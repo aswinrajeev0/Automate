@@ -9,7 +9,7 @@ import {
 	SUCCESS_MESSAGES,
 } from "../../../shared/constants";
 import { ZodError } from "zod";
-import { CustomError } from "@/entities/utils/custom.error";
+import { CustomError } from "../../../entities/utils/custom.error";
 import { IRegisterController } from "@/entities/controllerInterfaces/register-controller.interface";
 
 @injectable()
@@ -40,6 +40,8 @@ export class CustomerRegisterController implements IRegisterController {
 					message: err.message,
 				}));
 
+				console.error(error)
+
 				res.status(HTTP_STATUS.BAD_REQUEST).json({
 					success: false,
 					message: ERROR_MESSAGES.VALIDATION_ERROR,
@@ -48,6 +50,7 @@ export class CustomerRegisterController implements IRegisterController {
 				return;
 			}
 			if (error instanceof CustomError) {
+				console.error(error)
 				res.status(error.statusCode).json({
 					success: false,
 					message: error.message,

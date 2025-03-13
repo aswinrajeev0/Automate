@@ -38,7 +38,7 @@ export class Server {
     }
 
     private configureRoutes() {
-        this._app.use('/api/v1/auth', new AuthRoutes().router);
+        this._app.use('/api/v1/customer/', new AuthRoutes().router);
     }
 
     private configureErrorHandling() {

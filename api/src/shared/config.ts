@@ -15,8 +15,9 @@ export const config = {
     },
     nodemailer: {
         EMAIL_USER: process.env.SMTP_EMAIL,
-        EMAIL_PASS: process.env.SMTP_PASS
+        EMAIL_PASS: process.env.SMTP_PASS,
     },
+    OtpExpiry: process.env.OTP_EXPIRY_IN_MINUTES || "2",
     loggerStatus: process.env.LOGGER_STATUS || "dev",
     bcryptSaltRounds: parseInt(process.env.BCRYPT_SALT_ROUNDS || "10", 10)
 }

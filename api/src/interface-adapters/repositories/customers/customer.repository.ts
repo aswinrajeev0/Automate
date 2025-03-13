@@ -1,5 +1,5 @@
 import { injectable } from "tsyringe";
-import { CustomerModel } from "@/frameworks/database/mongoDB/models/customer.model";
+import { CustomerModel } from "../../../frameworks/database/mongoDB/models/customer.model";
 import { ICustomerEntity } from "@/entities/models/customer.entity";
 import { ICustomerRepository } from "@/entities/repositoryInterfaces/customer/customer-repository.interface";
 

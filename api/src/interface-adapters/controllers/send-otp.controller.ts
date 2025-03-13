@@ -1,9 +1,9 @@
 import { inject, injectable } from "tsyringe";
 import { ISendOtpController } from "@/entities/controllerInterfaces/sendotp-controller.interface";
 import { ISendOtpUseCase } from "@/entities/useCaseInterfaces/auth/send-otp-usecase.interface";
-import { CustomError } from "@/entities/utils/custom.error";
+import { CustomError } from "../../entities/utils/custom.error";
 import { ZodError } from "zod";
-import { ERROR_MESSAGES, HTTP_STATUS, SUCCESS_MESSAGES } from "@/shared/constants";
+import { ERROR_MESSAGES, HTTP_STATUS, SUCCESS_MESSAGES } from "../../shared/constants";
 import { Request, Response } from "express";
 
 @injectable()
@@ -14,6 +14,7 @@ export class SendOtpController implements ISendOtpController {
     ) { }
 
     async handle(req: Request, res: Response): Promise<void> {
+        
         try {
             const { email } = req.body;
             await this.sendOtpUseCase.execute(email);

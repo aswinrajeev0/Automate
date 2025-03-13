@@ -1,4 +1,4 @@
-import { config } from "@/shared/config";
+import { config } from "../../shared/config";
 import { IBcrypt } from "./bcrypt.interface";
 import bcrypt from "bcryptjs";
 

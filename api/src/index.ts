@@ -1,4 +1,4 @@
-
+import 'reflect-metadata'
 import { Server } from "./frameworks/http/server";
 import { MongoConnect } from "./frameworks/database/mongoDB/mongoConnect";
 import { config } from "./shared/config";

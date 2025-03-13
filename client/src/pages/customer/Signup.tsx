@@ -2,15 +2,135 @@ import { useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { signupSchema } from "../../utils/validations/signupvalidator";
 import { User, Mail, Lock, Eye, EyeOff, Phone } from "lucide-react";
-import { SignupFormValues } from "../../types/auth";
+import { CustomerSignupFormValues, CustomerRegisterData } from "../../types/auth";
+import {
+  useCustomerRegister,
+  useSendOtp,
+  useVerifyOtp
+} from "../../hooks/customerAuth/useCustomerAuth";
+import { useNavigate } from "react-router-dom";
+import { useToast } from "../../hooks/useToast";
+import OTPModal from "../../components/modals/OtpModal";
 
 export default function SignupPage() {
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [email, setEmail] = useState<string>("");
+  const [isOTPModalOpen, setIsOTPModalOpen] = useState<boolean>(false);
+  const [formData, setFormData] = useState<CustomerRegisterData | null>(null)
 
-  const handleSubmit = (values: SignupFormValues) => {
-    console.log("Form submitted", values);
+  const navigate = useNavigate();
+  const { toast } = useToast()
+
+  //react query hooks for api calling
+  const registerCustomer = useCustomerRegister();
+  const sendOtp = useSendOtp();
+  const verifyOtp = useVerifyOtp()
+
+  const handleSubmit = async (values: CustomerSignupFormValues) => {
+    try {
+      setIsLoading(true)
+      setEmail(values.email)
+
+      // Prepare the registration data
+      const registrationData: CustomerRegisterData = {
+        name: values.name,
+        email: values.email,
+        phone: values.mobile,
+        password: values.password,
+      }
+
+      // Store form data for later use after OTP verification
+      setFormData(registrationData)
+
+      // Send OTP to the user's email
+      const response = await sendOtp.mutateAsync(values.email)
+
+      if (response.status === 200) {
+        // Open OTP modal for verification
+        setIsOTPModalOpen(true)
+        toast({
+          title: "Verification Code Sent",
+          description: `We've sent a verification code to ${values.email}`,
+        })
+      } else {
+        console.log(response.data)
+        toast({
+          title: "Error",
+          description: response.data.message || "Failed to send verification code. Please try again.",
+          variant: "destructive",
+        })
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Something went wrong. Please try again later.",
+        variant: "destructive",
+      })
+      console.error("Error sending OTP:", error)
+    } finally {
+      setIsLoading(false)
+    }
   };
+
+  const resendOtp = async () => {
+    if(!email){
+      toast({
+        title: "Error",
+        description: "Email is missing. Please try signing up again",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      const response = await sendOtp.mutateAsync(email);
+      if(response.status === 200){
+        setIsOTPModalOpen(true);
+        toast({
+          title: "OTP sent",
+          description: "Check your email for the OTP."
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Missing registration data. Please try again",
+        variant: "destructive"
+      });
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const handleVerifyOtp = async (otp: string) => {
+    if (!formData) {
+      toast({
+        title: "Error",
+        description: "Missing registration data. Please try again.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      const otpResponse = await verifyOtp.mutateAsync({email, otp});
+
+      if(otpResponse){
+        await registerCustomer.mutateAsync(formData);
+        toast({
+          title: "Success",
+          description: "Account created successfully"
+        });
+        navigate("/login")
+      }
+    } catch (error) {
+      
+    }
+  }
 
   return (
     <div className="flex min-h-screen">
@@ -146,6 +266,15 @@ export default function SignupPage() {
           </div>
         </div>
       </div>
+      <OTPModal
+        isOpen={isOTPModalOpen}
+        onClose={() => setIsOTPModalOpen(false)}
+        onVerify={handleVerifyOtp}
+        onResend={resendOtp}
+        isLoading={isLoading}
+        title="Verify Your Email"
+        subtitle={`We've sent a 6-digit code to ${email}. Enter it below to verify your account.`}
+      />
     </div>
   );
 }
