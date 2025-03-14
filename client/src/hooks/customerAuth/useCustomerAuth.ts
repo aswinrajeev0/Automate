@@ -1,6 +1,11 @@
 import { useMutation } from '@tanstack/react-query'
-import { registerCustomer, sendOtp, verifyOtp } from '../../services/customer/authServices'
-import { CustomerRegisterData } from '../../types/auth'
+import {
+    registerCustomer,
+    sendOtp,
+    verifyOtp,
+    loginCustomer
+} from '../../services/customer/authServices'
+import { CustomerRegisterData, CustomerLoginData } from '../../types/auth'
 
 export const useCustomerRegister = () => {
     return useMutation({
@@ -22,9 +27,18 @@ export const useSendOtp = () => {
 
 export const useVerifyOtp = () => {
     return useMutation({
-        mutationFn: ({email, otp}: {email: string, otp: string}) => verifyOtp(email, otp),
+        mutationFn: ({ email, otp }: { email: string, otp: string }) => verifyOtp(email, otp),
         onError: (error: Error) => {
-            console.error("Verify email error: ",error)
+            console.error("Verify email error: ", error)
+        }
+    })
+}
+
+export const useCsutomerLogin = () => {
+    return useMutation({
+        mutationFn: (data: CustomerLoginData) => loginCustomer(data),
+        onError: (error: Error) => {
+            console.error(error)
         }
     })
 }

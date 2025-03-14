@@ -9,7 +9,7 @@ import {
   useVerifyOtp
 } from "../../hooks/customerAuth/useCustomerAuth";
 import { useNavigate } from "react-router-dom";
-import { useToast } from "../../hooks/useToast";
+import { useToast } from "../../hooks/ui/useToast";
 import OTPModal from "../../components/modals/OtpModal";
 
 export default function SignupPage() {
@@ -37,7 +37,7 @@ export default function SignupPage() {
       const registrationData: CustomerRegisterData = {
         name: values.name,
         email: values.email,
-        phone: values.mobile,
+        phoneNumber: values.mobile,
         password: values.password,
       }
 
@@ -62,10 +62,10 @@ export default function SignupPage() {
           variant: "destructive",
         })
       }
-    } catch (error) {
+    } catch (error: any) {
       toast({
         title: "Error",
-        description: "Something went wrong. Please try again later.",
+        description: error.message || "Something went wrong. Please try again later.",
         variant: "destructive",
       })
       console.error("Error sending OTP:", error)
@@ -75,7 +75,7 @@ export default function SignupPage() {
   };
 
   const resendOtp = async () => {
-    if(!email){
+    if (!email) {
       toast({
         title: "Error",
         description: "Email is missing. Please try signing up again",
@@ -87,7 +87,7 @@ export default function SignupPage() {
     try {
       setIsLoading(true);
       const response = await sendOtp.mutateAsync(email);
-      if(response.status === 200){
+      if (response.status === 200) {
         setIsOTPModalOpen(true);
         toast({
           title: "OTP sent",
@@ -117,9 +117,9 @@ export default function SignupPage() {
 
     try {
       setIsLoading(true);
-      const otpResponse = await verifyOtp.mutateAsync({email, otp});
+      const otpResponse = await verifyOtp.mutateAsync({ email, otp });
 
-      if(otpResponse){
+      if (otpResponse) {
         await registerCustomer.mutateAsync(formData);
         toast({
           title: "Success",
@@ -127,8 +127,13 @@ export default function SignupPage() {
         });
         navigate("/login")
       }
-    } catch (error) {
-      
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message || "Somethimg went wrong",
+        variant: "destructive",
+      });
+      console.error("Signup error:", error);
     }
   }
 
@@ -179,7 +184,7 @@ export default function SignupPage() {
             validationSchema={signupSchema}
             onSubmit={handleSubmit}
           >
-            {({ errors, touched }) => (
+            {({ }) => (
               <Form className="space-y-4">
                 <div className="relative">
                   <User className="absolute left-3 top-3.5 h-5 w-5 text-gray-400" />

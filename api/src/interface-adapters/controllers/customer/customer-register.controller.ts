@@ -1,7 +1,7 @@
 import { inject, injectable } from "tsyringe";
-import { ICustomerRegisterUseCase } from "@/entities/useCaseInterfaces/auth/register-usecase.interface";
+import { ICustomerRegisterUseCase } from "../../../entities/useCaseInterfaces/auth/register-usecase.interface";
 import { Request, Response } from "express";
-import { CustomerDTO } from "@/shared/dtos/customer.dto";
+import { CustomerDTO } from "../../../shared/dtos/customer.dto";
 import { customerSchema } from "../validations/customer-signup.validation.schema";
 import {
 	ERROR_MESSAGES,
@@ -10,7 +10,7 @@ import {
 } from "../../../shared/constants";
 import { ZodError } from "zod";
 import { CustomError } from "../../../entities/utils/custom.error";
-import { IRegisterController } from "@/entities/controllerInterfaces/register-controller.interface";
+import { IRegisterController } from "../../../entities/controllerInterfaces/customer/register-controller.interface";
 
 @injectable()
 export class CustomerRegisterController implements IRegisterController {

@@ -1,6 +1,6 @@
 import { inject, injectable } from "tsyringe";
-import { ISendOtpController } from "@/entities/controllerInterfaces/sendotp-controller.interface";
-import { ISendOtpUseCase } from "@/entities/useCaseInterfaces/auth/send-otp-usecase.interface";
+import { ISendOtpController } from "../../entities/controllerInterfaces/sendotp-controller.interface";
+import { ISendOtpUseCase } from "../../entities/useCaseInterfaces/auth/send-otp-usecase.interface";
 import { CustomError } from "../../entities/utils/custom.error";
 import { ZodError } from "zod";
 import { ERROR_MESSAGES, HTTP_STATUS, SUCCESS_MESSAGES } from "../../shared/constants";

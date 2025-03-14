@@ -5,3 +5,8 @@ export interface CustomerDTO {
     phoneNumber: string;
     password: string;
   }
+
+  export interface CustomerLoginDTO {
+    email: string,
+    password: string
+  }

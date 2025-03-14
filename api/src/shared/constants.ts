@@ -58,6 +58,8 @@ export const WALLET_TRANSACTION_TYPES = {
 	PURCHASE:"purchase"
 } as const
 
+export type TRole = "customer" | "admin" | "workshop";
+
 export type TWalletTransactionType = keyof typeof WALLET_TRANSACTION_TYPES;
 
 export interface IWalletTransaction {

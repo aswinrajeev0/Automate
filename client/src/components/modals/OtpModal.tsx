@@ -3,7 +3,7 @@
 import type React from "react"
 import { useState, useRef, useEffect } from "react"
 import { X, AlertTriangle, Check, Loader2, Timer } from "lucide-react"
-import { useToast } from "../../hooks/useToast"
+import { useToast } from "../../hooks/ui/useToast"
 
 interface OTPModalProps {
   isOpen: boolean
@@ -28,7 +28,6 @@ const OTPModal: React.FC<OTPModalProps> = ({
   subtitle = "Enter the 6-digit code sent to your email",
   otpLength = 6,
 }) => {
-    console.log("OTP modal")
   const [otp, setOtp] = useState<string[]>(Array(otpLength).fill(""))
   const [activeInput, setActiveInput] = useState<number>(0)
   const [errorMessage, setErrorMessage] = useState<string>("")

@@ -1,6 +1,6 @@
 import { injectable } from "tsyringe";
-import { IOtpEntity } from "@/entities/models/otp.entity";
-import { IOtpRepository } from "@/entities/repositoryInterfaces/otp-repository.interface";
+import { IOtpEntity } from "../../entities/models/otp.entity";
+import { IOtpRepository } from "../../entities/repositoryInterfaces/otp-repository.interface";
 import { IOtpModel, OtpModel } from "../../frameworks/database/mongoDB/models/otp.model";
 
 @injectable()

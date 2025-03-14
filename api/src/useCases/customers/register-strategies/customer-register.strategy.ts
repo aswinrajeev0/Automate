@@ -1,11 +1,11 @@
 import { inject, injectable } from "tsyringe";
-import { ICustomerRepository } from "@/entities/repositoryInterfaces/customer/customer-repository.interface";
+import { ICustomerRepository } from "../../../entities/repositoryInterfaces/customer/customer-repository.interface";
 import { CustomError } from "../../../entities/utils/custom.error";
 import { ERROR_MESSAGES, HTTP_STATUS } from "../../../shared/constants";
-import { IBcrypt } from "@/frameworks/security/bcrypt.interface";
+import { IBcrypt } from "../../../frameworks/security/bcrypt.interface";
 import { generateUniqueId } from "../../../frameworks/security/uniqueuid.bcrypt";
-import { CustomerDTO } from "@/shared/dtos/customer.dto";
-import { ICustomerEntity } from "@/entities/models/customer.entity";
+import { CustomerDTO } from "../../../shared/dtos/customer.dto";
+import { ICustomerEntity } from "../../../entities/models/customer.entity";
 
 export interface ICustomerRegisterStrategy {
     register(user: CustomerDTO): Promise<ICustomerEntity | void>;

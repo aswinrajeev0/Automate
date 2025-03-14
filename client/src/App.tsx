@@ -1,13 +1,17 @@
-import SignupPage from "./pages/customer/Signup"
 import { Toaster } from "sonner";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { CustomerRoutes } from "./routes/CustomerRoute";
+import { AdminRoutes } from "./routes/AdminRoute";
+import { WorkshopRoutes } from "./routes/WorkshopRoute";
 function App() {
 
   return (
     <BrowserRouter>
       <Toaster />
       <Routes>
-        <Route path="/signup" element={<SignupPage />} />
+        <Route path="/*" element={<CustomerRoutes />} />
+        <Route path="/admin/*" element={<AdminRoutes />} />
+        <Route path="/workshop/*" element={<WorkshopRoutes />} />
       </Routes>
     </BrowserRouter>
   )
