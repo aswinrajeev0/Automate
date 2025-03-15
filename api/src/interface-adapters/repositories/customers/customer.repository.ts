@@ -32,6 +32,24 @@ export class CustomerRepository implements ICustomerRepository {
         return this.toEntity(customer);
     }
 
+    async find(filter: any, skip: number, limit: number): Promise<{ users: ICustomerEntity[] | []; total: number; }> {
+        const users = await CustomerModel.find({ isAdmin: false, ...filter }).skip(skip).limit(limit);
+        return { users, total: users.length }
+    }
+
+    async findByIdAndUpdateStatus(id: string): Promise<void> {
+        const customer = await CustomerModel.findById(id);
+
+        if (!customer) {
+            throw new Error("Customer not found");
+        }
+
+        const updatedStatus = !customer.isBlocked;
+
+        await CustomerModel.findByIdAndUpdate(id, { $set: { isBlocked: updatedStatus } });
+    }
+
+
     private toEntity(customer: any): ICustomerEntity {
         return {
             customerId: customer._id.toString(), // Map _id to customerId

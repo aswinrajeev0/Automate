@@ -8,4 +8,10 @@ export interface ICustomerRepository {
         email: string,
         updates: Partial<ICustomerEntity>
     ): Promise<ICustomerEntity | null>;
+    find(
+        filter: any,
+        skip: number,
+        limit: number
+    ): Promise<{users: ICustomerEntity[] | []; total: number}>
+    findByIdAndUpdateStatus(id: string): Promise<void>
 }

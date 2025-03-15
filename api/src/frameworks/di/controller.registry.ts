@@ -4,6 +4,8 @@ import { CustomerRegisterController } from "../../interface-adapters/controllers
 import { SendOtpController } from "../../interface-adapters/controllers/send-otp.controller";
 import { VerifyOtpController } from "../../interface-adapters/controllers/verify-otp.controller";
 import { LoginCustomerController } from "../../interface-adapters/controllers/customer/customer-login.controller";
+import { AdminController } from "../../interface-adapters/controllers/admin.controller";
+import { CustomerController } from "../../interface-adapters/controllers/customer.controller";
 
 export class ControllerRegistry {
     static registerController(): void {
@@ -21,6 +23,14 @@ export class ControllerRegistry {
 
         container.register("LoginCustomerController", {
             useClass: LoginCustomerController
+        })
+
+        container.register("AdminController", {
+            useClass: AdminController
+        })
+
+        container.register("CustomerController", {
+            useClass: CustomerController
         })
     }
 }

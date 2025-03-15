@@ -7,7 +7,7 @@ import {
 } from "../../di/resolver";
 import { sendOtpController } from "../../di/resolver";
 
-export class AuthRoutes extends BaseRoute {
+export class CustomerRoute extends BaseRoute {
     constructor() {
         super();
     }

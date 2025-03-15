@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
-import { signupSchema } from "../../utils/validations/signupvalidator";
+import { signupSchema } from "../../utils/validations/customerValidations/signupvalidator";
 import { User, Mail, Lock, Eye, EyeOff, Phone } from "lucide-react";
 import { CustomerSignupFormValues, CustomerRegisterData } from "../../types/auth";
 import {

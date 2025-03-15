@@ -65,7 +65,7 @@ export class LoginCustomerController implements ILoginController {
                 }));
 
                 res.status(HTTP_STATUS.BAD_REQUEST).json({
-                    succecc: false,
+                    success: false,
                     message: ERROR_MESSAGES.VALIDATION_ERROR,
                     errors
                 })

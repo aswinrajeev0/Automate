@@ -7,7 +7,8 @@ import rateLimit from "express-rate-limit";
 
 import { config } from "../../shared/config";
 
-import { AuthRoutes } from "../routes/customer/auth.route";
+import { CustomerRoute } from "../routes/customer/customer.route";
+import { AdminRoute } from "../routes/admin/admin.route";
 
 export class Server {
     private _app: Application;
@@ -38,7 +39,10 @@ export class Server {
     }
 
     private configureRoutes() {
-        this._app.use('/api/v1/customer/', new AuthRoutes().router);
+        this._app.use('/api/v1/customer/', new CustomerRoute().router);
+        this._app.use('/api/v1/admin/', new AdminRoute().router);
+        // this._app.use('/api/v1/workshop/', new AuthRoutes().router);
+        // this._app.use("*", notFound);
     }
 
     private configureErrorHandling() {

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { Mail, Lock, Eye, EyeOff } from "lucide-react";
-import { loginSchema } from "../../utils/validations/loginvalidator";
+import { loginSchema } from "../../utils/validations/customerValidations/loginvalidator";
 import { CustomerLoginFormValues, CustomerLoginData } from "../../types/auth";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "../../hooks/ui/useToast";

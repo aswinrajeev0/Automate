@@ -10,3 +10,8 @@ export interface CustomerDTO {
     email: string,
     password: string
   }
+
+  export interface AdminLoginDTO {
+    email: string,
+    password: string
+  }

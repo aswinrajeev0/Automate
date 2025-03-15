@@ -26,7 +26,8 @@ export interface CustomerLoginData {
 
 export interface AdminLoginFormValues {
   email: string,
-  password: string
+  password: string,
+  rememberMe: boolean
 }
 
 export interface AdminLoginData {

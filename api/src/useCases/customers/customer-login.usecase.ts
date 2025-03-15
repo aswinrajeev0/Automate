@@ -25,6 +25,13 @@ export class LoginCustomerUseCase implements ILoginCustomerUseCase {
             )
         }
 
+        if(customer.isAdmin){
+            throw new CustomError(
+                ERROR_MESSAGES.UNAUTHORIZED_ACCESS,
+                HTTP_STATUS.FORBIDDEN
+            )
+        }
+
         if (customer.isBlocked) {
             throw new CustomError(
                 ERROR_MESSAGES.BLOCKED,
@@ -33,7 +40,7 @@ export class LoginCustomerUseCase implements ILoginCustomerUseCase {
         }
 
         if (user.password) {
-            const passMatch = this.passwordBcrypt.compare(
+            const passMatch = await this.passwordBcrypt.compare(
                 user.password,
                 customer.password
             )
@@ -41,7 +48,8 @@ export class LoginCustomerUseCase implements ILoginCustomerUseCase {
             if (!passMatch) {
                 throw new CustomError(
                     ERROR_MESSAGES.INVALID_CREDENTIALS,
-                    HTTP_STATUS.BAD_REQUEST)
+                    HTTP_STATUS.BAD_REQUEST
+                )
             }
         }
         return customer;

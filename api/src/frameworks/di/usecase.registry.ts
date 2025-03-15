@@ -16,6 +16,12 @@ import { ILoginCustomerUseCase } from "../../entities/useCaseInterfaces/auth/log
 import { LoginCustomerUseCase } from "../../useCases/customers/customer-login.usecase";
 import { IGenerateTokenUseCase } from "../../entities/useCaseInterfaces/generatetoken.usecase.interface";
 import { GenerateTokenUseCase } from "../../useCases/generate-token.usecase";
+import { AdminLoginUseCase } from "../../useCases/admin/admin-login.usecase";
+import { IAdminLoginUseCase } from "../../entities/useCaseInterfaces/admin/admin-login-usecase.interface";
+import { IGetAllCustomersUseCase } from "../../entities/useCaseInterfaces/customer/get-allcustomers.usecase.interface";
+import { GetAllCustomersUseCase } from "../../useCases/customers/get-all-customers.usecase";
+import { IUpdateCustomerStatusUseCase } from "../../entities/useCaseInterfaces/customer/updateCustomer-status.usecase";
+import { UpdateCustomerStatusUseCase } from "../../useCases/customers/updateCustomer-status.usecase";
 
 import { IEmailService } from "../../entities/serviceInterfaces.ts/email-service.interface";
 import { EmailService } from "../../interface-adapters/services/email-service";
@@ -47,6 +53,18 @@ export class UseCaseRegistry {
 
         container.register<IGenerateTokenUseCase>("IGenerateTokenUseCase", {
             useClass: GenerateTokenUseCase
+        })
+
+        container.register<IAdminLoginUseCase>("IAdminLoginUseCase", {
+            useClass: AdminLoginUseCase
+        })
+
+        container.register<IGetAllCustomersUseCase>("IGetAllCustomersUseCase", {
+            useClass: GetAllCustomersUseCase
+        })
+
+        container.register<IUpdateCustomerStatusUseCase>("IUpdateCustomerStatusUseCase", {
+            useClass: UpdateCustomerStatusUseCase
         })
 
         //* ====== Register Strategies ====== *//
