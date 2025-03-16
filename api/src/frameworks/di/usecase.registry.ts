@@ -22,6 +22,14 @@ import { IGetAllCustomersUseCase } from "../../entities/useCaseInterfaces/custom
 import { GetAllCustomersUseCase } from "../../useCases/customers/get-all-customers.usecase";
 import { IUpdateCustomerStatusUseCase } from "../../entities/useCaseInterfaces/customer/updateCustomer-status.usecase";
 import { UpdateCustomerStatusUseCase } from "../../useCases/customers/updateCustomer-status.usecase";
+import { IWorkshopSignupUseCase } from "../../entities/useCaseInterfaces/workshop/workshop-signup-usecase.interface";
+import { WorkshopSignUpUseCase } from "../../useCases/workshop/workshop-signup.usecase";
+import { IWorkshopLoginUseCase } from "../../entities/useCaseInterfaces/workshop/workshop-login-usecase.interface";
+import { WorkshopLoginUseCase } from "../../useCases/workshop/workshop-login.usecase";
+import { ICustomerResetPasswordOtpUseCase } from "../../entities/useCaseInterfaces/resend-otp.usecase.interface";
+import { CustomerResetPasswordOtpUseCase } from "../../useCases/customers/customer-reset-otp.usecase";
+import { ICustomerResetPasswordUseCase } from "../../entities/useCaseInterfaces/customer/customer-reset-password.usecase.interface";
+import { CustomerResetPasswordUseCase } from "../../useCases/customers/customer-reset-password.usecase";
 
 import { IEmailService } from "../../entities/serviceInterfaces.ts/email-service.interface";
 import { EmailService } from "../../interface-adapters/services/email-service";
@@ -31,6 +39,8 @@ import { IUserExistenceService } from "../../entities/serviceInterfaces.ts/userE
 import { UserExistenceService } from "../../interface-adapters/services/userexistence-service";
 import { ITokenService } from "../../entities/serviceInterfaces.ts/token-service.interface";
 import { JWTService } from "../../interface-adapters/services/jwt-service";
+import { IGetAllWorkshopsUseCase } from "../../entities/useCaseInterfaces/workshop/get-allworkshops-usecase.interface";
+import { GetAllWorkshopsUseCase } from "../../useCases/workshop/get-allworkshops.usecase";
 
 export class UseCaseRegistry {
     static registerUseCases(): void {
@@ -65,6 +75,26 @@ export class UseCaseRegistry {
 
         container.register<IUpdateCustomerStatusUseCase>("IUpdateCustomerStatusUseCase", {
             useClass: UpdateCustomerStatusUseCase
+        })
+
+        container.register<IWorkshopSignupUseCase>("IWorkshopSignupUseCase", {
+            useClass: WorkshopSignUpUseCase
+        })
+
+        container.register<IWorkshopLoginUseCase>("IWorkshopLoginUseCase", {
+            useClass: WorkshopLoginUseCase
+        })
+
+        container.register<ICustomerResetPasswordOtpUseCase>("ICustomerResetPasswordOtpUseCase", {
+            useClass: CustomerResetPasswordOtpUseCase
+        })
+
+        container.register<ICustomerResetPasswordUseCase>("ICustomerResetPasswordUseCase", {
+            useClass: CustomerResetPasswordUseCase
+        })
+
+        container.register<IGetAllWorkshopsUseCase>("IGetAllWorkshopsUseCase", {
+            useClass: GetAllWorkshopsUseCase
         })
 
         //* ====== Register Strategies ====== *//

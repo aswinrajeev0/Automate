@@ -1,16 +1,25 @@
-import React from "react"
 import { useNavigate } from "react-router-dom"
 import { useSelector, useDispatch } from "react-redux"
 import { RootState } from "../../../store/store"
 import { Power } from 'lucide-react';
+import { customerLogout } from "../../../store/slices/customerSlice";
+import { useToaster } from "../../../hooks/ui/useToaster";
 
 export const Header = () => {
 
     const navigate = useNavigate()
     const { customer } = useSelector((state: RootState) => state.customer)
+    const dispatch = useDispatch()
+    const {successToast} = useToaster()
+
+    function handleLogout(){
+        dispatch(customerLogout())
+        successToast("Logged out successfully.")
+        navigate('/login')
+    }
 
     return (
-        <header className="bg-amber-400 p-4">
+        <header className="bg-amber-300 p-4">
             <div className="container mx-auto flex items-center justify-between">
                 <div className="flex items-center">
                     <div className="bg-black rounded-full p-3 mr-3">
@@ -32,17 +41,17 @@ export const Header = () => {
                     <h1 className="text-xl font-semibold uppercase tracking-wider">Automate</h1>
                 </div>
                 <div className="flex gap-4">
-                    {customer ? <Power onClick={() => navigate("/logout")} /> :
+                    {customer ? <Power onClick={handleLogout} /> :
                         <>
                             <button
                                 onClick={() => navigate("/login")}
-                                className="bg-black text-amber-400 px-4 py-2 rounded-md hover:bg-gray-900 transition-colors"
+                                className="text-black-400 px-4 py-2 rounded-md hover:text-black/50 transition-colors"
                             >
                                 Login
                             </button>
                             <button
                                 onClick={() => navigate("/")}
-                                className="bg-black text-amber-400 px-4 py-2 rounded-md hover:bg-gray-900 transition-colors"
+                                className="text-black-400 px-4 py-2 rounded-md hover:text-black/50 transition-colors"
                             >
                                 Sign Up
                             </button>

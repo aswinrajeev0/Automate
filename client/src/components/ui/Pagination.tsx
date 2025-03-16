@@ -77,12 +77,18 @@ PaginationPrevious.displayName = "PaginationPrevious"
 
 const PaginationNext = ({
   className,
+  onClick,
+  isDisabled,
   ...props
-}: React.ComponentProps<typeof PaginationLink>) => (
+}: React.ComponentProps<typeof PaginationLink> & {isDisabled?: boolean}) => (
   <PaginationLink
     aria-label="Go to next page"
     size="default"
-    className={cn("gap-1 pr-2.5", className)}
+    className={cn("gap-1 pr-2.5",isDisabled && "pointer-events-none opacity-50", className)}
+    onClick={(e) => {
+      if(isDisabled) e.preventDefault();
+      else onClick?.(e) 
+    }}
     {...props}
   >
     <span>Next</span>

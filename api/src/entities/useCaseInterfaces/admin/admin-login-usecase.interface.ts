@@ -1,4 +1,4 @@
-import { AdminLoginDTO } from "../../../shared/dtos/customer.dto";
+import { AdminLoginDTO } from "../../../shared/dtos/auth.dto";
 import { IUserEntity } from "../../models/user.entity";
 
 export interface IAdminLoginUseCase {

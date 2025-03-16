@@ -5,6 +5,8 @@ import { Mail, ArrowLeft } from "lucide-react";
 import * as Yup from "yup";
 import { useNavigate, Link } from "react-router-dom";
 import { useToast } from "../../hooks/ui/useToast";
+import { useResetPasswordOtp, useSendOtp, useVerifyOtp } from "../../hooks/customerAuth/useCustomerAuth";
+import OTPModal from "../../components/modals/OtpModal";
 
 const forgotPasswordSchema = Yup.object().shape({
   email: Yup.string()
@@ -18,25 +20,34 @@ interface ForgotPasswordFormValues {
 
 export default function ForgotPasswordPage() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isOTPModalOpen, setIsOTPModalOpen] = useState<boolean>(false);
+  const [email, setEmail] = useState<string>("")
+  const [resetToken, setResetToken] = useState<string | null>(null)
   const navigate = useNavigate();
   const { toast } = useToast();
+  const sendOtp = useResetPasswordOtp();
+  const verifyOtp = useVerifyOtp();
 
   const handleSubmit = async (values: ForgotPasswordFormValues) => {
     try {
       setIsLoading(true);
-      
-      // Mock password reset for now
-      console.log("Password reset request submitted for:", values.email);
-      
-      toast({
-        title: "Email Sent",
-        description: "Check your inbox for password reset instructions",
-      });
-      
-      // Navigate back to login after successful submission
-      setTimeout(() => {
-        navigate("/login");
-      }, 2000);
+      setEmail(values.email)
+
+      const response = await sendOtp.mutateAsync(values.email);
+      if (response.status === 200) {
+        setIsOTPModalOpen(true)
+        setResetToken(response.data.token)
+        toast({
+          title: "Verification Code Sent",
+          description: `We have sent a verification code to ${values.email}`
+        })
+      } else {
+        toast({
+          title: "Error",
+          description: response.data.message || "Failed to send verification code. Please try again.",
+          variant: "destructive"
+        })
+      }
     } catch (error: any) {
       toast({
         title: "Error",
@@ -49,8 +60,77 @@ export default function ForgotPasswordPage() {
     }
   };
 
+  const resendOtp = async () => {
+    try {
+      if (!email) {
+        toast({
+          title: "Error",
+          description: "Email is missing. Please try signing up again",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      setIsLoading(true);
+      const response = await sendOtp.mutateAsync(email);
+      if (response.status === 200) {
+        setIsOTPModalOpen(true);
+        toast({
+          title: "OTP sent",
+          description: "Check your email for the OTP."
+        });
+      }
+
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Missing email. Please try again",
+        variant: "destructive"
+      });
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const handleVerifyOtp = async (otp: string) => {
+    if (!email) {
+      toast({
+        title: "Error",
+        description: "Missing email. Please try again.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      const otpResponse = await verifyOtp.mutateAsync({ email, otp });
+
+      if (otpResponse) {
+        setTimeout(() => {
+          navigate(`/reset-password?token=${resetToken}`);
+        }, 2000);
+      }
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.response.data || "Error verify otp.",
+        variant: "destructive"
+      });
+    }
+  }
+
   return (
     <div className="flex min-h-screen">
+      <OTPModal
+        isOpen={isOTPModalOpen}
+        onClose={() => setIsOTPModalOpen(false)}
+        onVerify={handleVerifyOtp}
+        onResend={resendOtp}
+        isLoading={isLoading}
+        title="Verify Your Email"
+        subtitle={`We've sent a 6-digit code to ${email}. Enter it below to verify your account.`}
+      />
       {/* Left side with illustration - 1/2 of the page */}
       <div className="hidden md:flex md:w-1/2 bg-blend-color items-center justify-center p-8">
         <img
@@ -105,7 +185,7 @@ export default function ForgotPasswordPage() {
             validationSchema={forgotPasswordSchema}
             onSubmit={handleSubmit}
           >
-            {({  }) => (
+            {({ }) => (
               <Form className="space-y-4">
                 <div className="relative">
                   <Mail className="absolute left-3 top-3.5 h-5 w-5 text-gray-400" />

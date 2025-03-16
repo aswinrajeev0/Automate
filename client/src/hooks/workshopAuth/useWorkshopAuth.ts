@@ -7,7 +7,7 @@ import {
 } from '../../services/workshop/authService'
 import { WorkshopRegisterData, WorkshopLoginData } from '../../types/auth'
 
-export const useCustomerRegister = () => {
+export const useWorkshopRegister = () => {
     return useMutation({
         mutationFn: (data: WorkshopRegisterData) => registerWorkshop(data),
         onError: (error: Error) => {
@@ -34,7 +34,7 @@ export const useVerifyOtp = () => {
     })
 }
 
-export const useCsutomerLogin = () => {
+export const useWorkshopLogin = () => {
     return useMutation({
         mutationFn: (data: WorkshopLoginData) => workshopLogin(data),
         onError: (error: Error) => {

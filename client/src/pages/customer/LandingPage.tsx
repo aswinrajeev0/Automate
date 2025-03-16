@@ -157,7 +157,7 @@ export default function LandingPage() {
           <div className="flex flex-col md:flex-row items-center justify-between gap-8">
             <div className="md:w-1/2">
               <img 
-                src="./lovable-uploads/3e074257-43c8-47c5-b1ba-b13d046678ba.png" 
+                src="./mechs2.jpg" 
                 alt="Car service illustration" 
                 className="w-full max-w-lg mx-auto"
               />

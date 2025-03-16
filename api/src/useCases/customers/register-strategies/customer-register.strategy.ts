@@ -4,7 +4,7 @@ import { CustomError } from "../../../entities/utils/custom.error";
 import { ERROR_MESSAGES, HTTP_STATUS } from "../../../shared/constants";
 import { IBcrypt } from "../../../frameworks/security/bcrypt.interface";
 import { generateUniqueId } from "../../../frameworks/security/uniqueuid.bcrypt";
-import { CustomerDTO } from "../../../shared/dtos/customer.dto";
+import { CustomerDTO } from "../../../shared/dtos/auth.dto";
 import { ICustomerEntity } from "../../../entities/models/customer.entity";
 
 export interface ICustomerRegisterStrategy {

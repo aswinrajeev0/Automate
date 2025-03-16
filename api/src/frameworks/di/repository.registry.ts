@@ -6,6 +6,8 @@ import { IOtpRepository } from "../../entities/repositoryInterfaces/otp-reposito
 import { OtpRepository } from "../../interface-adapters/repositories/send-otp.repository";
 import { IRefreshTokenRepository } from "../../entities/repositoryInterfaces/refresh-token-repository.interface";
 import { RefreshTokenRepository } from "../../interface-adapters/repositories/refresh-token.repository";
+import { IWorkshopRepository } from "../../entities/repositoryInterfaces/workshop/workshop-repository.interface";
+import { WorkshopRepository } from "../../interface-adapters/repositories/workshop/workshop.repository";
 
 export class RepositoryRegistry {
     static registerRepositories(): void {
@@ -19,6 +21,10 @@ export class RepositoryRegistry {
 
         container.register<IRefreshTokenRepository>("IRefreshTokenRepository", {
             useClass: RefreshTokenRepository
+        })
+
+        container.register<IWorkshopRepository>("IWorkshopRepository", {
+            useClass: WorkshopRepository
         })
     }
 }

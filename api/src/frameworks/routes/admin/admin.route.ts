@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { BaseRoute } from "../base.route";
-import { adminController, customerController } from "../../di/resolver";
+import { adminController, customerController, workshopController } from "../../di/resolver";
 
 
 export class AdminRoute extends BaseRoute {
@@ -20,6 +20,14 @@ export class AdminRoute extends BaseRoute {
 
         this.router.patch("/customer-status/:userId", (req: Request, res: Response) => {
             customerController.updateCustomerStatus(req, res);
+        })
+
+        this.router.get("/workshops", (req: Request, res: Response) => {
+            workshopController
+        })
+
+        this.router.patch("workshop-status/:workshopId", (req: Request, res: Response) => {
+            workshopController
         })
     }
 }

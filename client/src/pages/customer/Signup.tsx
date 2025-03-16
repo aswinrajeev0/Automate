@@ -125,12 +125,15 @@ export default function SignupPage() {
           title: "Success",
           description: "Account created successfully"
         });
-        navigate("/login")
+        
+        setTimeout(() => {
+          navigate("/login");
+        }, 2000);
       }
     } catch (error: any) {
       toast({
         title: "Error",
-        description: error.message || "Somethimg went wrong",
+        description: error.message || "Something went wrong",
         variant: "destructive",
       });
       console.error("Signup error:", error);

@@ -7,12 +7,8 @@ import {
   FileText,
   AlertTriangle,
   LogOut,
-  Search,
-  Bell,
-  ShieldAlert,
   DollarSign
 } from "lucide-react";
-import { useToast } from "../../hooks/ui/useToast";
 import {
   SidebarProvider,
   Sidebar,
@@ -22,28 +18,30 @@ import {
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuButton,
-  SidebarTrigger,
   SidebarInset
 } from "../../components/ui/Sidebar";
-import { Button } from "../../components/ui/Button";
-import { Input } from "../../components/ui/Input";
 import DashboardContent from "../../components/ui/admin/DashboardContent";
 import ApprovalContent from "../../components/ui/admin/ApprovalContent";
 import AdminHeader from "../../components/ui/admin/AdminHeader";
 import Customers from "../../components/ui/admin/Customers";
+import { useDispatch } from "react-redux";
+import { adminLogout } from "../../store/slices/adminSlice";
+import { useToaster } from "../../hooks/ui/useToaster";
+import Workshops from "../../components/ui/admin/Workshops";
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
-  const { toast } = useToast();
+  const { successToast } = useToaster();
   const [activeMenu, setActiveMenu] = useState("dashboard");
   const [isSideBarOpen, setIsSidebarOpen] = useState(true);
+  const dispatch = useDispatch()
 
   const handleLogout = () => {
-    toast({
-      title: "Logged out",
-      description: "You have been successfully logged out of admin panel",
-    });
-    navigate("/admin-login");
+    dispatch(adminLogout())
+    successToast(
+      "You have been successfully logged out of admin panel"
+    );
+    navigate("/admin/login");
   };
 
   // Menu items based on the design
@@ -125,6 +123,10 @@ export default function AdminDashboard() {
 
             {activeMenu === "customers" && (
               <Customers />
+            )}
+
+            {activeMenu === "workshops" && (
+              <Workshops />
             )}
 
             {activeMenu === "approvals" && (

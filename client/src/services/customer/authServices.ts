@@ -1,5 +1,5 @@
 import { customerApi } from "../../api/customer.axios";
-import { CustomerLoginData, CustomerRegisterData } from "../../types/auth";
+import { CustomerLoginData, CustomerRegisterData, ResetPasswordFormData } from "../../types/auth";
 
 export const registerCustomer = async (data: CustomerRegisterData) => {
     try {
@@ -19,6 +19,15 @@ export const sendOtp = async (email: string) => {
     }
 };
 
+export const resetOtp = async (email: string) => {
+    try {
+        const response = await customerApi.post("/reset-password-otp", {email});
+        return response;
+    } catch (error: any) {
+        throw error.response.data || "failed to send reset otp";
+    }
+}
+
 export const verifyOtp = async (email: string, otp: string) => {
     try {
         const response = await customerApi.post("/verify-otp", { email, otp });
@@ -34,5 +43,14 @@ export const loginCustomer = async (data:CustomerLoginData) => {
         return response.data;
     } catch (error: any) {
         throw error?.response.data || "Login failed"
+    }
+}
+
+export const resetPassword = async(data: ResetPasswordFormData) => {
+    try {
+        const response = await customerApi.post("/reset-password", data)
+        return response.data;
+    } catch (error: any) {
+        throw error.response.data || "Password reset failed."
     }
 }

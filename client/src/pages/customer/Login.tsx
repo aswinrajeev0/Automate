@@ -5,7 +5,7 @@ import { loginSchema } from "../../utils/validations/customerValidations/loginva
 import { CustomerLoginFormValues, CustomerLoginData } from "../../types/auth";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "../../hooks/ui/useToast";
-import { useCsutomerLogin } from "../../hooks/customerAuth/useCustomerAuth";
+import { useCustomerLogin } from "../../hooks/customerAuth/useCustomerAuth";
 import { useDispatch } from "react-redux";
 import { customerLogin } from "../../store/slices/customerSlice";
 
@@ -17,7 +17,7 @@ export default function LoginPage() {
     const navigate = useNavigate();
     const { toast } = useToast();
 
-    const loginCustomer = useCsutomerLogin();
+    const loginCustomer = useCustomerLogin();
 
     const handleSubmit = async (values: CustomerLoginFormValues) => {
         try {

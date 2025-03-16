@@ -1,7 +1,7 @@
 import { inject, injectable } from "tsyringe";
 import { ICustomerRegisterUseCase } from "../../../entities/useCaseInterfaces/auth/register-usecase.interface";
 import { Request, Response } from "express";
-import { CustomerDTO } from "../../../shared/dtos/customer.dto";
+import { CustomerDTO } from "../../../shared/dtos/auth.dto";
 import { customerSchema } from "../validations/customer-signup.validation.schema";
 import {
 	ERROR_MESSAGES,

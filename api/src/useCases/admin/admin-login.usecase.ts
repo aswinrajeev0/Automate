@@ -1,7 +1,7 @@
 import { inject, injectable } from "tsyringe";
 import { IUserEntity } from "../../entities/models/user.entity";
 import { IAdminLoginUseCase } from "../../entities/useCaseInterfaces/admin/admin-login-usecase.interface";
-import { AdminLoginDTO } from "../../shared/dtos/customer.dto";
+import { AdminLoginDTO } from "../../shared/dtos/auth.dto";
 import { ICustomerRepository } from "../../entities/repositoryInterfaces/customer/customer-repository.interface";
 import { IBcrypt } from "../../frameworks/security/bcrypt.interface";
 import { ERROR_MESSAGES, HTTP_STATUS } from "../../shared/constants";

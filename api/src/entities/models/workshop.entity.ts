@@ -1,4 +1,5 @@
 export interface IWorkshopEntity {
+    workshopId?: string,
     id?: string;
     image?: string;
     name: string;
@@ -10,7 +11,7 @@ export interface IWorkshopEntity {
     city: string;
     streetAddress: string;
     buildingNo: string;
-    description?: Date;
+    description?: string;
     isActive: boolean;
     isBlocked: boolean;
     createdAt: Date;

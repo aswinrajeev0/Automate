@@ -9,10 +9,10 @@ export const useUpdateCustomerStatusMutation = () => {
 		mutationFn: (userId: string) => updateCustomerStatus(userId),
         onSuccess: (data) => {
             queryClient.invalidateQueries({ queryKey: ["customers"] });
-            successToast(data.message); // ✅ Handle success here
+            successToast(data.message);
         },
         onError: (error: any) => {
-            errorToast(error.response?.data?.message || "An error occurred"); // ✅ Safer error handling
+            errorToast(error.response?.data?.message || "An error occurred");
         },
 	});
 };

@@ -44,7 +44,7 @@ export interface WorkshopSignupFormValues {
   country: string,
   state: string,
   city: string,
-  steetAddress: string,
+  streetAddress: string,
   buildingNo: string
 }
 
@@ -56,7 +56,7 @@ export interface WorkshopRegisterData {
   country: string,
   state: string,
   city: string,
-  steetAddress: string,
+  streetAddress: string,
   buildingNo: string
 }
 
@@ -68,4 +68,15 @@ export interface WorkshopLoginFormValues {
 export interface WorkshopLoginData {
   email: string,
   password: string
+}
+
+export interface ResetPasswordFormValues {
+  password: string;
+  confirmPassword: string;
+}
+
+export interface ResetPasswordFormData {
+  password: string;
+  confirmPassword: string;
+  token: string
 }

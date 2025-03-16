@@ -1,7 +1,7 @@
 import { inject, injectable } from "tsyringe";
 import { ICustomerRegisterUseCase } from "../../entities/useCaseInterfaces/auth/register-usecase.interface";
 import { ICustomerRegisterStrategy } from "./register-strategies/customer-register.strategy";
-import { CustomerDTO } from "../../shared/dtos/customer.dto";
+import { CustomerDTO } from "../../shared/dtos/auth.dto";
 import { CustomError } from "../../entities/utils/custom.error";
 import { ERROR_MESSAGES, HTTP_STATUS } from "../../shared/constants";
 import { ICustomerEntity } from "../../entities/models/customer.entity";

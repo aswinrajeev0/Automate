@@ -9,6 +9,8 @@ import { config } from "../../shared/config";
 
 import { CustomerRoute } from "../routes/customer/customer.route";
 import { AdminRoute } from "../routes/admin/admin.route";
+import { WorkshopRoute } from "../routes/workshop/workshop.route";
+import { errorHandler } from "../../interface-adapters/middlewares/error.middleware";
 
 export class Server {
     private _app: Application;
@@ -41,15 +43,15 @@ export class Server {
     private configureRoutes() {
         this._app.use('/api/v1/customer/', new CustomerRoute().router);
         this._app.use('/api/v1/admin/', new AdminRoute().router);
-        // this._app.use('/api/v1/workshop/', new AuthRoutes().router);
+        this._app.use('/api/v1/workshop/', new WorkshopRoute().router);
         // this._app.use("*", notFound);
     }
 
-    private configureErrorHandling() {
-
+    private configureErrorHandling(): void {
+        this._app.use(errorHandler);
     }
 
-    public getApp():Application{
+    public getApp(): Application {
         return this._app;
     }
 }

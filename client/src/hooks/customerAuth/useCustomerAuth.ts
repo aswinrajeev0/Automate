@@ -3,9 +3,11 @@ import {
     registerCustomer,
     sendOtp,
     verifyOtp,
-    loginCustomer
+    loginCustomer,
+    resetOtp,
+    resetPassword
 } from '../../services/customer/authServices'
-import { CustomerRegisterData, CustomerLoginData } from '../../types/auth'
+import { CustomerRegisterData, CustomerLoginData, ResetPasswordFormData } from '../../types/auth'
 
 export const useCustomerRegister = () => {
     return useMutation({
@@ -25,6 +27,15 @@ export const useSendOtp = () => {
     })
 }
 
+export const useResetPasswordOtp = () => {
+    return useMutation({
+        mutationFn: (email: string) => resetOtp(email),
+        onError: (error: Error) => {
+            console.error("Error sending reset otp: ", error)
+        }
+    })
+}
+
 export const useVerifyOtp = () => {
     return useMutation({
         mutationFn: ({ email, otp }: { email: string, otp: string }) => verifyOtp(email, otp),
@@ -34,11 +45,20 @@ export const useVerifyOtp = () => {
     })
 }
 
-export const useCsutomerLogin = () => {
+export const useCustomerLogin = () => {
     return useMutation({
         mutationFn: (data: CustomerLoginData) => loginCustomer(data),
         onError: (error: Error) => {
             console.error(error)
+        }
+    })
+}
+
+export const useResetPassword = () => {
+    return useMutation({
+        mutationFn: (data: ResetPasswordFormData) => resetPassword(data),
+        onError: (error: Error) => {
+            console.error("Reset password error",error)
         }
     })
 }
