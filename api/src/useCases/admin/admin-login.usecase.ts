@@ -12,13 +12,13 @@ export class AdminLoginUseCase implements IAdminLoginUseCase {
 
     constructor(
         @inject("ICustomerRepository")
-        private customerRepo: ICustomerRepository,
+        private adminRepo: ICustomerRepository,
         @inject("IPasswordBcrypt")
         private passwordBcrypt: IBcrypt
     ) { }
 
     async execute(user: AdminLoginDTO): Promise<Partial<IUserEntity>> {
-        const admin = await this.customerRepo.findByEmail(user.email)
+        const admin = await this.adminRepo.findByEmail(user.email)
         if (!admin) {
             throw new CustomError(
                 ERROR_MESSAGES.USER_NOT_FOUND,

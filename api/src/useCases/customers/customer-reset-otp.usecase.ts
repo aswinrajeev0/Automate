@@ -1,5 +1,5 @@
 import { inject, injectable } from "tsyringe";
-import { ICustomerResetPasswordOtpUseCase } from "../../entities/useCaseInterfaces/resend-otp.usecase.interface";
+import { IResetPasswordOtpUseCase } from "../../entities/useCaseInterfaces/reset-otp.usecase.interface";
 import { IEmailService } from "../../entities/serviceInterfaces.ts/email-service.interface";
 import { IOtpService } from "../../entities/serviceInterfaces.ts/otp-service.interface";
 import { IBcrypt } from "../../frameworks/security/bcrypt.interface";
@@ -8,7 +8,7 @@ import { ERROR_MESSAGES, SUCCESS_MESSAGES, HTTP_STATUS } from "../../shared/cons
 import { ICustomerRepository } from "../../entities/repositoryInterfaces/customer/customer-repository.interface";
 
 @injectable()
-export class CustomerResetPasswordOtpUseCase implements ICustomerResetPasswordOtpUseCase {
+export class CustomerResetPasswordOtpUseCase implements IResetPasswordOtpUseCase {
     constructor(
         @inject("IEmailService")
         private emailService: IEmailService,
@@ -34,7 +34,7 @@ export class CustomerResetPasswordOtpUseCase implements ICustomerResetPasswordOt
         await this.otpService.storeOtp(email, hashOtp);
         await this.emailService.sendOtpEmail(
             email,
-            "AutoMate - Verify your email.",
+            "AutoMate - Verify your reset password email.",
             otp
         )
     }

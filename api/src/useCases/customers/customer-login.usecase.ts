@@ -17,41 +17,46 @@ export class LoginCustomerUseCase implements ILoginCustomerUseCase {
     ) { }
 
     async execute(user: CustomerLoginDTO): Promise<Partial<IUserEntity>> {
-        const customer = await this.customerRepo.findByEmail(user.email)
-        if (!customer) {
-            throw new CustomError(
-                ERROR_MESSAGES.USER_NOT_FOUND,
-                HTTP_STATUS.NOT_FOUND
-            )
-        }
-
-        if(customer.isAdmin){
-            throw new CustomError(
-                ERROR_MESSAGES.UNAUTHORIZED_ACCESS,
-                HTTP_STATUS.FORBIDDEN
-            )
-        }
-
-        if (customer.isBlocked) {
-            throw new CustomError(
-                ERROR_MESSAGES.BLOCKED,
-                HTTP_STATUS.FORBIDDEN
-            )
-        }
-
-        if (user.password) {
-            const passMatch = await this.passwordBcrypt.compare(
-                user.password,
-                customer.password
-            )
-
-            if (!passMatch) {
+        try {
+            const customer = await this.customerRepo.findByEmail(user.email)
+            if (!customer) {
                 throw new CustomError(
-                    ERROR_MESSAGES.INVALID_CREDENTIALS,
-                    HTTP_STATUS.BAD_REQUEST
+                    ERROR_MESSAGES.USER_NOT_FOUND,
+                    HTTP_STATUS.NOT_FOUND
                 )
             }
+            
+            if (customer.isBlocked) {
+                throw new CustomError(
+                    ERROR_MESSAGES.BLOCKED,
+                    HTTP_STATUS.FORBIDDEN
+                )
+            }
+
+            if (customer.isAdmin) {
+                throw new CustomError(
+                    ERROR_MESSAGES.UNAUTHORIZED_ACCESS,
+                    HTTP_STATUS.FORBIDDEN
+                )
+            }
+            
+            if (user.password) {
+                const passMatch = await this.passwordBcrypt.compare(
+                    user.password,
+                    customer.password
+                )
+
+                if (!passMatch) {
+                    throw new CustomError(
+                        ERROR_MESSAGES.INVALID_CREDENTIALS,
+                        HTTP_STATUS.BAD_REQUEST
+                    )
+                }
+            }
+            return customer;
+        } catch (error) {
+            console.error("Error in login execution:", error)
+            throw error;
         }
-        return customer;
     }
 }

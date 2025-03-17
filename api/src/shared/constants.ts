@@ -34,6 +34,7 @@ export const ERROR_MESSAGES = {
 	MISSING_PARAMETERS: "Missing required parameters.",
 	WRONG_CURRENT_PASSWORD: "Current password is wrong",
 	SAME_CURR_NEW_PASSWORD: "Please enter a different password from current",
+   INVALID_JSON: "Invalid JSON format in request body."
 } as const;
 
 export const SUCCESS_MESSAGES = {

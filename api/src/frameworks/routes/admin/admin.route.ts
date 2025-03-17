@@ -1,6 +1,7 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { BaseRoute } from "../base.route";
 import { adminController, customerController, workshopController } from "../../di/resolver";
+import { authenticate } from "../../../interface-adapters/middlewares/auth.midleware";
 
 
 export class AdminRoute extends BaseRoute {
@@ -10,24 +11,28 @@ export class AdminRoute extends BaseRoute {
     }
 
     protected initializeRoute(): void {
-        this.router.post('/login', (req: Request, res: Response) => {
-            adminController.login(req, res);
+        this.router.post('/login', (req: Request, res: Response, next: NextFunction) => {
+            adminController.login(req, res, next);
         })
 
-        this.router.get("/customers", (req: Request, res: Response) => {
-            customerController.getAllCustomers(req, res);
+        this.router.get("/customers", authenticate("admin"), (req: Request, res: Response, next: NextFunction) => {
+            customerController.getAllCustomers(req, res, next);
         })
 
-        this.router.patch("/customer-status/:userId", (req: Request, res: Response) => {
-            customerController.updateCustomerStatus(req, res);
+        this.router.patch("/customer-status/:userId", authenticate("admin"), (req: Request, res: Response, next: NextFunction) => {
+            customerController.updateCustomerStatus(req, res, next);
         })
 
-        this.router.get("/workshops", (req: Request, res: Response) => {
-            workshopController
+        this.router.get("/workshops", authenticate("admin"), (req: Request, res: Response, next: NextFunction) => {
+            workshopController.getAllWorkshops(req, res, next);
         })
 
-        this.router.patch("workshop-status/:workshopId", (req: Request, res: Response) => {
-            workshopController
+        this.router.patch("/workshop-status/:workshopId", authenticate("admin"), (req: Request, res: Response, next: NextFunction) => {
+            workshopController.updateWorkshopStatus(req, res, next);
+        })
+
+        this.router.post("/logout", authenticate("admin"), (req: Request, res: Response, next: NextFunction) => {
+            adminController.logout(req, res, next);
         })
     }
 }

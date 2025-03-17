@@ -56,7 +56,7 @@ export default function WorkshopLoginPage() {
             {/* Left side with illustration - 1/2 of the page */}
 
             {/* Right side with form - 1/2 of the page */}
-            <div className="w-full md:w-1/2 bg-white p-8 flex flex-col justify-center">
+            <div className="w-full md:w-1/2 bg-red-100 p-8 flex flex-col justify-center">
                 <div className="max-w-md mx-auto w-full">
                     <div className="flex flex-col items-center mb-8">
                         <div className="bg-black rounded-full p-3 mb-2">
@@ -121,7 +121,7 @@ export default function WorkshopLoginPage() {
 
                                 <div className="flex items-center justify-between">
                                     <div className="text-sm">
-                                        <a href="/forgot-password" className="font-medium text-red-600 hover:text-red-500">
+                                        <a href="/workshop/forgot-password" className="font-medium text-red-600 hover:text-red-500">
                                             Forgot password?
                                         </a>
                                     </div>

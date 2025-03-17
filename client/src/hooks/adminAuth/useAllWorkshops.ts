@@ -21,7 +21,7 @@ export const useAllWorkshopsQuery = <T extends WorkshopData>(
     search: string
 ) => {
     return useQuery({
-        queryKey: ["customers", page, limit, search],
+        queryKey: ["workshops", page, limit, search],
         queryFn: () => queryFunc({ page, limit, search }),
         placeholderData: (prevData) => prevData ? { ...prevData } : undefined,
     });

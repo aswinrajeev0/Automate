@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, Outlet, useNavigate } from "react-router-dom";
 import {
   LayoutDashboard,
   Users,
@@ -28,6 +28,7 @@ import { useDispatch } from "react-redux";
 import { adminLogout } from "../../store/slices/adminSlice";
 import { useToaster } from "../../hooks/ui/useToaster";
 import Workshops from "../../components/ui/admin/Workshops";
+import { useAdminLogout } from "../../hooks/adminAuth/useAdminAuth";
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
@@ -35,23 +36,28 @@ export default function AdminDashboard() {
   const [activeMenu, setActiveMenu] = useState("dashboard");
   const [isSideBarOpen, setIsSidebarOpen] = useState(true);
   const dispatch = useDispatch()
+  const logOut = useAdminLogout()
 
-  const handleLogout = () => {
-    dispatch(adminLogout())
-    successToast(
-      "You have been successfully logged out of admin panel"
-    );
-    navigate("/admin/login");
+  const handleLogout = async () => {
+    const response = await logOut.mutateAsync();
+    if (response) {
+      dispatch(adminLogout())
+      successToast(
+        "You have been successfully logged out of admin panel"
+      );
+      navigate("/admin/login");
+    }
+
   };
 
   // Menu items based on the design
   const menuItems = [
-    { id: "dashboard", title: "Dashboard", icon: LayoutDashboard },
-    { id: "customers", title: "Customers", icon: Users },
-    { id: "workshops", title: "Workshops", icon: Calendar },
-    { id: "requests", title: "Requests", icon: FileText },
-    { id: "revenue", title: "Revenue Report", icon: DollarSign },
-    { id: "approvals", title: "Pending Approvals", icon: AlertTriangle },
+    { id: "dashboard", title: "Dashboard", icon: LayoutDashboard, path: "/admin" },
+    { id: "customers", title: "Customers", icon: Users, path: "/admin/customers" },
+    { id: "workshops", title: "Workshops", icon: Calendar, path: "/admin/workshops" },
+    { id: "requests", title: "Requests", icon: FileText, path: "/admin/requests" },
+    { id: "revenue", title: "Revenue Report", icon: DollarSign, path: "/admin/revenue" },
+    { id: "approvals", title: "Pending Approvals", icon: AlertTriangle, path: "/admin/approvals" },
   ];
 
   return (
@@ -85,13 +91,11 @@ export default function AdminDashboard() {
             <SidebarMenu>
               {menuItems.map((item) => (
                 <SidebarMenuItem key={item.id}>
-                  <SidebarMenuButton
-                    isActive={activeMenu === item.id}
-                    onClick={() => setActiveMenu(item.id)}
-                    className="py-3 text-blaack hover:bg-white/10 data-[active=true]:bg-white/20"
-                  >
-                    <item.icon className="h-5 w-5" />
-                    <span className="text-base">{item.title}</span>
+                  <SidebarMenuButton asChild>
+                    <Link to={item.path} className="py-3 text-black hover:bg-white/10 flex items-center gap-2">
+                      <item.icon className="h-5 w-5" />
+                      <span className="text-base">{item.title}</span>
+                    </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
@@ -117,21 +121,7 @@ export default function AdminDashboard() {
 
           {/* Dashboard Content */}
           <main className="p-6">
-            {activeMenu === "dashboard" && (
-              <DashboardContent />
-            )}
-
-            {activeMenu === "customers" && (
-              <Customers />
-            )}
-
-            {activeMenu === "workshops" && (
-              <Workshops />
-            )}
-
-            {activeMenu === "approvals" && (
-              <ApprovalContent />
-            )}
+            <Outlet />
           </main>
         </SidebarInset>
       </div>

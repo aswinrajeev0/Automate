@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { ArrowRight, MapPin, MessageCircle, Users, Wrench, Home, Star } from "lucide-react";
 import { Button } from "../../components/ui/Button";
 import { Card, CardContent } from "../../components/ui/Card";

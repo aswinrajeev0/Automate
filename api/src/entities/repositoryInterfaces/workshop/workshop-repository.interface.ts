@@ -10,4 +10,5 @@ export interface IWorkshopRepository {
         skip: number,
         limit: number
     ): Promise<{ workshops: IWorkshopEntity[] | []; total: number }>
+    updateBlockStatus(id: string): Promise<void>;
 }

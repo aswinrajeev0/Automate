@@ -5,7 +5,7 @@ import { Mail, ArrowLeft } from "lucide-react";
 import * as Yup from "yup";
 import { useNavigate, Link } from "react-router-dom";
 import { useToast } from "../../hooks/ui/useToast";
-import { useResetPasswordOtp, useSendOtp, useVerifyOtp } from "../../hooks/customerAuth/useCustomerAuth";
+import { useResetPasswordOtp, useVerifyOtp } from "../../hooks/customerAuth/useCustomerAuth";
 import OTPModal from "../../components/modals/OtpModal";
 
 const forgotPasswordSchema = Yup.object().shape({

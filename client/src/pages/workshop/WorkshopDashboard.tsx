@@ -26,6 +26,7 @@ import WorkshopDasboardContent from "../../components/ui/workshop/DashboardConte
 import WorkshopHeader from "../../components/ui/workshop/Header";
 import { useDispatch } from "react-redux";
 import { workshopLogout } from "../../store/slices/workshopSlice";
+import { useWorkshopLogout } from "../../hooks/workshopAuth/useWorkshopAuth";
 
 
 export default function WorkshopDashboard() {
@@ -34,14 +35,18 @@ export default function WorkshopDashboard() {
     const [activeMenu, setActiveMenu] = useState("dashboard");
     const [isSidebarOpen, setIsSidebarOpen] = useState(true)
     const dispatch = useDispatch()
+    const logout = useWorkshopLogout()
 
-    const handleLogout = () => {
-        dispatch(workshopLogout())
-        toast({
-            title: "Logged out",
-            description: "You have been successfully logged out",
-        });
-        navigate("/workshop/login");
+    const handleLogout = async () => {
+        const response = await logout.mutateAsync()
+        if (response) {
+            dispatch(workshopLogout())
+            toast({
+                title: "Logged out",
+                description: "You have been successfully logged out",
+            });
+            navigate("/workshop/login");
+        }
     };
 
     // Menu items based on the design

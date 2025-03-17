@@ -1,5 +1,5 @@
 import { workshopApi } from "../../api/workshop.axios";
-import { WorkshopLoginData, WorkshopRegisterData } from "../../types/auth";
+import { ResetPasswordFormData, WorkshopLoginData, WorkshopRegisterData } from "../../types/auth";
 
 export const registerWorkshop = async (data: WorkshopRegisterData) => {
     try {
@@ -28,11 +28,38 @@ export const verifyOtp = async (email: string, otp: string) => {
     }
 };
 
-export const workshopLogin = async (data:WorkshopLoginData) => {
+export const workshopLogin = async (data: WorkshopLoginData) => {
     try {
         const response = await workshopApi.post("/login", data)
         return response.data;
     } catch (error: any) {
         throw error?.response.data || "Login failed"
+    }
+}
+
+export const workshopResetOtp = async (email: string) => {
+    try {
+        const response = await workshopApi.post("/reset-password-otp", { email });
+        return response;
+    } catch (error: any) {
+        throw error?.response?.data || "failed to send reset otp";
+    }
+}
+
+export const workshopResetPassword = async (data: ResetPasswordFormData) => {
+    try {
+        const response = await workshopApi.patch("/reset-password", data)
+        return response.data;
+    } catch (error: any) {
+        throw error?.response?.data || "Password reset failed."
+    }
+}
+
+export const workshopLogout = async () => {
+    try {
+        const response = await workshopApi.post("/logout");
+        return response.data;
+    } catch (error: any) {
+        throw error.response.data
     }
 }

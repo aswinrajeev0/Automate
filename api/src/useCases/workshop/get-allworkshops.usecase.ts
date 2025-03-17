@@ -12,7 +12,7 @@ export class GetAllWorkshopsUseCase implements IGetAllWorkshopsUseCase {
     ) { }
 
     async execute(pageNumber: number, pageSize: number, searchTerm: string): Promise<PaginatedWorkshops> {
-        let filter: any
+        let filter: any = {}
 
         if (searchTerm) {
             filter.$or = [

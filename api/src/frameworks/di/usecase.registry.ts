@@ -26,10 +26,14 @@ import { IWorkshopSignupUseCase } from "../../entities/useCaseInterfaces/worksho
 import { WorkshopSignUpUseCase } from "../../useCases/workshop/workshop-signup.usecase";
 import { IWorkshopLoginUseCase } from "../../entities/useCaseInterfaces/workshop/workshop-login-usecase.interface";
 import { WorkshopLoginUseCase } from "../../useCases/workshop/workshop-login.usecase";
-import { ICustomerResetPasswordOtpUseCase } from "../../entities/useCaseInterfaces/resend-otp.usecase.interface";
+import { IResetPasswordOtpUseCase } from "../../entities/useCaseInterfaces/reset-otp.usecase.interface";
 import { CustomerResetPasswordOtpUseCase } from "../../useCases/customers/customer-reset-otp.usecase";
 import { ICustomerResetPasswordUseCase } from "../../entities/useCaseInterfaces/customer/customer-reset-password.usecase.interface";
 import { CustomerResetPasswordUseCase } from "../../useCases/customers/customer-reset-password.usecase";
+import { IGetAllWorkshopsUseCase } from "../../entities/useCaseInterfaces/workshop/get-allworkshops-usecase.interface";
+import { GetAllWorkshopsUseCase } from "../../useCases/workshop/get-allworkshops.usecase";
+import { IUpdateWorkshopStatusUseCase } from "../../entities/useCaseInterfaces/workshop/update-worksho-status-usecase.interface";
+import { UpdateWorkshopStatusUseCase } from "../../useCases/workshop/update-workshop-status.usecase";
 
 import { IEmailService } from "../../entities/serviceInterfaces.ts/email-service.interface";
 import { EmailService } from "../../interface-adapters/services/email-service";
@@ -39,8 +43,19 @@ import { IUserExistenceService } from "../../entities/serviceInterfaces.ts/userE
 import { UserExistenceService } from "../../interface-adapters/services/userexistence-service";
 import { ITokenService } from "../../entities/serviceInterfaces.ts/token-service.interface";
 import { JWTService } from "../../interface-adapters/services/jwt-service";
-import { IGetAllWorkshopsUseCase } from "../../entities/useCaseInterfaces/workshop/get-allworkshops-usecase.interface";
-import { GetAllWorkshopsUseCase } from "../../useCases/workshop/get-allworkshops.usecase";
+import { WorkshopResetPasswordOtpUseCase } from "../../useCases/workshop/workshop-reset-otp.usecase";
+import { IWorkshopResetPasswordUseCase } from "../../entities/useCaseInterfaces/workshop/workshop-resetPassword-usecase.interface";
+import { WorkshopResetPasswordUseCase } from "../../useCases/workshop/workshop-reset-password.usecase.interface";
+import { IBlackListTokenUseCase } from "../../entities/useCaseInterfaces/blacklisttoken.usecase.interface";
+import { BlackListTokenUseCase } from "../../useCases/blacklist-token.usecase";
+import { IRevokeRefreshTokenUseCase } from "../../entities/useCaseInterfaces/revoke-refreshtoken.usecase.interface";
+import { RevokeRefreshTokenUseCase } from "../../useCases/revoke-refreshtoken.usecase";
+import { ICustomerLogutUseCase } from "../../entities/useCaseInterfaces/customer/customer-logout.interface";
+import { CustomerLogutUseCase } from "../../useCases/customers/customer-logout.usecase";
+import { IAdminLogoutUseCase } from "../../entities/useCaseInterfaces/admin/admin-logout.usecase.interface";
+import { AdminLogoutUseCase } from "../../useCases/admin/admin-logout.usecase";
+import { IWorkshopLogoutUseCase } from "../../entities/useCaseInterfaces/workshop/workshoplogout.usecase.interface";
+import { WorkshopLogoutUseCase } from "../../useCases/workshop/workshop-logout.usecase";
 
 export class UseCaseRegistry {
     static registerUseCases(): void {
@@ -85,16 +100,48 @@ export class UseCaseRegistry {
             useClass: WorkshopLoginUseCase
         })
 
-        container.register<ICustomerResetPasswordOtpUseCase>("ICustomerResetPasswordOtpUseCase", {
+        container.register<IResetPasswordOtpUseCase>("ICustomerResetPasswordOtpUseCase", {
             useClass: CustomerResetPasswordOtpUseCase
+        })
+
+        container.register<IResetPasswordOtpUseCase>("IWorkshopResetPasswordOtpUseCase", {
+            useClass: WorkshopResetPasswordOtpUseCase
         })
 
         container.register<ICustomerResetPasswordUseCase>("ICustomerResetPasswordUseCase", {
             useClass: CustomerResetPasswordUseCase
         })
 
+        container.register<IWorkshopResetPasswordUseCase>("IWorkshopResetPasswordUseCase", {
+            useClass: WorkshopResetPasswordUseCase
+        })
+
         container.register<IGetAllWorkshopsUseCase>("IGetAllWorkshopsUseCase", {
             useClass: GetAllWorkshopsUseCase
+        })
+
+        container.register<IUpdateWorkshopStatusUseCase>("IUpdateWorkshopStatusUseCase", {
+            useClass: UpdateWorkshopStatusUseCase
+        })
+
+        container.register<IRevokeRefreshTokenUseCase>("IRevokeRefreshTokenUseCase", {
+            useClass: RevokeRefreshTokenUseCase
+        })
+
+        container.register<IBlackListTokenUseCase>("IBlackListTokenUseCase", {
+            useClass: BlackListTokenUseCase
+        })
+
+        container.register<ICustomerLogutUseCase>("ICustomerLogutUseCase", {
+            useClass: CustomerLogutUseCase
+        })
+
+        container.register<IAdminLogoutUseCase>("IAdminLogoutUseCase", {
+            useClass: AdminLogoutUseCase
+        })
+
+        container.register<IWorkshopLogoutUseCase>("IWorkshopLogoutUseCase", {
+            useClass: WorkshopLogoutUseCase
         })
 
         //* ====== Register Strategies ====== *//
@@ -124,7 +171,7 @@ export class UseCaseRegistry {
             useClass: UserExistenceService
         })
 
-        container.register<ITokenService>("ITokenService",{
+        container.register<ITokenService>("ITokenService", {
             useClass: JWTService
         })
     }

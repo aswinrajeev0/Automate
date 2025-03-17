@@ -4,18 +4,23 @@ import { RootState } from "../../../store/store"
 import { Power } from 'lucide-react';
 import { customerLogout } from "../../../store/slices/customerSlice";
 import { useToaster } from "../../../hooks/ui/useToaster";
+import { useCustomerLogout } from "../../../hooks/customerAuth/useCustomerAuth";
 
 export const Header = () => {
 
     const navigate = useNavigate()
     const { customer } = useSelector((state: RootState) => state.customer)
     const dispatch = useDispatch()
-    const {successToast} = useToaster()
+    const { successToast } = useToaster()
+    const logout = useCustomerLogout()
 
-    function handleLogout(){
-        dispatch(customerLogout())
-        successToast("Logged out successfully.")
-        navigate('/login')
+    async function handleLogout() {
+        const response = await logout.mutateAsync();
+        if (response.success) {
+            dispatch(customerLogout())
+            successToast("Logged out successfully.")
+            navigate('/login')
+        }
     }
 
     return (

@@ -5,7 +5,8 @@ import {
     verifyOtp,
     loginCustomer,
     resetOtp,
-    resetPassword
+    resetPassword,
+    customerlogout
 } from '../../services/customer/authServices'
 import { CustomerRegisterData, CustomerLoginData, ResetPasswordFormData } from '../../types/auth'
 
@@ -59,6 +60,15 @@ export const useResetPassword = () => {
         mutationFn: (data: ResetPasswordFormData) => resetPassword(data),
         onError: (error: Error) => {
             console.error("Reset password error",error)
+        }
+    })
+}
+
+export const useCustomerLogout = () => {
+    return useMutation({
+        mutationFn: () => customerlogout(),
+        onError: (error: Error) => {
+            console.error("Error in customer logout", error)
         }
     })
 }

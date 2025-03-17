@@ -3,9 +3,12 @@ import {
     registerWorkshop,
     sendOtp,
     verifyOtp,
-    workshopLogin
+    workshopLogin,
+    workshopLogout,
+    workshopResetOtp,
+    workshopResetPassword
 } from '../../services/workshop/authService'
-import { WorkshopRegisterData, WorkshopLoginData } from '../../types/auth'
+import { WorkshopRegisterData, WorkshopLoginData, ResetPasswordFormData } from '../../types/auth'
 
 export const useWorkshopRegister = () => {
     return useMutation({
@@ -39,6 +42,33 @@ export const useWorkshopLogin = () => {
         mutationFn: (data: WorkshopLoginData) => workshopLogin(data),
         onError: (error: Error) => {
             console.error(error)
+        }
+    })
+}
+
+export const useWorkshopResetPasswordOtp = () => {
+    return useMutation({
+        mutationFn: (email: string) => workshopResetOtp(email),
+        onError: (error: Error) => {
+            console.error("Error sending reset otp: ", error)
+        }
+    })
+}
+
+export const useWorkshopResetPassword = () => {
+    return useMutation({
+        mutationFn: (data: ResetPasswordFormData) => workshopResetPassword(data),
+        onError: (error: Error) => {
+            console.error("Reset password error", error)
+        }
+    })
+}
+
+export const useWorkshopLogout = () => {
+    return useMutation({
+        mutationFn: () => workshopLogout(),
+        onError: (error: Error) => {
+            console.error("Workshop logout error", error)
         }
     })
 }

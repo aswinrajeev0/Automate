@@ -26,7 +26,7 @@ export const config = {
         RESET_EXPIRES_IN: process.env.JWT_RESET_EXPIRES_IN || "5m",
     },
     redis: {
-        REDIS_URL: process.env.REDIS_URL
+        REDIS_URL: process.env.REDIS_URL || ""
     },
     OtpExpiry: process.env.OTP_EXPIRY_IN_MINUTES || "2",
     loggerStatus: process.env.LOGGER_STATUS || "dev",
