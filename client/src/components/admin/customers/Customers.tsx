@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../Table";
-import { Button } from "../Button";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../ui/Table";
+import { Button } from "../../ui/Button";
 import { debounce } from "lodash";
 import { useAllCustomersQuery } from "../../../hooks/adminAuth/useAllCustomers";
 import { getAllCustomers } from "../../../services/admin/adminService";
 import { useUpdateCustomerStatusMutation } from "../../../hooks/adminAuth/useUpdateCustomerStatus";
-import { Pagination1 } from "./Pagination1";
+import { Pagination1 } from "../Pagination1";
 import { Search } from "lucide-react";
-import { Input } from "../Input";
+import { Input } from "../../ui/Input";
 
 export interface ICustomer {
     _id: string;
@@ -19,7 +19,7 @@ export interface ICustomer {
 }
 
 export type CustomersData = {
-    users: ICustomer[];
+    customers: ICustomer[];
     totalPages: number;
 };
 
@@ -28,9 +28,9 @@ const Customers: React.FC = () => {
     const [searchQuery, setSearchQuery] = useState("");
     const [debouncedSearch, setDebouncedSearch] = useState(searchQuery);
     const [currentPage, setCurrentPage] = useState(1);
-    const { mutate: updateCustomerStatus } = useUpdateCustomerStatusMutation();
-
+    
     const limit = 10;
+    const { mutate: updateCustomerStatus } = useUpdateCustomerStatusMutation(currentPage, limit, searchQuery);
 
     function handleBlockStatus(userId: string) {
         updateCustomerStatus(userId);

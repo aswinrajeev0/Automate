@@ -13,7 +13,10 @@ export const workshopSchema = new Schema<IWorkshopModel>({
     city: { type: String, required: true },
     streetAddress: { type: String, required: true },
     buildingNo: { type: String, required: true },
+    approvalStatus: {type: String, enum: ["pending", "approved", "rejected"], default: "pending"},
+    rejectionReason: {type: String},
     isActive: { type: Boolean, default: false },
+    isRejected: {type: Boolean, default: false},
     isBlocked: { type: Boolean, default: false }
 }, {
     timestamps: true

@@ -2,8 +2,8 @@ import { ArrowRight, MapPin, MessageCircle, Users, Wrench, Home, Star } from "lu
 import { Button } from "../../components/ui/Button";
 import { Card, CardContent } from "../../components/ui/Card";
 import { useNavigate } from "react-router-dom";
-import {Header} from "../../components/ui/customer/Header"
-import { Footer } from "../../components/ui/customer/Footer";
+import {Header} from "../../components/customer/Header"
+import { Footer } from "../../components/customer/Footer";
 
 export default function LandingPage() {
   const navigate = useNavigate();

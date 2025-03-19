@@ -1,7 +1,7 @@
 import React from "react";
-import { SidebarTrigger } from "../Sidebar";
+import { SidebarTrigger } from "../ui/Sidebar";
 import { Bell } from "lucide-react";
-import { Button } from "../Button";
+import { Button } from "../ui/Button";
 
 interface AdminHeaderProps {
   setIsSidebarOpen: React.Dispatch<React.SetStateAction<boolean>>;

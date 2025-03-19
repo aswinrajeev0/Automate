@@ -13,19 +13,22 @@ import { IResetPasswordOtpUseCase } from "../../entities/useCaseInterfaces/reset
 import { ITokenService } from "../../entities/serviceInterfaces.ts/token-service.interface";
 import { IWorkshopResetPasswordUseCase } from "../../entities/useCaseInterfaces/workshop/workshop-resetPassword-usecase.interface";
 import { IWorkshopLogoutUseCase } from "../../entities/useCaseInterfaces/workshop/workshoplogout.usecase.interface";
+import { parseBoolean } from "../../shared/utils/parsers";
+import { IUpdateWorkshopApprovalStatusUseCase } from "../../entities/useCaseInterfaces/workshop/update-workshop-approvalstatus.usecase.interface";
 
 @injectable()
 export class WorkshopController implements IWorkshopController {
     constructor(
-        @inject("IWorkshopSignupUseCase") private workshopSignupUseCase: IWorkshopSignupUseCase,
-        @inject("IWorkshopLoginUseCase") private workshopLoginUseCase: IWorkshopLoginUseCase,
-        @inject("IGenerateTokenUseCase") private generateToken: IGenerateTokenUseCase,
-        @inject("IGetAllWorkshopsUseCase") private getAllWorkshopsUseCase: IGetAllWorkshopsUseCase,
-        @inject("IUpdateWorkshopStatusUseCase") private updateWorkshopStatusUseCase: IUpdateWorkshopStatusUseCase,
-        @inject("IWorkshopResetPasswordOtpUseCase") private workshopResetPasswordOtpUseCase: IResetPasswordOtpUseCase,
-        @inject("IWorkshopResetPasswordUseCase") private workshopResetPasswordUseCase: IWorkshopResetPasswordUseCase,
-        @inject("ITokenService") private tokenService: ITokenService,
-        @inject("IWorkshopLogoutUseCase") private workshopLogoutUseCase: IWorkshopLogoutUseCase
+        @inject("IWorkshopSignupUseCase") private _workshopSignupUseCase: IWorkshopSignupUseCase,
+        @inject("IWorkshopLoginUseCase") private _workshopLoginUseCase: IWorkshopLoginUseCase,
+        @inject("IGenerateTokenUseCase") private _generateToken: IGenerateTokenUseCase,
+        @inject("IGetAllWorkshopsUseCase") private _getAllWorkshopsUseCase: IGetAllWorkshopsUseCase,
+        @inject("IUpdateWorkshopStatusUseCase") private _updateWorkshopStatusUseCase: IUpdateWorkshopStatusUseCase,
+        @inject("IWorkshopResetPasswordOtpUseCase") private _workshopResetPasswordOtpUseCase: IResetPasswordOtpUseCase,
+        @inject("IWorkshopResetPasswordUseCase") private _workshopResetPasswordUseCase: IWorkshopResetPasswordUseCase,
+        @inject("ITokenService") private _tokenService: ITokenService,
+        @inject("IWorkshopLogoutUseCase") private _workshopLogoutUseCase: IWorkshopLogoutUseCase,
+        @inject ("IUpdateWorkshopApprovalStatusUseCase") private _updateWorkshopApproval: IUpdateWorkshopApprovalStatusUseCase
     ) { }
 
     async signup(req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -33,7 +36,7 @@ export class WorkshopController implements IWorkshopController {
             const data = req.body;
             const schema = workshopSchema
             const validatedData = schema.parse(data)
-            await this.workshopSignupUseCase.execute(validatedData)
+            await this._workshopSignupUseCase.execute(validatedData)
             res.status(HTTP_STATUS.CREATED).json({
                 success: true,
                 message: SUCCESS_MESSAGES.REGISTRATION_SUCCESS,
@@ -46,12 +49,12 @@ export class WorkshopController implements IWorkshopController {
     async login(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const data = req.body
-            const workshop = await this.workshopLoginUseCase.execute(data);
+            const workshop = await this._workshopLoginUseCase.execute(data);
             if (!workshop.email || !workshop.id) {
                 throw new Error("Workshop id or email is missing.")
             }
 
-            const tokens = await this.generateToken.execute(
+            const tokens = await this._generateToken.execute(
                 workshop.id,
                 workshop.email,
                 "workshop"
@@ -95,7 +98,7 @@ export class WorkshopController implements IWorkshopController {
             const pageSize = Number(limit);
             const searchTermString = typeof search === "string" ? search : "";
 
-            const { workshops, total } = await this.getAllWorkshopsUseCase.execute(
+            const { workshops, total } = await this._getAllWorkshopsUseCase.execute(
                 pageNumber,
                 pageSize,
                 searchTermString
@@ -114,7 +117,7 @@ export class WorkshopController implements IWorkshopController {
     async updateWorkshopStatus(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const { workshopId } = req.params;
-            await this.updateWorkshopStatusUseCase.execute(workshopId)
+            await this._updateWorkshopStatusUseCase.execute(workshopId)
             res.status(HTTP_STATUS.OK).json({
                 success: true,
                 message: SUCCESS_MESSAGES.UPDATE_SUCCESS
@@ -127,8 +130,8 @@ export class WorkshopController implements IWorkshopController {
     async resetPasswordOtp(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const { email } = req.body
-            await this.workshopResetPasswordOtpUseCase.execute(email);
-            const token = await this.tokenService.generateResetToken(email);
+            await this._workshopResetPasswordOtpUseCase.execute(email);
+            const token = await this._tokenService.generateResetToken(email);
             res.status(HTTP_STATUS.OK).json({
                 message: SUCCESS_MESSAGES.OTP_SEND_SUCCESS,
                 success: true,
@@ -142,7 +145,7 @@ export class WorkshopController implements IWorkshopController {
     async resetPassword(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const { token, password, confirmPassword } = req.body;
-            await this.workshopResetPasswordUseCase.execute(token, password, confirmPassword)
+            await this._workshopResetPasswordUseCase.execute(token, password, confirmPassword)
             res.status(HTTP_STATUS.OK).json({
                 success: true,
                 message: SUCCESS_MESSAGES.PASSWORD_RESET_SUCCESS
@@ -162,13 +165,26 @@ export class WorkshopController implements IWorkshopController {
                 return;
             }
 
-            await this.workshopLogoutUseCase.execute(req.user)
+            await this._workshopLogoutUseCase.execute(req.user)
             clearAuthCookies(res, "workshop_access_token", "workshop_refresh_token");
 
             res.status(HTTP_STATUS.OK).json({
                 success: true,
                 message: SUCCESS_MESSAGES.LOGOUT_SUCCESS,
             });
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    async updateWorkshopApprovalStatus(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const {workshopId, status, reason} = req.body;
+            await this._updateWorkshopApproval.execute(workshopId, status, reason);
+            res.status(HTTP_STATUS.OK).json({
+                success: true,
+                message: SUCCESS_MESSAGES.UPDATE_SUCCESS
+            })
         } catch (error) {
             next(error)
         }

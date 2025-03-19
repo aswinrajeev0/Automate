@@ -1,10 +1,9 @@
 import { NextFunction, Request, Response } from "express";
 import { BaseRoute } from "../base.route";
 import {
-    verifyOtpController,
-    customerController
+    customerController,
+    otpController
 } from "../../di/resolver";
-import { sendOtpController } from "../../di/resolver";
 import { authenticate } from "../../../interface-adapters/middlewares/auth.midleware";
 
 export class CustomerRoute extends BaseRoute {
@@ -18,11 +17,11 @@ export class CustomerRoute extends BaseRoute {
         })
 
         this.router.post('/send-otp', (req: Request, res: Response, next: NextFunction) => {
-            sendOtpController.handle(req, res, next);
+            otpController.sendOtp(req, res, next);
         })
 
         this.router.post('/verify-otp', (req: Request, res: Response, next: NextFunction) => {
-            verifyOtpController.handle(req, res, next);
+            otpController.verifyOtp(req, res, next);
         })
 
         this.router.post('/login', (req: Request, res: Response, next: NextFunction) => {
@@ -34,11 +33,15 @@ export class CustomerRoute extends BaseRoute {
         })
 
         this.router.patch("/reset-password", (req: Request, res: Response, next: NextFunction) => {
-            customerController.resetPassword(req, res, next)
+            customerController.resetPassword(req, res, next);
         })
 
         this.router.post("/logout", authenticate("customer"), (req: Request, res: Response, next: NextFunction) => {
-            customerController.logout(req, res, next)
+            customerController.logout(req, res, next);
+        })
+
+        this.router.post("/google-auth", (req: Request, res: Response, next: NextFunction) => {
+            customerController.googleAuth(req, res, next);
         })
     }
 }

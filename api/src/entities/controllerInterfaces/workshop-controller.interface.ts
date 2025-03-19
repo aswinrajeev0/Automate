@@ -8,4 +8,5 @@ export interface IWorkshopController {
     resetPasswordOtp(req: Request, res: Response, next: NextFunction): Promise<void>;
     resetPassword(req: Request, res: Response, next: NextFunction): Promise<void>;
     logout(req: Request, res: Response, next: NextFunction): Promise<void>;
+    updateWorkshopApprovalStatus(req: Request, res: Response, next: NextFunction): Promise<void>;
 }

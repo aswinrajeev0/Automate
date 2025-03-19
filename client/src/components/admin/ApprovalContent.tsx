@@ -1,9 +1,9 @@
 import React from "react";
-import { Card, CardContent } from "../Card";
+import { Card, CardContent } from "../ui/Card";
 import { Table } from "lucide-react";
-import { TableBody, TableCell, TableHead, TableHeader, TableRow } from "../Table";
+import { TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/Table";
 import { Progress } from "@radix-ui/react-progress";
-import { Button } from "../Button";
+import { Button } from "../ui/Button";
 
 // Sample pending approvals data
 const pendingApprovals = [

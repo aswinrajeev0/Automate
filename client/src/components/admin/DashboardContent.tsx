@@ -1,6 +1,6 @@
 import React from 'react'
-import { Card, CardContent } from '../Card';
-import { ChartContainer } from '../Chart';
+import { Card, CardContent } from '../ui/Card';
+import { ChartContainer } from '../ui/Chart';
 import { AreaChart } from 'lucide-react';
 import { Area, CartesianGrid, XAxis, YAxis } from 'recharts';
 import { Tooltip } from '@radix-ui/react-tooltip';

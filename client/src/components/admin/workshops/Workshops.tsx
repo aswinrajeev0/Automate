@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../Table";
-import { Button } from "../Button";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../ui/Table";
+import { Button } from "../../ui/Button";
 import { debounce } from "lodash";
 import { getAllWorkshops } from "../../../services/admin/adminService";
 import { useUpdateWorkshopStatusMutation } from "../../../hooks/adminAuth/useUpdateWorkshopStatus";
-import { Pagination1 } from "./Pagination1";
+import { Pagination1 } from "../Pagination1";
 import { Search } from "lucide-react";
-import { Input } from "../Input";
+import { Input } from "../../ui/Input";
 import { useAllWorkshopsQuery } from "../../../hooks/adminAuth/useAllWorkshops";
 
 export interface IWorkshop {
@@ -19,21 +19,24 @@ export interface IWorkshop {
 }
 
 export type WorkshopData = {
-    users: IWorkshop[];
+    workshops: IWorkshop[];
     totalPages: number;
 };
 
 const Workshops: React.FC = () => {
 
+    const limit = 10;
     const [searchQuery, setSearchQuery] = useState("");
     const [debouncedSearch, setDebouncedSearch] = useState(searchQuery);
     const [currentPage, setCurrentPage] = useState(1);
-    const { mutate: updateWorkshopStatus } = useUpdateWorkshopStatusMutation();
+    const { mutate: updateWorkshopStatus } = useUpdateWorkshopStatusMutation(
+        currentPage,
+        limit,
+        debouncedSearch
+    );
 
-    const limit = 10;
-
-    function handleBlockStatus(userId: string) {
-        updateWorkshopStatus(userId);
+    function handleBlockStatus(workshopId: string) {
+        updateWorkshopStatus(workshopId);
     }
 
     useEffect(() => {
@@ -46,7 +49,7 @@ const Workshops: React.FC = () => {
         getAllWorkshops,
         currentPage,
         limit,
-        debouncedSearch,
+        debouncedSearch
     );
 
     const workshops = (data?.workshops ?? []) as IWorkshop[];

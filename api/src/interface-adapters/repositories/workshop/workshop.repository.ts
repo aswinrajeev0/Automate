@@ -34,21 +34,31 @@ export class WorkshopRepository implements IWorkshopRepository {
         return workshop;
     }
 
+    async findByIdAndUpdate(id: string, updates: Partial<IWorkshopEntity>): Promise<IWorkshopEntity | null> {
+        const workshop = await WorkshopModel.findByIdAndUpdate(id, { $set: updates }, { new: true }).lean()
+        return { ...workshop, id: workshop?._id.toString() } as IWorkshopEntity;
+    }
+
     async find(filter: any, skip: number, limit: number): Promise<{ workshops: IWorkshopEntity[] | []; total: number; }> {
         const workshops = await WorkshopModel.find(filter).skip(skip).limit(limit);
         return { workshops, total: workshops.length }
     }
 
-    async updateBlockStatus(id: string): Promise<void> {
+    async updateBlockStatus(id: string): Promise<IWorkshopEntity> {
         const workshop = await WorkshopModel.findById(id);
+
         if (!workshop) {
             throw new CustomError(
                 ERROR_MESSAGES.USER_NOT_FOUND,
                 HTTP_STATUS.NOT_FOUND
-            )
+            );
         }
 
-        const status = !workshop.isBlocked;
-        await WorkshopModel.findByIdAndUpdate(id, { $set: { isBlocked: status } })
+        workshop.isBlocked = !workshop.isBlocked;
+
+        await workshop.save();
+
+        return workshop;
     }
+
 }

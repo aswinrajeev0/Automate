@@ -12,8 +12,9 @@ import { customerSchema } from "./validations/customer-signup.validation.schema"
 import { clearAuthCookies, setAuthCookies } from "../../shared/utils/cookie-helper";
 import { ILoginCustomerUseCase } from "../../entities/useCaseInterfaces/auth/login-usecase.interface";
 import { IGenerateTokenUseCase } from "../../entities/useCaseInterfaces/generatetoken.usecase.interface";
-import { UserRequest } from "../middlewares/auth.midleware";
 import { ICustomerLogutUseCase } from "../../entities/useCaseInterfaces/customer/customer-logout.interface";
+import { IGoogleUseCase } from "../../entities/useCaseInterfaces/customer/googlelogin.usecase.interface";
+import { loginSchema } from "./validations/customer-login.validation.schema";
 
 @injectable()
 export class CustomerController implements ICustomerController {
@@ -26,7 +27,8 @@ export class CustomerController implements ICustomerController {
         @inject("ICustomerResetPasswordOtpUseCase") private customerResetPasswordOtpUseCase: IResetPasswordOtpUseCase,
         @inject("ITokenService") private tokenService: ITokenService,
         @inject("ICustomerResetPasswordUseCase") private customerResetPasswordUseCase: ICustomerResetPasswordUseCase,
-        @inject("ICustomerLogutUseCase") private customerLogutUseCase: ICustomerLogutUseCase
+        @inject("ICustomerLogutUseCase") private customerLogutUseCase: ICustomerLogutUseCase,
+        @inject("IGoogleUseCase") private googleUseCase: IGoogleUseCase
     ) { }
 
     async signup(req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -46,7 +48,9 @@ export class CustomerController implements ICustomerController {
     async login(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const data = req.body
-            const user = await this.loginCustomer.execute(data)
+            const schema = loginSchema;
+            const validatedData = schema.parse(data);
+            const user = await this.loginCustomer.execute(validatedData);
             if (!user.id || !user.email) {
                 throw new Error("User id or email is missing.")
             }
@@ -165,6 +169,45 @@ export class CustomerController implements ICustomerController {
             res.status(HTTP_STATUS.OK).json({
                 success: true,
                 message: SUCCESS_MESSAGES.LOGOUT_SUCCESS,
+            });
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    async googleAuth(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const { credential, client_id } = req.body;
+            const user = await this.googleUseCase.execute(
+                credential,
+                client_id
+            );
+
+            if (!user.id || !user.email) {
+                throw new Error("User ID, email, or role is missing");
+            }
+
+            const tokens = await this.generateTokenUseCase.execute(
+                user.id,
+                user.email,
+                "customer"
+            );
+
+            const accessTokenName = "customer_access_token"
+            const refreshTokenName = "customer_refresh_token"
+
+            setAuthCookies(
+                res,
+                tokens.accessToken,
+                tokens.refreshToken,
+                accessTokenName,
+                refreshTokenName
+            );
+
+            res.status(HTTP_STATUS.OK).json({
+                success: true,
+                message: SUCCESS_MESSAGES.LOGIN_SUCCESS,
+                user: user,
             });
         } catch (error) {
             next(error)

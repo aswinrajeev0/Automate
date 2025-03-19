@@ -12,7 +12,10 @@ export interface IWorkshopEntity {
     streetAddress: string;
     buildingNo: string;
     description?: string;
+    approvalStatus: "approved" | "rejected" | "pending";
+    rejectionReason: string;
     isActive: boolean;
+    isRejected: boolean;
     isBlocked: boolean;
     createdAt: Date;
     updatedAt: Date;

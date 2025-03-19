@@ -34,5 +34,9 @@ export class AdminRoute extends BaseRoute {
         this.router.post("/logout", authenticate("admin"), (req: Request, res: Response, next: NextFunction) => {
             adminController.logout(req, res, next);
         })
+
+        this.router.patch("/workshop-approval", authenticate("admin"), (req: Request, res: Response, next: NextFunction) => {
+            workshopController.updateWorkshopApprovalStatus(req, res, next);
+        })
     }
 }

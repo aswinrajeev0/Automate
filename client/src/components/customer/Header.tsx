@@ -1,10 +1,10 @@
 import { useNavigate } from "react-router-dom"
 import { useSelector, useDispatch } from "react-redux"
-import { RootState } from "../../../store/store"
+import { RootState } from "../../store/store"
 import { Power } from 'lucide-react';
-import { customerLogout } from "../../../store/slices/customerSlice";
-import { useToaster } from "../../../hooks/ui/useToaster";
-import { useCustomerLogout } from "../../../hooks/customerAuth/useCustomerAuth";
+import { customerLogout } from "../../store/slices/customerSlice";
+import { useToaster } from "../../hooks/ui/useToaster";
+import { useCustomerLogout } from "../../hooks/customerAuth/useCustomerAuth";
 
 export const Header = () => {
 
@@ -55,7 +55,7 @@ export const Header = () => {
                                 Login
                             </button>
                             <button
-                                onClick={() => navigate("/")}
+                                onClick={() => navigate("/signup")}
                                 className="text-black-400 px-4 py-2 rounded-md hover:text-black/50 transition-colors"
                             >
                                 Sign Up

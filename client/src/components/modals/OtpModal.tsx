@@ -35,6 +35,7 @@ const OTPModal: React.FC<OTPModalProps> = ({
   const [canResend, setCanResend] = useState<boolean>(false)
   const inputRefs = useRef<(HTMLInputElement | null)[]>([])
   const { toast } = useToast()
+  // const [expireTime, setExpireTime] = useState(120)
 
   // Reset OTP, errors, and timer when modal opens
   useEffect(() => {

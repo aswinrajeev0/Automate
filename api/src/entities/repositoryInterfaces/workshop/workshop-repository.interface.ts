@@ -5,10 +5,11 @@ export interface IWorkshopRepository {
     findById(id: string): Promise<IWorkshopEntity | null>;
     findByEmail(email: string): Promise<IWorkshopEntity | null>;
     updateByEmail(email: string, updates: Partial<IWorkshopEntity>): Promise<IWorkshopEntity | null>
+    findByIdAndUpdate(id: string, updates: Partial<IWorkshopEntity>): Promise<IWorkshopEntity | null>
     find(
         filter: any,
         skip: number,
         limit: number
     ): Promise<{ workshops: IWorkshopEntity[] | []; total: number }>
-    updateBlockStatus(id: string): Promise<void>;
+    updateBlockStatus(id: string): Promise<IWorkshopEntity>;
 }

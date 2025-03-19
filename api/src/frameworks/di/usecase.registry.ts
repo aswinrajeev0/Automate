@@ -56,6 +56,10 @@ import { IAdminLogoutUseCase } from "../../entities/useCaseInterfaces/admin/admi
 import { AdminLogoutUseCase } from "../../useCases/admin/admin-logout.usecase";
 import { IWorkshopLogoutUseCase } from "../../entities/useCaseInterfaces/workshop/workshoplogout.usecase.interface";
 import { WorkshopLogoutUseCase } from "../../useCases/workshop/workshop-logout.usecase";
+import { IGoogleUseCase } from "../../entities/useCaseInterfaces/customer/googlelogin.usecase.interface";
+import { GoogleUseCase } from "../../useCases/customers/google-login.usecase";
+import { IUpdateWorkshopApprovalStatusUseCase } from "../../entities/useCaseInterfaces/workshop/update-workshop-approvalstatus.usecase.interface";
+import { UpdateWorkshopApprovalStatusUseCase } from "../../useCases/workshop/update-workshop-approvalstatus.usecase";
 
 export class UseCaseRegistry {
     static registerUseCases(): void {
@@ -142,6 +146,14 @@ export class UseCaseRegistry {
 
         container.register<IWorkshopLogoutUseCase>("IWorkshopLogoutUseCase", {
             useClass: WorkshopLogoutUseCase
+        })
+
+        container.register<IGoogleUseCase>("IGoogleUseCase", {
+            useClass: GoogleUseCase
+        })
+
+        container.register<IUpdateWorkshopApprovalStatusUseCase>("IUpdateWorkshopApprovalStatusUseCase", {
+            useClass: UpdateWorkshopApprovalStatusUseCase
         })
 
         //* ====== Register Strategies ====== *//

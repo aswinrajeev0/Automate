@@ -1,8 +1,8 @@
 import React from "react"
-import { SidebarTrigger } from "../Sidebar"
+import { SidebarTrigger } from "../ui/Sidebar"
 import { Search } from "lucide-react"
-import { Input } from "../Input"
-import { Button } from "../Button"
+import { Input } from "../ui/Input"
+import { Button } from "../ui/Button"
 
 interface WorkshopHeaderProps {
     setIsSidebarOpen: React.Dispatch<React.SetStateAction<boolean>>;

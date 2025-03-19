@@ -66,7 +66,7 @@ export default function AdminLoginPage() {
       <div className="hidden md:flex md:w-1/2 bg-slate-900 items-center justify-center p-8">
         <div className="text-center">
           <div className="bg-black rounded-full p-6 mb-4 mx-auto w-24 h-24 flex items-center justify-center">
-            <ShieldAlert className="text-amber-400 w-12 h-12" />
+            <ShieldAlert className="text-purple-400 w-12 h-12" />
           </div>
           <h2 className="text-2xl font-bold text-white mb-2">Admin Portal</h2>
           <p className="text-gray-300 max-w-md">
@@ -91,21 +91,21 @@ export default function AdminLoginPage() {
                 strokeWidth="2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                className="text-amber-400"
+                className="text-purple-400"
               >
                 <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
               </svg>
             </div>
             <h2 className="text-xl font-semibold uppercase tracking-wider">Automate</h2>
             <div className="mt-2">
-              <Link to="/" className="text-amber-600 hover:text-amber-800 text-sm">
+              <Link to="/" className="text-purple-600 hover:text-purple-800 text-sm">
                 Return to landing page
               </Link>
             </div>
           </div>
 
           <h1 className="text-3xl font-bold mb-8 flex items-center">
-            <ShieldAlert className="mr-2 h-6 w-6 text-amber-600" />
+            <ShieldAlert className="mr-2 h-6 w-6 text-purple-600" />
             Admin Login
           </h1>
 
@@ -126,7 +126,7 @@ export default function AdminLoginPage() {
                     type="email"
                     name="email"
                     placeholder="Admin Email"
-                    className="w-full p-3 pl-10 rounded-md border border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-600"
+                    className="w-full p-3 pl-10 rounded-md border border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-600"
                   />
                   <ErrorMessage name="email" component="div" className="text-red-500 text-sm mt-1" />
                 </div>
@@ -137,7 +137,7 @@ export default function AdminLoginPage() {
                     type={showPassword ? "text" : "password"}
                     name="password"
                     placeholder="Admin Password"
-                    className="w-full p-3 pl-10 rounded-md border border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-600"
+                    className="w-full p-3 pl-10 rounded-md border border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-600"
                   />
                   <button
                     type="button"
@@ -155,14 +155,14 @@ export default function AdminLoginPage() {
                       type="checkbox"
                       name="rememberMe"
                       id="rememberMe"
-                      className="h-4 w-4 text-amber-600 focus:ring-amber-500 border-gray-300 rounded"
+                      className="h-4 w-4 text-purple-600 focus:ring-purple-500 border-gray-300 rounded"
                     />
                     <label htmlFor="rememberMe" className="ml-2 block text-sm text-gray-700">
                       Remember me
                     </label>
                   </div>
                   <div className="text-sm">
-                    <Link to="/login" className="font-medium text-amber-600 hover:text-amber-500">
+                    <Link to="/login" className="font-medium text-purple-600 hover:text-purple-500">
                       User login
                     </Link>
                   </div>
@@ -171,7 +171,7 @@ export default function AdminLoginPage() {
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="w-full h-12 bg-black text-amber-400 font-semibold rounded-md hover:bg-gray-900 transition-colors mt-6"
+                  className="w-full h-12 bg-black text-purple-400 font-semibold rounded-md hover:bg-gray-900 transition-colors mt-6"
                 >
                   {isLoading ? "Authenticating..." : "Admin Login"}
                 </button>
@@ -181,7 +181,7 @@ export default function AdminLoginPage() {
 
           <div className="flex justify-center items-center text-sm mt-6 pt-4 border-t border-gray-200">
             <span>Need assistance?</span>
-            <a href="mailto:admin-support@automate.com" className="ml-2 font-semibold text-amber-600 hover:text-amber-800">
+            <a href="mailto:admin-support@automate.com" className="ml-2 font-semibold text-purple-600 hover:text-purple-800">
               Contact support
             </a>
           </div>

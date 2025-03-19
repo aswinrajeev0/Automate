@@ -20,20 +20,16 @@ import {
   SidebarMenuButton,
   SidebarInset
 } from "../../components/ui/Sidebar";
-import DashboardContent from "../../components/ui/admin/DashboardContent";
-import ApprovalContent from "../../components/ui/admin/ApprovalContent";
-import AdminHeader from "../../components/ui/admin/AdminHeader";
-import Customers from "../../components/ui/admin/Customers";
+import AdminHeader from "../../components/admin/AdminHeader";
 import { useDispatch } from "react-redux";
 import { adminLogout } from "../../store/slices/adminSlice";
 import { useToaster } from "../../hooks/ui/useToaster";
-import Workshops from "../../components/ui/admin/Workshops";
 import { useAdminLogout } from "../../hooks/adminAuth/useAdminAuth";
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
   const { successToast } = useToaster();
-  const [activeMenu, setActiveMenu] = useState("dashboard");
+  // const [activeMenu, setActiveMenu] = useState("dashboard");
   const [isSideBarOpen, setIsSidebarOpen] = useState(true);
   const dispatch = useDispatch()
   const logOut = useAdminLogout()
@@ -56,7 +52,7 @@ export default function AdminDashboard() {
     { id: "customers", title: "Customers", icon: Users, path: "/admin/customers" },
     { id: "workshops", title: "Workshops", icon: Calendar, path: "/admin/workshops" },
     { id: "requests", title: "Requests", icon: FileText, path: "/admin/requests" },
-    { id: "revenue", title: "Revenue Report", icon: DollarSign, path: "/admin/revenue" },
+    { id: "revenue", title: "Revenue Report", icon: DollarSign, path: "/admin/revenue-report" },
     { id: "approvals", title: "Pending Approvals", icon: AlertTriangle, path: "/admin/approvals" },
   ];
 
@@ -78,7 +74,7 @@ export default function AdminDashboard() {
                   strokeWidth="2"
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  className="text-amber-400"
+                  className="text-purple-400"
                 >
                   <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
                 </svg>
@@ -118,8 +114,6 @@ export default function AdminDashboard() {
         <SidebarInset className={`flex-1 bg-gray-50 ${isSideBarOpen ? "ml-50" : "ml-0"}`}>
           {/* Header */}
           <AdminHeader setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSideBarOpen} />
-
-          {/* Dashboard Content */}
           <main className="p-6">
             <Outlet />
           </main>

@@ -18,6 +18,7 @@ export class LoginCustomerUseCase implements ILoginCustomerUseCase {
 
     async execute(user: CustomerLoginDTO): Promise<Partial<IUserEntity>> {
         try {
+            
             const customer = await this.customerRepo.findByEmail(user.email)
             if (!customer) {
                 throw new CustomError(

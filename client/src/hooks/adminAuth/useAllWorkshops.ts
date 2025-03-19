@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { WorkshopData } from "../../components/ui/admin/Workshops";
+import { WorkshopData } from "../../components/admin/workshops/Workshops";
 
 
 interface FetchWorkshopsParams {
@@ -18,7 +18,7 @@ export const useAllWorkshopsQuery = <T extends WorkshopData>(
     queryFunc: (params: FetchWorkshopsParams) => Promise<workshopsResponse<T>>,
     page: number,
     limit: number,
-    search: string
+    search: string,
 ) => {
     return useQuery({
         queryKey: ["workshops", page, limit, search],

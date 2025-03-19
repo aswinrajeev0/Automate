@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { CustomersData } from "../../components/ui/admin/Customers";
+import { CustomersData } from "../../components/admin/customers/Customers";
 
 
 interface FetchCustomersParams {

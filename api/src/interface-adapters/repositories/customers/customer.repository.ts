@@ -52,15 +52,16 @@ export class CustomerRepository implements ICustomerRepository {
 
     private toEntity(customer: any): ICustomerEntity {
         return {
-            customerId: customer._id.toString(), // Map _id to customerId
-            id: customer._id.toString(), // Optional id field from IUserEntity
+            customerId: customer._id.toString(),
+            id: customer._id.toString(),
+            googleId: customer.googleId,
             name: customer.name,
             email: customer.email,
             password: customer.password,
             phone: customer.phone,
             profileImage: customer.profileImage,
-            isAdmin: customer.isAdmin ?? false, // Default to false if undefined
-            isBlocked: customer.isBlocked ?? false, // Default to false if undefined
+            isAdmin: customer.isAdmin ?? false,
+            isBlocked: customer.isBlocked ?? false,
             createdAt: customer.createdAt,
             updatedAt: customer.updatedAt,
         };

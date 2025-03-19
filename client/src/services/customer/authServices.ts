@@ -21,7 +21,7 @@ export const sendOtp = async (email: string) => {
 
 export const resetOtp = async (email: string) => {
     try {
-        const response = await customerApi.post("/reset-password-otp", {email});
+        const response = await customerApi.post("/reset-password-otp", { email });
         return response;
     } catch (error: any) {
         throw error?.response?.data || "failed to send reset otp";
@@ -37,7 +37,7 @@ export const verifyOtp = async (email: string, otp: string) => {
     }
 };
 
-export const loginCustomer = async (data:CustomerLoginData) => {
+export const loginCustomer = async (data: CustomerLoginData) => {
     try {
         const response = await customerApi.post("/login", data)
         return response.data;
@@ -47,7 +47,7 @@ export const loginCustomer = async (data:CustomerLoginData) => {
     }
 }
 
-export const resetPassword = async(data: ResetPasswordFormData) => {
+export const resetPassword = async (data: ResetPasswordFormData) => {
     try {
         const response = await customerApi.patch("/reset-password", data)
         return response.data;
@@ -64,3 +64,13 @@ export const customerlogout = async () => {
         throw error.response.data || "Logout failed"
     }
 }
+
+export const googleAuth = async ({ credential, client_id }: { credential: string | undefined; client_id: string }) => {
+    try {
+        console.log(credential)
+        const response = await customerApi.post("/google-auth", { credential, client_id });
+        return response.data;
+    } catch (error: any) {
+        throw error.response.data || "Google login failed"
+    }
+};

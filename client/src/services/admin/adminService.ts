@@ -55,3 +55,40 @@ export const updateWorkshopStatus = async (workshopId: string) => {
         throw new Error(error.response.data.message || "Failed to update status")
     }
 }
+
+export const updateWorkshopApprovalStatus = async ({ 
+    workshopId, 
+    status, 
+    reason 
+}: { workshopId: string; status: string; reason?: string }) => {
+    try {
+        const response = await adminApi.patch('/workshop-approval', {
+            workshopId,
+            status,
+            reason
+        })
+
+        return response.data;
+    } catch (error: any) {
+        throw new Error(error.response.data || "Failed to change approval status")
+    }
+}
+
+// export const getInActiveWorkshops = async ({
+//     page = 1,
+//     limit = 10,
+//     search = "",
+// }: {
+//     page: number;
+//     limit: number;
+//     search: string;
+// }) => {
+//     const response = await adminApi.get("/workshops", {
+//         params: {
+//             page,
+//             limit,
+//             search,
+//         },
+//     });
+//     return response.data;
+// }

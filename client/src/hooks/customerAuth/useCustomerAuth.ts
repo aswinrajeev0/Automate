@@ -6,7 +6,8 @@ import {
     loginCustomer,
     resetOtp,
     resetPassword,
-    customerlogout
+    customerlogout,
+    googleAuth
 } from '../../services/customer/authServices'
 import { CustomerRegisterData, CustomerLoginData, ResetPasswordFormData } from '../../types/auth'
 
@@ -59,7 +60,7 @@ export const useResetPassword = () => {
     return useMutation({
         mutationFn: (data: ResetPasswordFormData) => resetPassword(data),
         onError: (error: Error) => {
-            console.error("Reset password error",error)
+            console.error("Reset password error", error)
         }
     })
 }
@@ -72,3 +73,9 @@ export const useCustomerLogout = () => {
         }
     })
 }
+
+export const useGoogleMutation = () => {
+    return useMutation({
+        mutationFn: googleAuth,
+    })
+};
