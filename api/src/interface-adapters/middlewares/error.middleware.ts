@@ -24,13 +24,17 @@ export const errorHandler = (
         statusCode = err.statusCode;
         message = err.message;
     } else {
-        console.error("Unhandled Error:", err); 
+        console.error("Unhandled Error:", err);
+        if (err.name === "TokenExpiredError") {
+            statusCode = HTTP_STATUS.UNAUTHORIZED
+            message = ERROR_MESSAGES.TOKEN_EXPIRED
+        }
     }
 
     res.status(statusCode).json({
         success: false,
         statusCode,
         message,
-        errors, 
+        errors,
     });
 };

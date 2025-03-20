@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../ui/Table";
-import { Button } from "../../ui/Button";
+import { Button } from "../../ui/button";
 import { debounce } from "lodash";
-import { useAllCustomersQuery } from "../../../hooks/adminAuth/useAllCustomers";
+import { useAllCustomersQuery } from "../../../hooks/admin/useAllCustomers";
 import { getAllCustomers } from "../../../services/admin/adminService";
-import { useUpdateCustomerStatusMutation } from "../../../hooks/adminAuth/useUpdateCustomerStatus";
+import { useUpdateCustomerStatusMutation } from "../../../hooks/admin/useUpdateCustomerStatus";
 import { Pagination1 } from "../Pagination1";
 import { Search } from "lucide-react";
 import { Input } from "../../ui/Input";

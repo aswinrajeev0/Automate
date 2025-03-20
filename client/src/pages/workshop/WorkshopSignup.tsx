@@ -7,7 +7,7 @@ import { WorkshopRegisterData, type WorkshopSignupFormValues } from "../../types
 import { Button } from "../../components/ui/Button";
 import { useNavigate } from "react-router-dom";
 import { toast, useToast } from "../../hooks/ui/useToast";
-import { useSendOtp, useVerifyOtp, useWorkshopRegister } from "../../hooks/workshopAuth/useWorkshopAuth";
+import { useSendOtp, useVerifyOtp, useWorkshopRegister } from "../../hooks/workshop/useWorkshopAuth";
 import OTPModal from "../../components/modals/OtpModal";
 
 export default function WorkshopSignupPage() {

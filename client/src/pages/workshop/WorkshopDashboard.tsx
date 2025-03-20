@@ -26,7 +26,7 @@ import WorkshopDasboardContent from "../../components/workshop/DashboardContent"
 import WorkshopHeader from "../../components/workshop/Header";
 import { useDispatch } from "react-redux";
 import { workshopLogout } from "../../store/slices/workshopSlice";
-import { useWorkshopLogout } from "../../hooks/workshopAuth/useWorkshopAuth";
+import { useWorkshopLogout } from "../../hooks/workshop/useWorkshopAuth";
 
 
 export default function WorkshopDashboard() {

@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../ui/Table";
-import { Button } from "../../ui/Button";
+import { Button } from "../../ui/button";
 import { debounce } from "lodash";
 import { getAllWorkshops } from "../../../services/admin/adminService";
-import { useUpdateWorkshopStatusMutation } from "../../../hooks/adminAuth/useUpdateWorkshopStatus";
+import { useUpdateWorkshopStatusMutation } from "../../../hooks/admin/useUpdateWorkshopStatus";
 import { Pagination1 } from "../Pagination1";
 import { Eye, Search } from "lucide-react";
 import { Input } from "../../ui/Input";
-import { useAllWorkshopsQuery } from "../../../hooks/adminAuth/useAllWorkshops";
+import { useAllWorkshopsQuery } from "../../../hooks/admin/useAllWorkshops";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "../../ui/alert-dialog";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "../../ui/Dialog";
 import WorkshopDetails from "./WorkshopDetails";

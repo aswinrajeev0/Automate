@@ -5,7 +5,7 @@ import { loginSchema } from "../../utils/validations/customerValidations/loginva
 import { CustomerLoginFormValues, CustomerLoginData } from "../../types/auth";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "../../hooks/ui/useToast";
-import { useCustomerLogin, useGoogleMutation } from "../../hooks/customerAuth/useCustomerAuth";
+import { useCustomerLogin, useGoogleMutation } from "../../hooks/customer/useCustomerAuth";
 import { useDispatch } from "react-redux";
 import { customerLogin } from "../../store/slices/customerSlice";
 import { GoogleAuthButton } from "../../components/customer/GoogleSignnup";

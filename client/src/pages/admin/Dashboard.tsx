@@ -24,7 +24,7 @@ import AdminHeader from "../../components/admin/AdminHeader";
 import { useDispatch } from "react-redux";
 import { adminLogout } from "../../store/slices/adminSlice";
 import { useToaster } from "../../hooks/ui/useToaster";
-import { useAdminLogout } from "../../hooks/adminAuth/useAdminAuth";
+import { useAdminLogout } from "../../hooks/admin/useAdminAuth";
 
 export default function AdminDashboard() {
   const navigate = useNavigate();

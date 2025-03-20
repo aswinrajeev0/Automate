@@ -6,7 +6,7 @@ import * as Yup from "yup";
 import { useNavigate, Link } from "react-router-dom";
 import { useToast } from "../../hooks/ui/useToast";
 import OTPModal from "../../components/modals/OtpModal";
-import { useWorkshopResetPasswordOtp, useVerifyOtp } from "../../hooks/workshopAuth/useWorkshopAuth";
+import { useWorkshopResetPasswordOtp, useVerifyOtp } from "../../hooks/workshop/useWorkshopAuth";
 
 const forgotPasswordSchema = Yup.object().shape({
     email: Yup.string()

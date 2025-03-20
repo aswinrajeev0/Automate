@@ -9,7 +9,7 @@ export interface IWorkshopRepository {
     find(
         filter: any,
         skip: number,
-        limit: number
+        limit: number,
     ): Promise<{ workshops: IWorkshopEntity[] | []; total: number }>
     updateBlockStatus(id: string): Promise<IWorkshopEntity>;
 }

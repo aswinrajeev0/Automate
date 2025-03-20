@@ -5,7 +5,7 @@ import { IWorkshopSignupUseCase } from "../../entities/useCaseInterfaces/worksho
 import { workshopSchema } from "./validations/workshop-signup.validation.schema";
 import { ERROR_MESSAGES, HTTP_STATUS, SUCCESS_MESSAGES } from "../../shared/constants";
 import { IGenerateTokenUseCase } from "../../entities/useCaseInterfaces/generatetoken.usecase.interface";
-import { clearAuthCookies, setAuthCookies } from "../../shared/utils/cookie-helper";
+import { clearAuthCookies, setAuthCookies, updateCookieWithAccessToken } from "../../shared/utils/cookie-helper";
 import { IWorkshopLoginUseCase } from "../../entities/useCaseInterfaces/workshop/workshop-login-usecase.interface";
 import { IGetAllWorkshopsUseCase } from "../../entities/useCaseInterfaces/workshop/get-allworkshops-usecase.interface";
 import { IUpdateWorkshopStatusUseCase } from "../../entities/useCaseInterfaces/workshop/update-worksho-status-usecase.interface";
@@ -13,8 +13,9 @@ import { IResetPasswordOtpUseCase } from "../../entities/useCaseInterfaces/reset
 import { ITokenService } from "../../entities/serviceInterfaces.ts/token-service.interface";
 import { IWorkshopResetPasswordUseCase } from "../../entities/useCaseInterfaces/workshop/workshop-resetPassword-usecase.interface";
 import { IWorkshopLogoutUseCase } from "../../entities/useCaseInterfaces/workshop/workshoplogout.usecase.interface";
-import { parseBoolean } from "../../shared/utils/parsers";
 import { IUpdateWorkshopApprovalStatusUseCase } from "../../entities/useCaseInterfaces/workshop/update-workshop-approvalstatus.usecase.interface";
+import { IRefreshTokenUseCase } from "../../entities/useCaseInterfaces/admin/admin-refresh-token.usecase.interface";
+import { IFeaturedWorkshopsUseCase } from "../../entities/useCaseInterfaces/workshop/getFeatured-workshops.usecase.interface";
 
 @injectable()
 export class WorkshopController implements IWorkshopController {
@@ -28,7 +29,9 @@ export class WorkshopController implements IWorkshopController {
         @inject("IWorkshopResetPasswordUseCase") private _workshopResetPasswordUseCase: IWorkshopResetPasswordUseCase,
         @inject("ITokenService") private _tokenService: ITokenService,
         @inject("IWorkshopLogoutUseCase") private _workshopLogoutUseCase: IWorkshopLogoutUseCase,
-        @inject ("IUpdateWorkshopApprovalStatusUseCase") private _updateWorkshopApproval: IUpdateWorkshopApprovalStatusUseCase
+        @inject("IUpdateWorkshopApprovalStatusUseCase") private _updateWorkshopApproval: IUpdateWorkshopApprovalStatusUseCase,
+        @inject("IRefreshTokenUseCase") private _refreshToken: IRefreshTokenUseCase,
+        @inject("IFeaturedWorkshopsUseCase") private _featuredWorkshops: IFeaturedWorkshopsUseCase
     ) { }
 
     async signup(req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -91,6 +94,81 @@ export class WorkshopController implements IWorkshopController {
         }
     }
 
+    
+    async resetPasswordOtp(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const { email } = req.body
+            await this._workshopResetPasswordOtpUseCase.execute(email);
+            const token = await this._tokenService.generateResetToken(email);
+            res.status(HTTP_STATUS.OK).json({
+                message: SUCCESS_MESSAGES.OTP_SEND_SUCCESS,
+                success: true,
+                token
+            })
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    async resetPassword(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const { token, password, confirmPassword } = req.body;
+            await this._workshopResetPasswordUseCase.execute(token, password, confirmPassword)
+            res.status(HTTP_STATUS.OK).json({
+                success: true,
+                message: SUCCESS_MESSAGES.PASSWORD_RESET_SUCCESS
+            })
+        } catch (error) {
+            next(error)
+        }
+    }
+    
+    async logout(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            if (!req.user) {
+                res.status(HTTP_STATUS.UNAUTHORIZED).json({
+                    success: false,
+                    message: ERROR_MESSAGES.UNAUTHORIZED_ACCESS,
+                });
+                return;
+            }
+            
+            await this._workshopLogoutUseCase.execute(req.user)
+            clearAuthCookies(res, "workshop_access_token", "workshop_refresh_token");
+            
+            res.status(HTTP_STATUS.OK).json({
+                success: true,
+                message: SUCCESS_MESSAGES.LOGOUT_SUCCESS,
+            });
+        } catch (error) {
+            next(error)
+        }
+    }
+    
+    handleRefreshToken(req: Request, res: Response, next: NextFunction): void {
+        try {
+            const refreshToken = req.user?.refresh_token;
+            const newTokens = this._refreshToken.execute(refreshToken);
+            const accessTokenName = `${newTokens.role}_access_token`;
+            updateCookieWithAccessToken(
+                res,
+                newTokens.accessToken,
+                accessTokenName
+            )
+            res.status(HTTP_STATUS.OK).json({
+                success: true,
+                message: SUCCESS_MESSAGES.OPERATION_SUCCESS,
+            });
+        } catch (error) {
+            clearAuthCookies(
+                res,
+                `${req.user?.role}_access_token`,
+                `${req.user?.role}_refresh_token`
+            )
+            next(error)
+        }
+    }
+    
     async getAllWorkshops(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const { page = 1, limit = 10, search = "" } = req.query;
@@ -127,59 +205,9 @@ export class WorkshopController implements IWorkshopController {
         }
     }
 
-    async resetPasswordOtp(req: Request, res: Response, next: NextFunction): Promise<void> {
-        try {
-            const { email } = req.body
-            await this._workshopResetPasswordOtpUseCase.execute(email);
-            const token = await this._tokenService.generateResetToken(email);
-            res.status(HTTP_STATUS.OK).json({
-                message: SUCCESS_MESSAGES.OTP_SEND_SUCCESS,
-                success: true,
-                token
-            })
-        } catch (error) {
-            next(error)
-        }
-    }
-
-    async resetPassword(req: Request, res: Response, next: NextFunction): Promise<void> {
-        try {
-            const { token, password, confirmPassword } = req.body;
-            await this._workshopResetPasswordUseCase.execute(token, password, confirmPassword)
-            res.status(HTTP_STATUS.OK).json({
-                success: true,
-                message: SUCCESS_MESSAGES.PASSWORD_RESET_SUCCESS
-            })
-        } catch (error) {
-            next(error)
-        }
-    }
-
-    async logout(req: Request, res: Response, next: NextFunction): Promise<void> {
-        try {
-            if (!req.user) {
-                res.status(HTTP_STATUS.UNAUTHORIZED).json({
-                    success: false,
-                    message: ERROR_MESSAGES.UNAUTHORIZED_ACCESS,
-                });
-                return;
-            }
-
-            await this._workshopLogoutUseCase.execute(req.user)
-            clearAuthCookies(res, "workshop_access_token", "workshop_refresh_token");
-
-            res.status(HTTP_STATUS.OK).json({
-                success: true,
-                message: SUCCESS_MESSAGES.LOGOUT_SUCCESS,
-            });
-        } catch (error) {
-            next(error)
-        }
-    }
-
     async updateWorkshopApprovalStatus(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const {workshopId, status, reason} = req.body;
+            const { workshopId, status, reason } = req.body;
             await this._updateWorkshopApproval.execute(workshopId, status, reason);
             res.status(HTTP_STATUS.OK).json({
                 success: true,
@@ -189,4 +217,18 @@ export class WorkshopController implements IWorkshopController {
             next(error)
         }
     }
+
+    async getFeaturedWorkshops(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const workshops = await this._featuredWorkshops.execute();
+            res.status(HTTP_STATUS.OK).json({
+                success: true,
+                message: SUCCESS_MESSAGES.DATA_RETRIEVED,
+                workshops
+            })
+        } catch (error) {
+            next(error)
+        }
+    }
+
 }

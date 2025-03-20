@@ -14,6 +14,7 @@ export const HTTP_STATUS = {
 export const ERROR_MESSAGES = {
 	WRONG_ID: "Wrong ID",
 	TOKEN_EXPIRED: "Token Expired",
+   TOKEN_BLACKLISTED: "Token is Blacklisted",
 	EMAIL_NOT_FOUND: "Email Not Found",
 	FORBIDDEN:
 		"Access denied. You do not have permission to access this resource.",

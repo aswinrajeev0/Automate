@@ -39,12 +39,13 @@ export class JWTService implements ITokenService {
     }
 
     verifyAccessToken(token: string): string | JwtPayload | null {
-        try {
-            return jwt.verify(token, this.refreshSecret) as JwtPayload
-        } catch (error) {
-            console.error("Access token verification failed:", error)
-            return null
-        }
+        return jwt.verify(token, this.accessSecret) as JwtPayload
+        // try {
+        //     return jwt.verify(token, this.accessSecret) as JwtPayload
+        // } catch (error) {
+        //     console.error("Access token verification failed:", error)
+        //     return null
+        // }
     }
 
     verifyRefreshToken(token: string): string | JwtPayload | null {

@@ -7,7 +7,7 @@ import { useToast } from "../../hooks/ui/useToast";
 import { AdminLoginData } from "../../types/auth";
 import { AdminLoginFormValues } from "../../types/auth";
 import { adminLoginSchema } from "../../utils/validations/adminValidations/adminLoginvalidator";
-import { useAdminLogin } from "../../hooks/adminAuth/useAdminAuth";
+import { useAdminLogin } from "../../hooks/admin/useAdminAuth";
 import { useDispatch } from "react-redux";
 import { adminLogin } from "../../store/slices/adminSlice";
 

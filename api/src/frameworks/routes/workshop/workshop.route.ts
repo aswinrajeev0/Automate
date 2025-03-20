@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { BaseRoute } from "../base.route";
 import { otpController, workshopController } from "../../di/resolver";
-import { authenticate } from "../../../interface-adapters/middlewares/auth.midleware";
+import { authenticate, decodeToken } from "../../../interface-adapters/middlewares/auth.midleware";
 
 export class WorkshopRoute extends BaseRoute {
     constructor() {
@@ -35,6 +35,10 @@ export class WorkshopRoute extends BaseRoute {
 
         this.router.post("/logout", authenticate("workshop"), (req: Request, res: Response, next: NextFunction) => {
             workshopController.logout(req, res, next)
+        })
+
+        this.router.post("/refresh-token", decodeToken("workshop"), (req: Request, res: Response, next: NextFunction) => {
+            workshopController.handleRefreshToken(req, res, next)
         })
     }
 }

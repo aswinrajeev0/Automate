@@ -5,7 +5,7 @@ import { resetPasswordSchema } from "../../utils/validations/customerValidations
 import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import { useToast } from "../../hooks/ui/useToast";
 import { ResetPasswordFormValues, ResetPasswordFormData } from "../../types/auth";
-import { useResetPassword } from "../../hooks/customerAuth/useCustomerAuth";
+import { useResetPassword } from "../../hooks/customer/useCustomerAuth";
 
 export default function ResetPasswordPage() {
     const [showPassword, setShowPassword] = useState<boolean>(false);

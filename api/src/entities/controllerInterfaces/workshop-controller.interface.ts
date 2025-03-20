@@ -9,4 +9,6 @@ export interface IWorkshopController {
     resetPassword(req: Request, res: Response, next: NextFunction): Promise<void>;
     logout(req: Request, res: Response, next: NextFunction): Promise<void>;
     updateWorkshopApprovalStatus(req: Request, res: Response, next: NextFunction): Promise<void>;
+    handleRefreshToken(req: Request, res: Response, next: NextFunction): void;
+    getFeaturedWorkshops(req: Request, res: Response, next: NextFunction): Promise<void>;
 }

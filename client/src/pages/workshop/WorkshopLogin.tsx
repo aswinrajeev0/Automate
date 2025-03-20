@@ -5,7 +5,7 @@ import { loginSchema } from "../../utils/validations/customerValidations/loginva
 import { WorkshopLoginFormValues, WorkshopLoginData } from "../../types/auth";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "../../hooks/ui/useToast";
-import { useWorkshopLogin } from "../../hooks/workshopAuth/useWorkshopAuth";
+import { useWorkshopLogin } from "../../hooks/workshop/useWorkshopAuth";
 import { useDispatch } from "react-redux";
 import { workshopLogin } from "../../store/slices/workshopSlice";
 

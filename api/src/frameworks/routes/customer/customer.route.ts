@@ -2,9 +2,10 @@ import { NextFunction, Request, Response } from "express";
 import { BaseRoute } from "../base.route";
 import {
     customerController,
-    otpController
+    otpController,
+    workshopController
 } from "../../di/resolver";
-import { authenticate } from "../../../interface-adapters/middlewares/auth.midleware";
+import { authenticate, decodeToken } from "../../../interface-adapters/middlewares/auth.midleware";
 
 export class CustomerRoute extends BaseRoute {
     constructor() {
@@ -28,7 +29,7 @@ export class CustomerRoute extends BaseRoute {
             customerController.login(req, res, next);
         })
 
-        this.router.post("/reset-password-otp", (req:Request, res: Response, next: NextFunction) => {
+        this.router.post("/reset-password-otp", (req: Request, res: Response, next: NextFunction) => {
             customerController.resetPasswordOtp(req, res, next);
         })
 
@@ -42,6 +43,14 @@ export class CustomerRoute extends BaseRoute {
 
         this.router.post("/google-auth", (req: Request, res: Response, next: NextFunction) => {
             customerController.googleAuth(req, res, next);
+        })
+
+        this.router.post("/refresh-token", decodeToken("customer"), (req: Request, res: Response, next: NextFunction) => {
+            customerController.handleRefreshToken(req, res, next)
+        })
+
+        this.router.get("/workshops/featured", (req: Request, res: Response, next: NextFunction) => {
+            workshopController.getFeaturedWorkshops(req, res, next);
         })
     }
 }

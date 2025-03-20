@@ -5,7 +5,7 @@ import { resetPasswordSchema } from "../../utils/validations/customerValidations
 import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import { useToast } from "../../hooks/ui/useToast";
 import { ResetPasswordFormValues, ResetPasswordFormData } from "../../types/auth";
-import { useWorkshopResetPassword } from "../../hooks/workshopAuth/useWorkshopAuth";
+import { useWorkshopResetPassword } from "../../hooks/workshop/useWorkshopAuth";
 
 export default function WorkshopResetPasswordPage() {
     const [showPassword, setShowPassword] = useState<boolean>(false);

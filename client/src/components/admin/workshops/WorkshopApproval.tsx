@@ -1,11 +1,11 @@
 
 import React, { useEffect, useState } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../ui/Table";
-import { Button } from "../../ui/Button";
+import { Button } from "../../ui/button";
 import { Check, Eye, Search, X } from "lucide-react";
 import { Badge } from "../../ui/Badge";
 import { debounce } from "lodash";
-import { useAllWorkshopsQuery } from "../../../hooks/adminAuth/useAllWorkshops";
+import { useAllWorkshopsQuery } from "../../../hooks/admin/useAllWorkshops";
 import { WorkshopData } from "./Workshops";
 import { getAllWorkshops } from "../../../services/admin/adminService";
 import { useToast } from "../../../hooks/ui/useToast";
@@ -13,7 +13,7 @@ import { Pagination1 } from "../Pagination1";
 import { Input } from "../../ui/Input";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "../../ui/Dialog";
 import { Textarea } from "../../ui/Textarea";
-import { useUpdateWorkshopApprovalStatusMutation } from "../../../hooks/adminAuth/useUpdateWorkshopApprovalStatus";
+import { useUpdateWorkshopApprovalStatusMutation } from "../../../hooks/admin/useUpdateWorkshopApprovalStatus";
 import WorkshopDetails from "./WorkshopDetails";
 
 export interface IWorkshopApproval {
@@ -90,10 +90,8 @@ const WorkshopApproval: React.FC = () => {
         debouncedSearch
     );
 
-    // Get all workshops from data
     const allWorkshops = (data?.workshops ?? []) as IWorkshopApproval[];
 
-    // Filter out workshops with "approved" status
     const workshops = allWorkshops.filter(workshop =>
         workshop.approvalStatus === "pending" || workshop.approvalStatus === "rejected"
     );

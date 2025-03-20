@@ -16,7 +16,7 @@ adminApi.interceptors.response.use(
 		console.log(error)
 		const originalRequest = error.config;
         
-        if (originalRequest.url === "/admin/login") {
+        if (originalRequest.url === "/login") {
             return Promise.reject(error);
         }
 
@@ -29,15 +29,13 @@ adminApi.interceptors.response.use(
 			if (!isRefreshing) {
 				isRefreshing = true;
 				try {
-					await adminApi.post("/admin/refresh-token");
+					await adminApi.post("/refresh-token");
 					isRefreshing = false;
 					return adminApi(originalRequest);
 				} catch (refreshError) {
 					isRefreshing = false;
-
 					store.dispatch(adminLogout());
-
-					window.location.href = "/admin";
+					window.location.href = "/admin/login";
 					toast("Please login again");
 					return Promise.reject(refreshError);
 				}
@@ -56,7 +54,7 @@ adminApi.interceptors.response.use(
 			console.log("Session ended");
 			store.dispatch(adminLogout());
 
-			window.location.href = "/admin";
+			window.location.href = "/admin/login";
 			toast("Please login again");
 			return Promise.reject(error);
 		}

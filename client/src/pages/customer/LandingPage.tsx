@@ -1,39 +1,18 @@
-import { ArrowRight, MapPin, MessageCircle, Users, Wrench, Home, Star } from "lucide-react";
-import { Button } from "../../components/ui/Button";
-import { Card, CardContent } from "../../components/ui/Card";
+import { ArrowRight, MapPin, MessageCircle, Users, Wrench, Home } from "lucide-react";
+import { Button } from "../../components/ui/button";
 import { useNavigate } from "react-router-dom";
-import {Header} from "../../components/customer/Header"
-import { Footer } from "../../components/customer/Footer";
+import { Header } from "../../components/customer/Header"
+import { Footer } from "../../components/customer/Footer"
+import { IFeaturedWorkshop, useFeaturedWorkshopsQuery } from "../../hooks/customer/usePartialWorkshop";
+import { getFeaturedWorkshops } from "../../services/customer/customerService";
+import WorkshopCard from "../../components/customer/workshop/WorkshopCard";
 
 export default function LandingPage() {
   const navigate = useNavigate();
-  
-  const workshops = [
-    {
-      id: 1,
-      name: "Auto King Workshop",
-      location: "Muscat, Oman",
-      image: "./mechs2.jpg"
-    },
-    {
-      id: 2,
-      name: "Auto King Workshop",
-      location: "Muscat, Oman",
-      image: "./mechs2.jpg"
-    },
-    {
-      id: 3,
-      name: "Auto King Workshop",
-      location: "Muscat, Oman",
-      image: "./mechs.jpg"
-    },
-    {
-      id: 4,
-      name: "Auto King Workshop",
-      location: "Muscat, Oman",
-      image: "./mechs.jpg"
-    }
-  ];
+
+  const { data, isLoading, isError } = useFeaturedWorkshopsQuery(getFeaturedWorkshops);
+
+  const workshops = (data?.workshops ?? []) as IFeaturedWorkshop[];
 
   return (
     <div className="flex flex-col min-h-screen bg-white">
@@ -122,24 +101,7 @@ export default function LandingPage() {
           <h2 className="text-2xl font-bold mb-8">Featured Workshops</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {workshops.map((workshop) => (
-              <Card key={workshop.id} className="overflow-hidden border-none shadow-lg rounded-lg">
-                <div className="relative h-48">
-                  <img
-                    src={workshop.image}
-                    alt={workshop.name}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <CardContent className="bg-amber-400 p-4">
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <h3 className="font-bold">{workshop.name}</h3>
-                      <p className="text-sm">{workshop.location}</p>
-                    </div>
-                    <Star className="h-5 w-5" />
-                  </div>
-                </CardContent>
-              </Card>
+              <WorkshopCard workshop={workshop} />
             ))}
           </div>
           <div className="flex justify-end mt-4">
@@ -155,9 +117,9 @@ export default function LandingPage() {
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row items-center justify-between gap-8">
             <div className="md:w-1/2">
-              <img 
-                src="./mechs2.jpg" 
-                alt="Car service illustration" 
+              <img
+                src="./mechs2.jpg"
+                alt="Car service illustration"
                 className="w-full max-w-lg mx-auto"
               />
             </div>

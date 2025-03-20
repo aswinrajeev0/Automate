@@ -60,6 +60,10 @@ import { IGoogleUseCase } from "../../entities/useCaseInterfaces/customer/google
 import { GoogleUseCase } from "../../useCases/customers/google-login.usecase";
 import { IUpdateWorkshopApprovalStatusUseCase } from "../../entities/useCaseInterfaces/workshop/update-workshop-approvalstatus.usecase.interface";
 import { UpdateWorkshopApprovalStatusUseCase } from "../../useCases/workshop/update-workshop-approvalstatus.usecase";
+import { IRefreshTokenUseCase } from "../../entities/useCaseInterfaces/admin/admin-refresh-token.usecase.interface";
+import { RefreshTokenUseCase } from "../../useCases/refresh-token.usecase";
+import { IFeaturedWorkshopsUseCase } from "../../entities/useCaseInterfaces/workshop/getFeatured-workshops.usecase.interface";
+import { FeaturedWorkshopsUseCase } from "../../useCases/workshop/getFeatured-workshops.interface";
 
 export class UseCaseRegistry {
     static registerUseCases(): void {
@@ -154,6 +158,14 @@ export class UseCaseRegistry {
 
         container.register<IUpdateWorkshopApprovalStatusUseCase>("IUpdateWorkshopApprovalStatusUseCase", {
             useClass: UpdateWorkshopApprovalStatusUseCase
+        })
+
+        container.register<IRefreshTokenUseCase>("IRefreshTokenUseCase", {
+            useClass: RefreshTokenUseCase
+        })
+
+        container.register<IFeaturedWorkshopsUseCase>("IFeaturedWorkshopsUseCase", {
+            useClass: FeaturedWorkshopsUseCase
         })
 
         //* ====== Register Strategies ====== *//

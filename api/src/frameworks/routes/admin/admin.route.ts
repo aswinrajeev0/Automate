@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { BaseRoute } from "../base.route";
 import { adminController, customerController, workshopController } from "../../di/resolver";
-import { authenticate } from "../../../interface-adapters/middlewares/auth.midleware";
+import { authenticate, decodeToken } from "../../../interface-adapters/middlewares/auth.midleware";
 
 
 export class AdminRoute extends BaseRoute {
@@ -37,6 +37,10 @@ export class AdminRoute extends BaseRoute {
 
         this.router.patch("/workshop-approval", authenticate("admin"), (req: Request, res: Response, next: NextFunction) => {
             workshopController.updateWorkshopApprovalStatus(req, res, next);
+        })
+
+        this.router.post("/refresh-token", decodeToken("admin"), (req: Request, res: Response, next: NextFunction) => {
+            adminController.handleRefreshToken(req, res, next)
         })
     }
 }

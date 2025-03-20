@@ -9,12 +9,13 @@ import { ITokenService } from "../../entities/serviceInterfaces.ts/token-service
 import { ICustomerResetPasswordUseCase } from "../../entities/useCaseInterfaces/customer/customer-reset-password.usecase.interface";
 import { ICustomerRegisterUseCase } from "../../entities/useCaseInterfaces/auth/register-usecase.interface";
 import { customerSchema } from "./validations/customer-signup.validation.schema";
-import { clearAuthCookies, setAuthCookies } from "../../shared/utils/cookie-helper";
+import { clearAuthCookies, setAuthCookies, updateCookieWithAccessToken } from "../../shared/utils/cookie-helper";
 import { ILoginCustomerUseCase } from "../../entities/useCaseInterfaces/auth/login-usecase.interface";
 import { IGenerateTokenUseCase } from "../../entities/useCaseInterfaces/generatetoken.usecase.interface";
 import { ICustomerLogutUseCase } from "../../entities/useCaseInterfaces/customer/customer-logout.interface";
 import { IGoogleUseCase } from "../../entities/useCaseInterfaces/customer/googlelogin.usecase.interface";
 import { loginSchema } from "./validations/customer-login.validation.schema";
+import { IRefreshTokenUseCase } from "../../entities/useCaseInterfaces/admin/admin-refresh-token.usecase.interface";
 
 @injectable()
 export class CustomerController implements ICustomerController {
@@ -28,7 +29,8 @@ export class CustomerController implements ICustomerController {
         @inject("ITokenService") private tokenService: ITokenService,
         @inject("ICustomerResetPasswordUseCase") private customerResetPasswordUseCase: ICustomerResetPasswordUseCase,
         @inject("ICustomerLogutUseCase") private customerLogutUseCase: ICustomerLogutUseCase,
-        @inject("IGoogleUseCase") private googleUseCase: IGoogleUseCase
+        @inject("IGoogleUseCase") private googleUseCase: IGoogleUseCase,
+        @inject("IRefreshTokenUseCase") private _refreshToken: IRefreshTokenUseCase
     ) { }
 
     async signup(req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -210,6 +212,30 @@ export class CustomerController implements ICustomerController {
                 user: user,
             });
         } catch (error) {
+            next(error)
+        }
+    }
+
+    handleRefreshToken(req: Request, res: Response, next: NextFunction): void {
+        try {
+            const refreshToken = req.user?.refresh_token;
+            const newTokens = this._refreshToken.execute(refreshToken);
+            const accessTokenName = `${newTokens.role}_access_token`;
+            updateCookieWithAccessToken(
+                res,
+                newTokens.accessToken,
+                accessTokenName
+            )
+            res.status(HTTP_STATUS.OK).json({
+                success: true,
+                message: SUCCESS_MESSAGES.OPERATION_SUCCESS,
+            });
+        } catch (error) {
+            clearAuthCookies(
+                res,
+                `${req.user?.role}_access_token`,
+                `${req.user?.role}_refresh_token`
+            )
             next(error)
         }
     }

@@ -39,7 +39,7 @@ export class WorkshopRepository implements IWorkshopRepository {
         return { ...workshop, id: workshop?._id.toString() } as IWorkshopEntity;
     }
 
-    async find(filter: any, skip: number, limit: number): Promise<{ workshops: IWorkshopEntity[] | []; total: number; }> {
+    async find(filter: any, skip: number, limit: number ): Promise<{ workshops: IWorkshopEntity[] | []; total: number; }> {
         const workshops = await WorkshopModel.find(filter).skip(skip).limit(limit);
         return { workshops, total: workshops.length }
     }

@@ -4,26 +4,28 @@ import { injectable, inject } from "tsyringe";
 import { IGenerateTokenUseCase } from "../../entities/useCaseInterfaces/generatetoken.usecase.interface";
 import { IAdminLoginUseCase } from "../../entities/useCaseInterfaces/admin/admin-login-usecase.interface";
 import { ERROR_MESSAGES, HTTP_STATUS, SUCCESS_MESSAGES } from "../../shared/constants";
-import { clearAuthCookies, setAuthCookies } from "../../shared/utils/cookie-helper";
+import { clearAuthCookies, setAuthCookies, updateCookieWithAccessToken } from "../../shared/utils/cookie-helper";
 import { IAdminLogoutUseCase } from "../../entities/useCaseInterfaces/admin/admin-logout.usecase.interface";
+import { IRefreshTokenUseCase } from "../../entities/useCaseInterfaces/admin/admin-refresh-token.usecase.interface";
 
 @injectable()
 export class AdminController implements IAdminController {
     constructor(
-        @inject("IAdminLoginUseCase") private adminLogin: IAdminLoginUseCase,
-        @inject("IGenerateTokenUseCase") private generateToken: IGenerateTokenUseCase,
-        @inject("IAdminLogoutUseCase") private adminLogoutuseCase: IAdminLogoutUseCase
+        @inject("IAdminLoginUseCase") private _adminLogin: IAdminLoginUseCase,
+        @inject("IGenerateTokenUseCase") private _generateToken: IGenerateTokenUseCase,
+        @inject("IAdminLogoutUseCase") private _adminLogoutuseCase: IAdminLogoutUseCase,
+        @inject("IRefreshTokenUseCase") private _refreshToken: IRefreshTokenUseCase
     ) { }
 
     async login(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const data = req.body
-            const admin = await this.adminLogin.execute(data);
+            const admin = await this._adminLogin.execute(data);
             if (!admin.email || !admin.id) {
                 throw new Error("Admin id or email is missing.")
             }
 
-            const tokens = await this.generateToken.execute(
+            const tokens = await this._generateToken.execute(
                 admin.id,
                 admin.email,
                 "admin"
@@ -65,13 +67,37 @@ export class AdminController implements IAdminController {
                 return;
             }
 
-            await this.adminLogoutuseCase.execute(req.user)
+            await this._adminLogoutuseCase.execute(req.user)
             clearAuthCookies(res, "admin_access_token", "admin_refresh_token")
             res.status(HTTP_STATUS.OK).json({
                 success: true,
                 message: SUCCESS_MESSAGES.LOGOUT_SUCCESS,
             });
         } catch (error) {
+            next(error)
+        }
+    }
+
+    handleRefreshToken(req: Request, res: Response, next: NextFunction): void {
+        try {
+            const refreshToken = req.user?.refresh_token;
+            const newTokens = this._refreshToken.execute(refreshToken);
+            const accessTokenName = `${newTokens.role}_access_token`;
+            updateCookieWithAccessToken(
+                res,
+                newTokens.accessToken,
+                accessTokenName
+            )
+            res.status(HTTP_STATUS.OK).json({
+                success: true,
+                message: SUCCESS_MESSAGES.OPERATION_SUCCESS,
+            });
+        } catch (error) {
+            clearAuthCookies(
+                res,
+                `${req.user?.role}_access_token`,
+                `${req.user?.role}_refresh_token`
+            )
             next(error)
         }
     }

@@ -7,7 +7,7 @@ import {
   useCustomerRegister,
   useSendOtp,
   useVerifyOtp
-} from "../../hooks/customerAuth/useCustomerAuth";
+} from "../../hooks/customer/useCustomerAuth";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "../../hooks/ui/useToast";
 import OTPModal from "../../components/modals/OtpModal";
