@@ -2,7 +2,7 @@ import { Route, Routes } from "react-router-dom";
 import AdminLoginPage from "../pages/admin/Login";
 import AdminDashboard from "../pages/admin/Dashboard";
 import AdminProtected from "../utils/protected/AdminProtected";
-import DashboardContent from "../components/admin/DashboardContent";
+import DashboardContent from "../components/admin/dashboard/DashboardContent";
 import Customers from "../components/admin/customers/Customers";
 import Workshops from "../components/admin/workshops/Workshops";
 // import ApprovalContent from "../components/ui/admin/ApprovalContent";

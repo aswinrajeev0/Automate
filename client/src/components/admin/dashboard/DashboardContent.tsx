@@ -1,29 +1,5 @@
-import React from 'react'
-import { Card, CardContent } from '../ui/Card';
-import { ChartContainer } from '../ui/Chart';
-import { AreaChart } from 'lucide-react';
-import { Area, CartesianGrid, XAxis, YAxis } from 'recharts';
-import { Tooltip } from '@radix-ui/react-tooltip';
 
-// Sample data for charts
-const salesData = [
-    { name: '2020', value: 10000 },
-    { name: '2021', value: 20000 },
-    { name: '2022', value: 40000 },
-    { name: '2023', value: 80000 },
-    { name: '2024', value: 35000 },
-    { name: '2025', value: 70000 },
-];
-
-const userGrowthData = [
-    { name: '2020', value: 45 },
-    { name: '2021', value: 25 },
-    { name: '2022', value: 65 },
-    { name: '2023', value: 40 },
-    { name: '2024', value: 85 },
-    { name: '2025', value: 80 },
-];
-
+import { Card, CardContent } from '../../ui/Card';
 
 function DashboardContent() {
     return (

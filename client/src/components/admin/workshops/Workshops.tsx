@@ -5,17 +5,28 @@ import { debounce } from "lodash";
 import { getAllWorkshops } from "../../../services/admin/adminService";
 import { useUpdateWorkshopStatusMutation } from "../../../hooks/adminAuth/useUpdateWorkshopStatus";
 import { Pagination1 } from "../Pagination1";
-import { Search } from "lucide-react";
+import { Eye, Search } from "lucide-react";
 import { Input } from "../../ui/Input";
 import { useAllWorkshopsQuery } from "../../../hooks/adminAuth/useAllWorkshops";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "../../ui/alert-dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "../../ui/Dialog";
+import WorkshopDetails from "./WorkshopDetails";
 
 export interface IWorkshop {
     _id: string;
-    wowrkshopId: string;
+    workshopId: string;
     name: string;
     email: string;
     phone: string;
+    country: string;
+    state: string;
+    city: string;
+    streetAddress: string;
+    buildingNo: string;
     isBlocked: boolean;
+    approvalStatus: string;
+    createdAt: Date;
+    rejectionReason: string;
 }
 
 export type WorkshopData = {
@@ -28,12 +39,14 @@ const Workshops: React.FC = () => {
     const limit = 10;
     const [searchQuery, setSearchQuery] = useState("");
     const [debouncedSearch, setDebouncedSearch] = useState(searchQuery);
+    const [viewDetails, setViewDetails] = useState<IWorkshop | null>(null);
     const [currentPage, setCurrentPage] = useState(1);
     const { mutate: updateWorkshopStatus } = useUpdateWorkshopStatusMutation(
         currentPage,
         limit,
         debouncedSearch
     );
+    const [detailsOpen, setDetailsOpen] = useState(false);
 
     function handleBlockStatus(workshopId: string) {
         updateWorkshopStatus(workshopId);
@@ -52,8 +65,18 @@ const Workshops: React.FC = () => {
         debouncedSearch
     );
 
-    const workshops = (data?.workshops ?? []) as IWorkshop[];
+    const allWorkshops = (data?.workshops ?? []) as IWorkshop[];
+
+    // Filter out workshops with "approved" status
+    const workshops = allWorkshops.filter(workshop =>
+        workshop.approvalStatus === "approved"
+    );
     const totalPages = data?.totalPages || 1;
+
+    function handleViewDetails(workshop: IWorkshop) {
+        setViewDetails(workshop);
+        setDetailsOpen(true);
+    }
 
     return (
         <main className="p-6">
@@ -105,14 +128,33 @@ const Workshops: React.FC = () => {
                                         <TableCell>{workshop.phone}</TableCell>
                                         <TableCell>
                                             <Button
-                                                onClick={() => handleBlockStatus(workshop._id)}
-                                                className={workshop.isBlocked ?
-                                                    "bg-green-400 hover:bg-green-500" :
-                                                    "bg-red-400 hover:bg-red-500"
-                                                }
+                                                variant="outline"
+                                                size="sm"
+                                                onClick={() => handleViewDetails(workshop)}
                                             >
-                                                {workshop.isBlocked ? "Unblock" : "Block"}
+                                                <Eye className="h-4 w-4" />
                                             </Button>
+                                            <AlertDialog>
+                                                <AlertDialogTrigger asChild>
+                                                    <Button
+                                                        className={workshop.isBlocked ?
+                                                            "bg-green-400 hover:bg-green-500 w-20" :
+                                                            "bg-red-400 hover:bg-red-500 w-20"
+                                                        }
+                                                    >
+                                                        {workshop.isBlocked ? "Unblock" : "Block"}
+                                                    </Button>
+                                                </AlertDialogTrigger>
+                                                <AlertDialogContent>
+                                                    <AlertDialogHeader>
+                                                        <AlertDialogTitle>Are you sure you want to {workshop.isBlocked ? "unblock" : "block"} this workshop?</AlertDialogTitle>
+                                                    </AlertDialogHeader>
+                                                    <AlertDialogFooter>
+                                                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                                        <AlertDialogAction onClick={() => handleBlockStatus(workshop._id)}>Continue</AlertDialogAction>
+                                                    </AlertDialogFooter>
+                                                </AlertDialogContent>
+                                            </AlertDialog>
                                         </TableCell>
                                     </TableRow>
                                 ))}
@@ -120,6 +162,26 @@ const Workshops: React.FC = () => {
                         </Table>
                     </div>
                 )}
+
+                {/* Workshop Details Dialog */}
+                <Dialog open={detailsOpen} onOpenChange={setDetailsOpen}>
+                    <DialogContent className="sm:max-w-lg max-h-[100vh] flex flex-col">
+                        <DialogHeader>
+                            <DialogTitle>Workshop Details</DialogTitle>
+                            <DialogDescription>Complete information about the workshop registration.</DialogDescription>
+                        </DialogHeader>
+                        <div className="mt-4 space-y-4 flex-1 overflow-y-auto max-h-[60vh] px-2">
+                            {viewDetails && (
+                                <WorkshopDetails viewDetails={viewDetails} />
+                            )}
+                        </div>
+                        <div className="mt-8 flex justify-end">
+                            <Button variant="outline" onClick={() => setDetailsOpen(false)}>
+                                Close
+                            </Button>
+                        </div>
+                    </DialogContent>
+                </Dialog>
 
                 {/* Pagination */}
                 <div className="mt-6 flex justify-center items-center">

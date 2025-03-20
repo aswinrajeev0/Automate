@@ -11,6 +11,7 @@ import { CustomerRoute } from "../routes/customer/customer.route";
 import { AdminRoute } from "../routes/admin/admin.route";
 import { WorkshopRoute } from "../routes/workshop/workshop.route";
 import { errorHandler } from "../../interface-adapters/middlewares/error.middleware";
+import morganLogger from "./logger";
 
 export class Server {
     private _app: Application;
@@ -22,7 +23,7 @@ export class Server {
     }
 
     private configureMiddlewares() {
-        this._app.use(morgan(config.loggerStatus));
+        this._app.use(morganLogger);
         this._app.use(helmet());
         this._app.use(cors({
             origin: config.cors.ALLOWED_ORIGIN,

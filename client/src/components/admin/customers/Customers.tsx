@@ -8,6 +8,7 @@ import { useUpdateCustomerStatusMutation } from "../../../hooks/adminAuth/useUpd
 import { Pagination1 } from "../Pagination1";
 import { Search } from "lucide-react";
 import { Input } from "../../ui/Input";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "../../ui/alert-dialog";
 
 export interface ICustomer {
     _id: string;
@@ -28,12 +29,12 @@ const Customers: React.FC = () => {
     const [searchQuery, setSearchQuery] = useState("");
     const [debouncedSearch, setDebouncedSearch] = useState(searchQuery);
     const [currentPage, setCurrentPage] = useState(1);
-    
-    const limit = 10;
-    const { mutate: updateCustomerStatus } = useUpdateCustomerStatusMutation(currentPage, limit, searchQuery);
 
-    function handleBlockStatus(userId: string) {
-        updateCustomerStatus(userId);
+    const limit = 10;
+    const { mutate: updateCustomerStatus } = useUpdateCustomerStatusMutation(currentPage, limit, debouncedSearch);
+
+    function handleBlockStatus(customerId: string) {
+        updateCustomerStatus(customerId);
     }
 
     useEffect(() => {
@@ -42,7 +43,7 @@ const Customers: React.FC = () => {
         return () => handler.cancel();
     }, [searchQuery]);
 
-    const { data, isLoading, isError } = useAllCustomersQuery<CustomersData>(
+    const { data, isLoading, isError } = useAllCustomersQuery(
         getAllCustomers,
         currentPage,
         limit,
@@ -101,15 +102,27 @@ const Customers: React.FC = () => {
                                         <TableCell>{customer.email}</TableCell>
                                         <TableCell>{customer.phone}</TableCell>
                                         <TableCell>
-                                            <Button
-                                                onClick={() => handleBlockStatus(customer._id)}
-                                                className={customer.isBlocked ?
-                                                    "bg-green-400 hover:bg-green-500" :
-                                                    "bg-red-400 hover:bg-red-500"
-                                                }
-                                            >
-                                                {customer.isBlocked ? "Unblock" : "Block"}
-                                            </Button>
+                                            <AlertDialog>
+                                                <AlertDialogTrigger asChild>
+                                                    <Button
+                                                        className={customer.isBlocked ?
+                                                            "bg-green-400 hover:bg-green-500 w-20" :
+                                                            "bg-red-400 hover:bg-red-500 w-20"
+                                                        }
+                                                    >
+                                                        {customer.isBlocked ? "Unblock" : "Block"}
+                                                    </Button>
+                                                </AlertDialogTrigger>
+                                                <AlertDialogContent>
+                                                    <AlertDialogHeader>
+                                                        <AlertDialogTitle>Are you sure you want to {customer.isBlocked? "unblock" : "block"} this customer?</AlertDialogTitle>
+                                                    </AlertDialogHeader>
+                                                    <AlertDialogFooter>
+                                                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                                        <AlertDialogAction onClick={()=>handleBlockStatus(customer._id)}>Continue</AlertDialogAction>
+                                                    </AlertDialogFooter>
+                                                </AlertDialogContent>
+                                            </AlertDialog>
                                         </TableCell>
                                     </TableRow>
                                 ))}

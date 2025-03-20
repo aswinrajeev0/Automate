@@ -1,25 +1,26 @@
 import { updateCustomerStatus } from "../../services/admin/adminService";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useToaster } from "../ui/useToaster";
-import { CustomersData, ICustomer } from "../../components/admin/customers/Customers";
+import { ICustomer } from "../../components/admin/customers/Customers";
+import { customersResponse } from "./useAllCustomers";
 
 export const useUpdateCustomerStatusMutation = (currentPage: number, limit: number, search: string) => {
     const { successToast, errorToast } = useToaster();
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: (userId: string) => updateCustomerStatus(userId),
-        onMutate: async (userId) => {
+        mutationFn: (customerId: string) => updateCustomerStatus(customerId),
+        onMutate: async (customerId) => {
             const queryKey = ["customers", currentPage, limit, search];
             await queryClient.cancelQueries({ queryKey });
             const previousData = queryClient.getQueryData(queryKey)
 
-            queryClient.setQueryData(queryKey, (oldData: CustomersData) => {
-                if (!oldData || !oldData.customers) return oldData;
+            queryClient.setQueryData(queryKey, (oldData: customersResponse) => {
+                if (!oldData || !oldData.users) return oldData;
 
                 return {
                     ...oldData,
-                    customers: oldData.customers.map((customer: ICustomer) => 
-                        customer._id === userId
+                    users: oldData.users.map((customer: ICustomer) => 
+                        customer._id === customerId
                             ? {...customer, isBlocked: !customer.isBlocked}
                             : customer
                     )
