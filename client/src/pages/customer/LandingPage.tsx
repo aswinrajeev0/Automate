@@ -6,13 +6,22 @@ import { Footer } from "../../components/customer/Footer"
 import { IFeaturedWorkshop, useFeaturedWorkshopsQuery } from "../../hooks/customer/usePartialWorkshop";
 import { getFeaturedWorkshops } from "../../services/customer/customerService";
 import WorkshopCard from "../../components/customer/workshop/WorkshopCard";
+import { useRef } from "react";
+import MapModal from "../../components/map/Map";
 
 export default function LandingPage() {
   const navigate = useNavigate();
+  const mapModalButtonRef = useRef<HTMLButtonElement>(null);
 
   const { data, isLoading, isError } = useFeaturedWorkshopsQuery(getFeaturedWorkshops);
 
   const workshops = (data?.workshops ?? []) as IFeaturedWorkshop[];
+
+  const handleNearbyClick = () => {
+    if (mapModalButtonRef.current) {
+      mapModalButtonRef.current.click();
+    }
+  }
 
   return (
     <div className="flex flex-col min-h-screen bg-white">
@@ -125,13 +134,17 @@ export default function LandingPage() {
             </div>
             <div className="md:w-1/2 text-center md:text-left">
               <h2 className="text-3xl font-bold mb-6">Find your nearest workshop</h2>
-              <Button className="bg-amber-400 hover:bg-amber-500 text-black font-bold px-8 py-6 rounded-full text-lg">
+              <Button onClick={handleNearbyClick} className="bg-amber-400 hover:bg-amber-500 text-black font-bold px-8 py-6 rounded-full text-lg">
                 Find Now
               </Button>
             </div>
           </div>
         </div>
       </section>
+
+      <div className="hidden">
+        <MapModal ref={mapModalButtonRef} />
+      </div>
 
       {/* Footer */}
       <Footer />

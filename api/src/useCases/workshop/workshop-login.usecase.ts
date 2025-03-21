@@ -26,6 +26,13 @@ export class WorkshopLoginUseCase implements IWorkshopLoginUseCase {
             )
         }
 
+        if(workshop.approvalStatus === "pending" || workshop.approvalStatus === "rejected"){
+            throw new CustomError(
+                ERROR_MESSAGES.UNAUTHORIZED_ACCESS,
+                HTTP_STATUS.FORBIDDEN
+            )
+        }
+
         if (workshop.isBlocked) {
             throw new CustomError(
                 ERROR_MESSAGES.BLOCKED,

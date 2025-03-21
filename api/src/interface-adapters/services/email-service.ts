@@ -42,7 +42,14 @@ export class EmailService implements IEmailService {
     }
 
     async sendMail(to: string, subject: string, content: string): Promise<void> {
+        const mailOptions = {
+            from : `"Automate" <${config.nodemailer.EMAIL_USER}>`,
+            to,
+            subject,
+            html: content
+        }
 
+        await this.transporter.sendMail(mailOptions);
     }
 
 }

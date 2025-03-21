@@ -4,6 +4,8 @@ import LoginPage from "../pages/customer/Login";
 import LandingPage from "../pages/customer/LandingPage";
 import ForgotPasswordPage from "../pages/customer/ForgetPassword";
 import ResetPasswordPage from "../pages/customer/ResetPassword";
+import UserProfile from "../pages/customer/UserProfile";
+import Map from "../components/map/Map";
 
 export const CustomerRoutes = () => {
     return (
@@ -13,6 +15,8 @@ export const CustomerRoutes = () => {
             <Route path="/signup" element={<SignupPage />} />
             <Route path="/forgot-password" element={<ForgotPasswordPage />} />
             <Route path="/reset-password" element={<ResetPasswordPage />} />
+            <Route path="/profile" element={<UserProfile />} />
+            <Route path="/map" element={<Map />} />
         </Routes>
     )
 }

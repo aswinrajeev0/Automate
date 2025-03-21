@@ -27,7 +27,7 @@ export const authenticate =
                 if (!accessToken) {
                     res.status(HTTP_STATUS.UNAUTHORIZED).json({
                         success: false,
-                        message: ERROR_MESSAGES.UNAUTHORIZED_ACCESS,
+                        message: ERROR_MESSAGES.INVALID_TOKEN,
                     });
                     return;
                 }

@@ -15,10 +15,10 @@ export const AdminRoutes = () => {
 
             //protected admin routes
             <Route path="/" element={<AdminProtected><AdminDashboard /></AdminProtected>} >
-                <Route index element={<DashboardContent />} />
-                <Route path="customers" element={<Customers />} />
-                <Route path="workshops" element={<Workshops />} />
-                <Route path="approvals" element={<WorkshopApproval />} />
+                <Route index element={<AdminProtected><DashboardContent /></AdminProtected>} />
+                <Route path="customers" element={<AdminProtected><Customers /></AdminProtected>} />
+                <Route path="workshops" element={<AdminProtected><Workshops /></AdminProtected>} />
+                <Route path="approvals" element={<AdminProtected><WorkshopApproval /></AdminProtected>} />
                 <Route path="requests" />
                 <Route path="revenue-report" />
             </Route>
