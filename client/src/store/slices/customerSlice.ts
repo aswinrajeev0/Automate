@@ -4,7 +4,8 @@ interface Customer {
     id: string,
     name: string,
     email: string,
-    image?: string
+    image?: string,
+    phone?: string
 }
 
 export interface CustomerState {

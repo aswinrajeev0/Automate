@@ -3,7 +3,7 @@ import { Button } from "../../components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { Header } from "../../components/customer/Header"
 import { Footer } from "../../components/customer/Footer"
-import { IFeaturedWorkshop, useFeaturedWorkshopsQuery } from "../../hooks/customer/usePartialWorkshop";
+import { IFeaturedWorkshop, useFeaturedWorkshopsQuery } from "../../hooks/customer/useFeaturedWorkshop";
 import { getFeaturedWorkshops } from "../../services/customer/customerService";
 import WorkshopCard from "../../components/customer/workshop/WorkshopCard";
 import { useRef } from "react";

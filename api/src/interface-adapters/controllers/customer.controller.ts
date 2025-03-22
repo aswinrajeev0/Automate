@@ -82,6 +82,7 @@ export class CustomerController implements ICustomerController {
                     name: user.name,
                     email: user.email,
                     image: user?.profileImage,
+                    phone: user?.phone,
                 }
             })
         } catch (error) {

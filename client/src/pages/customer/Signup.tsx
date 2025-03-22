@@ -23,7 +23,6 @@ export default function SignupPage() {
   const navigate = useNavigate();
   const { toast } = useToast()
 
-  //react query hooks for api calling
   const registerCustomer = useCustomerRegister();
   const sendOtp = useSendOtp();
   const verifyOtp = useVerifyOtp()
@@ -33,7 +32,6 @@ export default function SignupPage() {
       setIsLoading(true)
       setEmail(values.email)
 
-      // Prepare the registration data
       const registrationData: CustomerRegisterData = {
         name: values.name,
         email: values.email,
@@ -41,14 +39,11 @@ export default function SignupPage() {
         password: values.password,
       }
 
-      // Store form data for later use after OTP verification
       setFormData(registrationData)
 
-      // Send OTP to the user's email
       const response = await sendOtp.mutateAsync(values.email)
 
       if (response.status === 200) {
-        // Open OTP modal for verification
         setIsOTPModalOpen(true)
         toast({
           title: "Verification Code Sent",

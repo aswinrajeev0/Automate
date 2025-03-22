@@ -1,6 +1,6 @@
 import React from "react";
 import { Card, CardContent } from "../../ui/Card";
-import { IFeaturedWorkshop } from "../../../hooks/customer/usePartialWorkshop";
+import { IFeaturedWorkshop } from "../../../hooks/customer/useFeaturedWorkshop";
 import { Star } from "lucide-react";
 
 interface WorkshopCardProps {
