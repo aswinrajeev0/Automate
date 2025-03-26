@@ -2,5 +2,6 @@ import { IUserEntity } from "./user.entity";
 
 export interface ICustomerEntity extends IUserEntity {
     customerId: string;
-    googleId: string
+    googleId: string;
+    bio?: string
 }

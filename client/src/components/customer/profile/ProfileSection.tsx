@@ -1,29 +1,34 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { TabsContent } from "../../ui/Tabs";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../../ui/Card";
 import { Avatar, AvatarFallback, AvatarImage } from "../../ui/Avatar";
 import { Label } from "../../ui/Label";
 import { Input } from "../../ui/Input";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../../ui/Form";
-import { Loader2, Mail, Pencil, Phone, Save, User } from "lucide-react";
+import { Loader2, Pencil, Phone, Save, User } from "lucide-react";
 import { Button } from "../../ui/button";
 import * as yup from "yup"
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { toast } from "sonner";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../store/store";
+import { CustomerEditUploadData } from "../../../types/auth";
+import { Textarea } from "../../ui/Textarea";
+import { uploadImage } from "../../../services/cloudinary/cloudinary";
+import { customerLogin } from "../../../store/slices/customerSlice";
+import { useToaster } from "../../../hooks/ui/useToaster";
+import { useCustomerUpdateProfile } from "../../../hooks/customer/useCustomerPRofile";
 
 const profileSchema = yup.object().shape({
     name: yup.string().required("Name is required"),
-    email: yup.string().email("Invalid email").required("Email is required"),
+    // email: yup.string().email("Invalid email").required("Email is required"),
     phone: yup
         .string()
         .matches(/^[0-9]+$/, "Must be only digits")
         .min(10, "Must be exactly 10 digits")
         .max(10, "Must be exactly 10 digits")
         .required("Phone number is required"),
-    // bio: yup.string().max(300, "Bio must be at most 300 characters"),
+    bio: yup.string().max(300, "Bio must be at most 300 characters"),
 })
 
 type ProfileFormValues = yup.InferType<typeof profileSchema>
@@ -38,34 +43,82 @@ interface ProfileSectionProps {
 const ProfileSection: React.FC<ProfileSectionProps> = ({ isEditingProfile, setIsEditingProfile, isLoadingProfile, setIsLoadingProfile }) => {
 
     const { customer } = useSelector((state: RootState) => state.customer)
+    const [selectedFile, setSelectedFile] = useState<File | null>(null);
+    const [imagePreview, setImagePreview] = useState<string | null>(null);
+    const { successToast, errorToast } = useToaster();
+    const customerUpdate = useCustomerUpdateProfile();
+    const dispatch = useDispatch();
 
     const defaultProfileValues: ProfileFormValues = {
         name: customer?.name || "",
-        email: customer?.email || "",
+        // email: customer?.email || "",
         phone: customer?.phone || "",
-        // bio: "Car enthusiast and regular customer. I own a 2018 Honda Civic and a 2015 Toyota Camry.",
+        bio: customer?.bio || "",
     }
+
+    //Car enthusiast and regular customer. I own a 2018 Honda Civic and a 2015 Toyota Camry.
 
     const profileForm = useForm<ProfileFormValues>({
         resolver: yupResolver(profileSchema),
         defaultValues: defaultProfileValues,
     })
 
-    const onSubmitProfile = (data: ProfileFormValues) => {
-        setIsLoadingProfile(true)
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            setSelectedFile(file)
+            const previewUrl = URL.createObjectURL(file);
+            setImagePreview(previewUrl);
+        }
+    }
 
-        // Simulate API call
-        setTimeout(() => {
-            console.log("Profile updated:", data)
-            toast.success("Profile updated successfully")
-            setIsEditingProfile(false)
+    useEffect(() => {
+        return () => {
+            if (imagePreview) {
+                URL.revokeObjectURL(imagePreview);
+            }
+        }
+    }, [imagePreview])
+
+    const onSubmitProfile = async (values: ProfileFormValues) => {
+        try {
+            setIsLoadingProfile(true)
+            let imageUrl = customer?.image || undefined;
+
+            if (selectedFile) {
+                imageUrl = await uploadImage(selectedFile) || undefined;
+            }
+
+            const customerEditData: CustomerEditUploadData = {
+                id: customer?.id,
+                name: values.name,
+                // email: values.email,
+                phone: values.phone,
+                bio: values.bio,
+                image: imageUrl
+            }
+
+            const response = await customerUpdate.mutateAsync(customerEditData)
+            if (response.status === 200) {
+                successToast(response.data.message)
+                dispatch(customerLogin(response.data.user))
+                setImagePreview(null);
+                setSelectedFile(null);
+                setIsEditingProfile(false)
+            }
+        } catch (error: any) {
+            errorToast(error.response.data.message)
+        }
+        finally {
             setIsLoadingProfile(false)
-        }, 1500)
+        }
     }
 
     const handleEditProfileToggle = () => {
         if (isEditingProfile) {
             profileForm.reset(defaultProfileValues)
+            setSelectedFile(null);
+            setImagePreview(null);
         }
         setIsEditingProfile(!isEditingProfile)
     }
@@ -81,26 +134,33 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({ isEditingProfile, setIs
                             <CardTitle>Profile Picture</CardTitle>
                         </CardHeader>
                         <CardContent className="flex flex-col items-center">
-                            <Avatar className="w-32 h-32 mb-4">
-                                <AvatarImage src={`${customer?.name ? customer.image : "https://github.com/shadcn.png"}`} alt={customer?.name} />
-                                <AvatarFallback className="text-3xl">
-                                    {defaultProfileValues.name
-                                        .split(" ")
-                                        .map((n) => n[0])
-                                        .join("")}
-                                </AvatarFallback>
-                            </Avatar>
+                            <Label htmlFor="picture" className={isEditingProfile ? "cursor-pointer" : ""}>
+                                <Avatar className="w-32 h-32 mb-4">
+                                    <AvatarImage src={
+                                        imagePreview ||
+                                        (customer?.name ? customer?.image : "https://github.com/shadcn.png")
+                                    } alt={customer?.name} />
+                                    <AvatarFallback className="text-3xl">
+                                        {defaultProfileValues.name
+                                            .split(" ")
+                                            .map((n) => n[0])
+                                            .join("")}
+                                    </AvatarFallback>
+                                </Avatar>
+                            </Label>
+
 
                             <div className="w-full mt-4">
-                                <Label htmlFor="picture" className="text-center block mb-2">
+                                {/* <Label htmlFor="picture" className="text-center block mb-2">
                                     Update Picture
-                                </Label>
+                                </Label> */}
                                 <Input
                                     id="picture"
                                     type="file"
                                     accept="image/*"
                                     disabled={!isEditingProfile}
-                                    className="cursor-pointer"
+                                    className="cursor-pointer hidden"
+                                    onChange={handleFileChange}
                                 />
                             </div>
                         </CardContent>
@@ -133,7 +193,7 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({ isEditingProfile, setIs
                                         )}
                                     />
 
-                                    <FormField
+                                    {/* <FormField
                                         control={profileForm.control}
                                         name="email"
                                         render={({ field }) => (
@@ -148,7 +208,7 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({ isEditingProfile, setIs
                                                 <FormMessage />
                                             </FormItem>
                                         )}
-                                    />
+                                    /> */}
 
                                     <FormField
                                         control={profileForm.control}
@@ -167,7 +227,7 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({ isEditingProfile, setIs
                                         )}
                                     />
 
-                                    {/* <FormField
+                                    <FormField
                                         control={profileForm.control}
                                         name="bio"
                                         render={({ field }) => (
@@ -184,7 +244,7 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({ isEditingProfile, setIs
                                                 <FormMessage />
                                             </FormItem>
                                         )}
-                                    /> */}
+                                    />
                                 </CardContent>
 
                                 <CardFooter className="flex justify-between">

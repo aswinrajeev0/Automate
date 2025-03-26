@@ -134,7 +134,7 @@ const WorkshopApproval: React.FC = () => {
 
       <div className="flex flex-wrap gap-2 mb-6">
         <Button
-          variant={filter === "all" ? "default" : "outline"}
+          variant={filter === "all" ? "admin" : "outline"}
           onClick={() => setFilter("all")}
           size="sm"
           className="flex-grow sm:flex-grow-0"
@@ -142,7 +142,7 @@ const WorkshopApproval: React.FC = () => {
           All
         </Button>
         <Button
-          variant={filter === "pending" ? "default" : "outline"}
+          variant={filter === "pending" ? "admin" : "outline"}
           onClick={() => setFilter("pending")}
           size="sm"
           className="flex-grow sm:flex-grow-0"
@@ -150,7 +150,7 @@ const WorkshopApproval: React.FC = () => {
           Pending
         </Button>
         <Button
-          variant={filter === "rejected" ? "default" : "outline"}
+          variant={filter === "rejected" ? "admin" : "outline"}
           onClick={() => setFilter("rejected")}
           size="sm"
           className="flex-grow sm:flex-grow-0"
@@ -169,7 +169,7 @@ const WorkshopApproval: React.FC = () => {
         </div>
       ) : filteredWorkshops.length === 0 ? (
         <div className="text-center py-8">
-          <p className="text-gray-500">No pending or rejected workshops found.</p>
+          <p className="text-gray-500">No {filter} workshops found.</p>
         </div>
       ) : (
         <>

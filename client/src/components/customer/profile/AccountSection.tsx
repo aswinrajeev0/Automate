@@ -16,26 +16,35 @@ import {
 } from "../../ui/alert-dialog";
 import { toast } from "sonner";
 import { customerLogout } from "../../../store/slices/customerSlice";
-import { useCustomerLogout } from "../../../hooks/customer/useCustomerAuth";
-import { useDispatch } from "react-redux";
+import { useCustomerDelete, useCustomerLogout } from "../../../hooks/customer/useCustomerAuth";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { RootState } from "../../../store/store";
 
-const handleDeleteAccount = () => {
-    toast.success("Account deleted successfully")
-    console.log("Account deleted")
-}
 
 const AccountSection: React.FC = () => {
-
+    
     const dispatch = useDispatch()
     const navigate = useNavigate()
-
+    const customer = useSelector((state: RootState) => state.customer)
+    
     const logout = useCustomerLogout()
+    const deleteAccount = useCustomerDelete()
+
     const handleLogout = async () => {
         const response = await logout.mutateAsync()
         if (response.success) {
             dispatch(customerLogout())
             toast.success("Logged out successfully.")
+            navigate("/login")
+        }
+    }
+    
+    const handleDeleteAccount = async () => {
+        const response = await deleteAccount.mutateAsync()
+        if(response.status === 200) {
+            dispatch(customerLogout())
+            toast.success("Account deleted successfully")
             navigate("/login")
         }
     }

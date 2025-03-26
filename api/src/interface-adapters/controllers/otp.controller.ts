@@ -9,14 +9,14 @@ import { otpMailValidation } from "./validations/otp-mail.validation";
 @injectable()
 export class OtpController implements IOtpController {
     constructor(
-        @inject("ISendOtpUseCase") private sendOtpUseCase: ISendOtpUseCase,
-        @inject("IVerifyOtpUseCase") private verifyOtpUsease: IVerifyOtpUseCase
+        @inject("ISendOtpUseCase") private _sendOtpUseCase: ISendOtpUseCase,
+        @inject("IVerifyOtpUseCase") private _verifyOtpUsease: IVerifyOtpUseCase
     ) { }
 
     async sendOtp(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const { email } = req.body;
-            await this.sendOtpUseCase.execute(email);
+            await this._sendOtpUseCase.execute(email);
             res.status(HTTP_STATUS.OK).json({
                 message: SUCCESS_MESSAGES.OTP_SEND_SUCCESS,
                 success: true
@@ -30,7 +30,7 @@ export class OtpController implements IOtpController {
         try {
             const { email, otp } = req.body;
             const validatedData = otpMailValidation.parse({ email, otp })
-            await this.verifyOtpUsease.execute(validatedData);
+            await this._verifyOtpUsease.execute(validatedData);
 
             res.status(HTTP_STATUS.OK).json({
                 success: true,

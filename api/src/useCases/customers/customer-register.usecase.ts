@@ -8,17 +8,17 @@ import { ICustomerEntity } from "../../entities/models/customer.entity";
 
 @injectable()
 export class CustomerRegisterUseCase implements ICustomerRegisterUseCase {
-    private strategies: Record<string, ICustomerRegisterStrategy>;
+    private _strategies: Record<string, ICustomerRegisterStrategy>;
     constructor(
-        @inject("CustomerRegisterStrategy") private customerRegister: ICustomerRegisterStrategy
+        @inject("CustomerRegisterStrategy") private _customerRegister: ICustomerRegisterStrategy
     ){
-        this.strategies = {
-            customer: this.customerRegister
+        this._strategies = {
+            customer: this._customerRegister
         }
     }
 
     async execute(customer: CustomerDTO): Promise<void> {
-        const strategy = this.strategies.customer;
+        const strategy = this._strategies.customer;
         await strategy.register(customer)
     }
 }

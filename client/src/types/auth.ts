@@ -80,3 +80,21 @@ export interface ResetPasswordFormData {
   confirmPassword: string;
   token: string
 }
+
+
+export interface CustomerEditFormData {
+  name: string,
+  phone: string,
+  email: string,
+  bio?: string,
+  image: string | undefined
+}
+
+export interface CustomerEditUploadData {
+  id?: string,
+  name?: string,
+  phone?: string,
+  email?: string,
+  bio?: string,
+  image?: string | undefined
+}

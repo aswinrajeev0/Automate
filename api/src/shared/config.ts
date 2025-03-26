@@ -30,5 +30,9 @@ export const config = {
     },
     OtpExpiry: process.env.OTP_EXPIRY_IN_MINUTES || "2",
     loggerStatus: process.env.LOGGER_STATUS || "dev",
-    bcryptSaltRounds: parseInt(process.env.BCRYPT_SALT_ROUNDS || "10", 10)
+    bcryptSaltRounds: parseInt(process.env.BCRYPT_SALT_ROUNDS || "10", 10),
+    cloudinary: {
+        SECRET_KEY: process.env.CLOUDINARY_API_SECRET,
+        UPLOAD_PRESET: process.env.UPLOAD_PRESET
+    }
 }

@@ -2,6 +2,8 @@ import { NextFunction, Request, Response } from "express";
 import { ZodError } from "zod";
 import { ERROR_MESSAGES, HTTP_STATUS } from "../../shared/constants";
 import { CustomError } from "../../entities/utils/custom.error";
+import logger from "../../shared/utils/error-logger";
+import { error } from "console";
 
 export const errorHandler = (
     err: any,
@@ -24,6 +26,7 @@ export const errorHandler = (
         statusCode = err.statusCode;
         message = err.message;
     } else {
+        logger.error(`[${req.method}] ${req.url} - ${err.message}`, {stack: err.stack});
         console.error("Unhandled Error:", err);
         if (err.name === "TokenExpiredError") {
             statusCode = HTTP_STATUS.UNAUTHORIZED

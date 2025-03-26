@@ -49,7 +49,7 @@ export class AdminController implements IAdminController {
                     id: admin.id,
                     name: admin.name,
                     email: admin.email,
-                    image: admin?.profileImage
+                    image: admin?.image
                 }
             })
         } catch (error) {

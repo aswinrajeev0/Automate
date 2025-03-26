@@ -1,5 +1,5 @@
 import { customerApi } from "../../api/customer.axios";
-import { CustomerLoginData, CustomerRegisterData, ResetPasswordFormData } from "../../types/auth";
+import { CustomerEditUploadData, CustomerLoginData, CustomerRegisterData, ResetPasswordFormData } from "../../types/auth";
 
 export const registerCustomer = async (data: CustomerRegisterData) => {
     try {
@@ -74,3 +74,21 @@ export const googleAuth = async ({ credential, client_id }: { credential: string
         throw error.response.data || "Google login failed"
     }
 };
+
+export const updateCustomer = async (data: CustomerEditUploadData) => {
+    try {
+        const response = await customerApi.put("/update-customer", data);
+        return response;
+    } catch (error: any) {
+        throw error.response.data || "Customer update failed"
+    }
+}
+
+export const deleteCustomer = async () => {
+    try {
+        const response = await customerApi.delete("/delete-customer")
+        return response
+    } catch (error: any) {
+        throw error.response.data || "Failed to delete"
+    }
+}

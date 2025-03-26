@@ -35,6 +35,7 @@ adminApi.interceptors.response.use(
 				} catch (refreshError) {
 					isRefreshing = false;
 					store.dispatch(adminLogout());
+					await adminApi.post("/logout")
 					window.location.href = "/admin/login";
 					toast("Please login again");
 					return Promise.reject(refreshError);

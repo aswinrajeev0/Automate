@@ -7,8 +7,7 @@ import { ERROR_MESSAGES, HTTP_STATUS } from "../../shared/constants";
 @injectable()
 export class UpdateWorkshopStatusUseCase implements IUpdateWorkshopStatusUseCase {
     constructor(
-        @inject("IWorkshopRepository")
-        private workshopRepo: IWorkshopRepository
+        @inject("IWorkshopRepository") private _workshopRepo: IWorkshopRepository
     ){}
 
     async execute(workshopId: string): Promise<void> {
@@ -18,6 +17,6 @@ export class UpdateWorkshopStatusUseCase implements IUpdateWorkshopStatusUseCase
                 HTTP_STATUS.BAD_REQUEST
             )
         }
-        await this.workshopRepo.updateBlockStatus(workshopId)
+        await this._workshopRepo.updateBlockStatus(workshopId)
     }
 }

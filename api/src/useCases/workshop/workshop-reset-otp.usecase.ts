@@ -10,18 +10,14 @@ import { ERROR_MESSAGES, HTTP_STATUS } from "../../shared/constants";
 @injectable()
 export class WorkshopResetPasswordOtpUseCase implements IResetPasswordOtpUseCase {
     constructor(
-        @inject("IEmailService")
-        private emailService: IEmailService,
-        @inject("IOtpService")
-        private otpService: IOtpService,
-        @inject("IWorkshopRepository")
-        private workshopRepo: IWorkshopRepository,
-        @inject("IOtpBcrypt")
-        private otpBcrypt: IBcrypt
+        @inject("IEmailService") private _emailService: IEmailService,
+        @inject("IOtpService") private _otpService: IOtpService,
+        @inject("IWorkshopRepository") private _workshopRepo: IWorkshopRepository,
+        @inject("IOtpBcrypt") private _otpBcrypt: IBcrypt
     ) { }
 
     async execute(email: string): Promise<void> {
-        const emailExists = await this.workshopRepo.findByEmail(email)
+        const emailExists = await this._workshopRepo.findByEmail(email)
         if (!emailExists) {
             throw new CustomError(
                 ERROR_MESSAGES.EMAIL_NOT_FOUND,
@@ -29,11 +25,11 @@ export class WorkshopResetPasswordOtpUseCase implements IResetPasswordOtpUseCase
             );
         }
 
-        const otp = this.otpService.generateOtp();
+        const otp = this._otpService.generateOtp();
         console.log(`OTP: ${otp}`);
-        const hashOtp = await this.otpBcrypt.hash(otp);
-        await this.otpService.storeOtp(email, hashOtp);
-        await this.emailService.sendOtpEmail(
+        const hashOtp = await this._otpBcrypt.hash(otp);
+        await this._otpService.storeOtp(email, hashOtp);
+        await this._emailService.sendOtpEmail(
             email,
             "AutoMate - Verify your reset password email.",
             otp

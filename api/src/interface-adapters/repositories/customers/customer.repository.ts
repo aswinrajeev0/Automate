@@ -7,19 +7,19 @@ import { ICustomerRepository } from "../../../entities/repositoryInterfaces/cust
 export class CustomerRepository implements ICustomerRepository {
     async save(data: Partial<ICustomerEntity>): Promise<ICustomerEntity> {
         const customer = await CustomerModel.create(data);
-        return this.toEntity(customer);
+        return customer;
     };
 
     async findById(id: any): Promise<ICustomerEntity | null> {
         const customer = await CustomerModel.findById(id);
         if (!customer) return null;
-        return this.toEntity(customer);
+        return customer
     };
 
     async findByEmail(email: string): Promise<ICustomerEntity | null> {
         const customer = await CustomerModel.findOne({ email });
         if (!customer) return null;
-        return this.toEntity(customer);
+        return customer;
     };
 
     async updateByEmail(email: string, updates: Partial<ICustomerEntity>): Promise<ICustomerEntity | null> {
@@ -29,7 +29,7 @@ export class CustomerRepository implements ICustomerRepository {
             { new: true }
         );
         if (!customer) return null;
-        return this.toEntity(customer);
+        return customer
     }
 
     async find(filter: any, skip: number, limit: number): Promise<{ users: ICustomerEntity[] | []; total: number; }> {
@@ -49,21 +49,12 @@ export class CustomerRepository implements ICustomerRepository {
         await CustomerModel.findByIdAndUpdate(id, { $set: { isBlocked: updatedStatus } });
     }
 
+    async findByIdAndUpdate(id: string, updates: Partial<ICustomerEntity>): Promise<ICustomerEntity | null> {
+        const customer = await CustomerModel.findByIdAndUpdate(id, { $set: updates }, { new: true });
+        return customer
+    }
 
-    private toEntity(customer: any): ICustomerEntity {
-        return {
-            customerId: customer._id.toString(),
-            id: customer._id.toString(),
-            googleId: customer.googleId,
-            name: customer.name,
-            email: customer.email,
-            password: customer.password,
-            phone: customer.phone,
-            profileImage: customer.profileImage,
-            isAdmin: customer.isAdmin ?? false,
-            isBlocked: customer.isBlocked ?? false,
-            createdAt: customer.createdAt,
-            updatedAt: customer.updatedAt,
-        };
+    async findByIdAndDelete(userId: string): Promise<void> {
+        await CustomerModel.findByIdAndDelete(userId)
     }
 }

@@ -10,9 +10,9 @@ import { passwordSchema } from "../../shared/validations/password.validation";
 @injectable()
 export class WorkshopResetPasswordUseCase implements IWorkshopResetPasswordUseCase {
     constructor(
-        @inject("ITokenService") private tokenService: ITokenService,
-        @inject("IWorkshopRepository") private workshopRepo: IWorkshopRepository,
-        @inject("IPasswordBcrypt") private passwordBcrypt: IBcrypt
+        @inject("ITokenService") private _tokenService: ITokenService,
+        @inject("IWorkshopRepository") private _workshopRepo: IWorkshopRepository,
+        @inject("IPasswordBcrypt") private _passwordBcrypt: IBcrypt
     ) { }
 
     async execute(token: string, password: string, cpassword: string): Promise<void> {
@@ -32,7 +32,7 @@ export class WorkshopResetPasswordUseCase implements IWorkshopResetPasswordUseCa
 
         passwordSchema.parse(password);
 
-        const decoded = await this.tokenService.decodeResetToken(token);
+        const decoded = await this._tokenService.decodeResetToken(token);
         if(!decoded || !decoded.email) {
             throw new CustomError(
                 ERROR_MESSAGES.INVALID_TOKEN,
@@ -40,11 +40,11 @@ export class WorkshopResetPasswordUseCase implements IWorkshopResetPasswordUseCa
             )
         }
         const email = decoded.email;
-        let hashedPassword = await this.passwordBcrypt.hash(password)
+        let hashedPassword = await this._passwordBcrypt.hash(password)
         const update = {
             password: hashedPassword
         }
 
-        await this.workshopRepo.updateByEmail(email, update)
+        await this._workshopRepo.updateByEmail(email, update)
     }
 }

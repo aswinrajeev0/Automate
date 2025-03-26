@@ -25,7 +25,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "../../ui/Card"
 
 export interface ICustomer {
     _id: string
-    clientId: string
+    customerId: string
     name: string
     email: string
     phone: string
@@ -159,7 +159,7 @@ const Customers: React.FC = () => {
                                 <TableBody>
                                     {customers.map((customer, index) => (
                                         <TableRow key={index}>
-                                            <TableCell className="max-w-[100px] truncate">{customer._id}</TableCell>
+                                            <TableCell className="max-w-[100px] truncate">{customer.customerId}</TableCell>
                                             <TableCell>{customer.name}</TableCell>
                                             <TableCell>{customer.email}</TableCell>
                                             <TableCell>{customer.phone}</TableCell>

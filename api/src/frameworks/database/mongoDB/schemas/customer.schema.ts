@@ -8,8 +8,9 @@ export const customerSchema = new Schema<ICustomerModel>({
     phone: { type: String},
     password: { type: String, required: true },
     isAdmin: { type: Boolean, default: false },
-    profileImage: { type: String },
-    isBlocked: { type: Boolean, default: false }
+    image: { type: String },
+    isBlocked: { type: Boolean, default: false },
+    bio: {type: String}
 }, {
     timestamps: true
 })

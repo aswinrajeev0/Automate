@@ -7,12 +7,12 @@ import { IBlackListTokenUseCase } from "../../entities/useCaseInterfaces/blackli
 @injectable()
 export class AdminLogoutUseCase implements IAdminLogoutUseCase {
     constructor(
-        @inject("IBlackListTokenUseCase") private blackListTokenUseCase: IBlackListTokenUseCase,
-        @inject("IRevokeRefreshTokenUseCase") private revokeRefreshToken: IRevokeRefreshTokenUseCase
+        @inject("IBlackListTokenUseCase") private _blackListTokenUseCase: IBlackListTokenUseCase,
+        @inject("IRevokeRefreshTokenUseCase") private _revokeRefreshToken: IRevokeRefreshTokenUseCase
     ) { }
 
     async execute(user: UserRequest): Promise<void> {
-        await this.blackListTokenUseCase.execute(user.access_token);
-        await this.revokeRefreshToken.execute(user.refresh_token);
+        await this._blackListTokenUseCase.execute(user.access_token);
+        await this._revokeRefreshToken.execute(user.refresh_token);
     }
 }

@@ -12,80 +12,80 @@ import { Eye, Search } from "lucide-react"
 import { Input } from "../../ui/Input"
 import { useAllWorkshopsQuery } from "../../../hooks/admin/useAllWorkshops"
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
 } from "../../ui/alert-dialog"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "../../ui/Dialog"
 import WorkshopDetails from "./WorkshopDetails"
 import { Card, CardContent, CardHeader, CardTitle } from "../../ui/Card"
 
 export interface IWorkshop {
-  _id: string
-  workshopId: string
-  name: string
-  email: string
-  phone: string
-  country: string
-  state: string
-  city: string
-  streetAddress: string
-  buildingNo: string
-  isBlocked: boolean
-  approvalStatus: string
-  createdAt: Date
-  rejectionReason: string
+    _id: string
+    workshopId: string
+    name: string
+    email: string
+    phone: string
+    country: string
+    state: string
+    city: string
+    streetAddress: string
+    buildingNo: string
+    isBlocked: boolean
+    approvalStatus: string
+    createdAt: Date
+    rejectionReason: string
 }
 
 export type WorkshopData = {
-  workshops: IWorkshop[]
-  totalPages: number
+    workshops: IWorkshop[]
+    totalPages: number
 }
 
 const Workshops: React.FC = () => {
-  const limit = 10
-  const [searchQuery, setSearchQuery] = useState("")
-  const [debouncedSearch, setDebouncedSearch] = useState(searchQuery)
-  const [viewDetails, setViewDetails] = useState<IWorkshop | null>(null)
-  const [currentPage, setCurrentPage] = useState(1)
-  const { mutate: updateWorkshopStatus } = useUpdateWorkshopStatusMutation(currentPage, limit, debouncedSearch)
-  const [detailsOpen, setDetailsOpen] = useState(false)
+    const limit = 10
+    const [searchQuery, setSearchQuery] = useState("")
+    const [debouncedSearch, setDebouncedSearch] = useState(searchQuery)
+    const [viewDetails, setViewDetails] = useState<IWorkshop | null>(null)
+    const [currentPage, setCurrentPage] = useState(1)
+    const { mutate: updateWorkshopStatus } = useUpdateWorkshopStatusMutation(currentPage, limit, debouncedSearch)
+    const [detailsOpen, setDetailsOpen] = useState(false)
 
-  function handleBlockStatus(workshopId: string) {
-    updateWorkshopStatus(workshopId)
-  }
+    function handleBlockStatus(workshopId: string) {
+        updateWorkshopStatus(workshopId)
+    }
 
-  useEffect(() => {
-    const handler = debounce(() => setDebouncedSearch(searchQuery), 300)
-    handler()
-    return () => handler.cancel()
-  }, [searchQuery])
+    useEffect(() => {
+        const handler = debounce(() => setDebouncedSearch(searchQuery), 300)
+        handler()
+        return () => handler.cancel()
+    }, [searchQuery])
 
-  const { data, isLoading, isError } = useAllWorkshopsQuery<WorkshopData>(
-    getAllWorkshops,
-    currentPage,
-    limit,
-    debouncedSearch,
-  )
+    const { data, isLoading, isError } = useAllWorkshopsQuery<WorkshopData>(
+        getAllWorkshops,
+        currentPage,
+        limit,
+        debouncedSearch,
+    )
 
-  const allWorkshops = (data?.workshops ?? []) as IWorkshop[]
+    const allWorkshops = (data?.workshops ?? []) as IWorkshop[]
 
-  // Filter out workshops with "approved" status
-  const workshops = allWorkshops.filter((workshop) => workshop.approvalStatus === "approved")
-  const totalPages = data?.totalPages || 1
+    // Filter out workshops with "approved" status
+    const workshops = allWorkshops.filter((workshop) => workshop.approvalStatus === "approved")
+    const totalPages = data?.totalPages || 1
 
-  function handleViewDetails(workshop: IWorkshop) {
-    setViewDetails(workshop)
-    setDetailsOpen(true)
-  }
+    function handleViewDetails(workshop: IWorkshop) {
+        setViewDetails(workshop)
+        setDetailsOpen(true)
+    }
 
-  return (
-    <div className="space-y-6">
+    return (
+        <div className="space-y-6">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <h1 className="text-2xl md:text-3xl font-bold text-gray-800">Workshops</h1>
                 <div className="relative flex w-full sm:w-64 items-center">
@@ -116,10 +116,10 @@ const Workshops: React.FC = () => {
                 <>
                     {/* Mobile view - Cards */}
                     <div className="grid grid-cols-1 gap-4 md:hidden">
-                        {workshops.map((workshop, index) => (
-                            <Card key={index} className="overflow-hidden">
+                        {workshops.map((workshop) => (
+                            <Card key={workshop._id} className="overflow-hidden">
                                 <CardHeader className="bg-gray-100 py-3">
-                                    <CardTitle className="text-sm font-medium">ID: {workshop._id}</CardTitle>
+                                    <CardTitle className="text-sm font-medium">ID: {workshop.workshopId}</CardTitle>
                                 </CardHeader>
                                 <CardContent className="p-4 space-y-2">
                                     <div className="grid grid-cols-2 gap-1">
@@ -144,7 +144,7 @@ const Workshops: React.FC = () => {
                                             <Eye className="h-4 w-4 mr-2" />
                                             View Details
                                         </Button>
-                                        
+
                                         <AlertDialog>
                                             <AlertDialogTrigger asChild>
                                                 <Button
@@ -186,9 +186,9 @@ const Workshops: React.FC = () => {
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
-                                    {workshops.map((workshop, index) => (
-                                        <TableRow key={index}>
-                                            <TableCell className="max-w-[100px] truncate">{workshop._id}</TableCell>
+                                    {workshops.map((workshop) => (
+                                        <TableRow key={workshop._id}>
+                                            <TableCell className="max-w-[100px] truncate">{workshop.workshopId}</TableCell>
                                             <TableCell>{workshop.name}</TableCell>
                                             <TableCell>{workshop.email}</TableCell>
                                             <TableCell>{workshop.phone}</TableCell>
@@ -246,7 +246,7 @@ const Workshops: React.FC = () => {
                         )}
                     </div>
                     <div className="mt-4 flex justify-en">
-                        
+
                     </div>
                     <div className="mt-4 flex justify-end">
                         <Button variant="outline" onClick={() => setDetailsOpen(false)}>                  Close
@@ -265,7 +265,7 @@ const Workshops: React.FC = () => {
                 />
             </div>
         </div>
-  )
+    )
 }
 
 export default Workshops

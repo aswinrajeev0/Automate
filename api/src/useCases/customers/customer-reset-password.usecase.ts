@@ -11,11 +11,9 @@ import { IBcrypt } from "../../frameworks/security/bcrypt.interface";
 export class CustomerResetPasswordUseCase implements ICustomerResetPasswordUseCase {
 
     constructor(
-        @inject("ITokenService")
-        private tokenService: ITokenService,
-        @inject("ICustomerRepository")
-        private customerRepo: ICustomerRepository,
-        @inject("IPasswordBcrypt") private passwordBcrypt: IBcrypt
+        @inject("ITokenService") private _tokenService: ITokenService,
+        @inject("ICustomerRepository") private _customerRepo: ICustomerRepository,
+        @inject("IPasswordBcrypt") private _passwordBcrypt: IBcrypt
     ) { }
 
     async execute(token: string, password: string, cpassword: string): Promise<void> {
@@ -35,7 +33,7 @@ export class CustomerResetPasswordUseCase implements ICustomerResetPasswordUseCa
 
         passwordSchema.parse(password);
 
-        const decoded = await this.tokenService.decodeResetToken(token);
+        const decoded = await this._tokenService.decodeResetToken(token);
         if (!decoded || !decoded.email) {
             throw new CustomError(
                 ERROR_MESSAGES.INVALID_TOKEN,
@@ -43,12 +41,12 @@ export class CustomerResetPasswordUseCase implements ICustomerResetPasswordUseCa
             )
         }
         const email = decoded.email;
-        let hashedPassword = await this.passwordBcrypt.hash(password);
+        let hashedPassword = await this._passwordBcrypt.hash(password);
 
         const update = {
             password: hashedPassword
         }
         
-        await this.customerRepo.updateByEmail(email, update)
+        await this._customerRepo.updateByEmail(email, update)
     }
 }

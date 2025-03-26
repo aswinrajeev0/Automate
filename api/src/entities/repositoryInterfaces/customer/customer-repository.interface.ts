@@ -14,4 +14,6 @@ export interface ICustomerRepository {
         limit: number
     ): Promise<{users: ICustomerEntity[] | []; total: number}>
     findByIdAndUpdateStatus(id: string): Promise<void>
+    findByIdAndUpdate(id:string, updates: Partial<ICustomerEntity>): Promise<ICustomerEntity | null>
+    findByIdAndDelete(userId: string): Promise<void>
 }

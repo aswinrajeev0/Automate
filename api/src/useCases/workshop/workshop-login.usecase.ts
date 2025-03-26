@@ -11,14 +11,12 @@ import { IWorkshopEntity } from "../../entities/models/workshop.entity";
 export class WorkshopLoginUseCase implements IWorkshopLoginUseCase {
 
     constructor(
-        @inject("IWorkshopRepository")
-        private workshopRepo: IWorkshopRepository,
-        @inject("IPasswordBcrypt")
-        private passwordBcrypt: IBcrypt
+        @inject("IWorkshopRepository") private _workshopRepo: IWorkshopRepository,
+        @inject("IPasswordBcrypt") private _passwordBcrypt: IBcrypt
     ) { }
 
     async execute(data: WorkshopLoginDTO): Promise<Partial<IWorkshopEntity>> {
-        const workshop = await this.workshopRepo.findByEmail(data.email);
+        const workshop = await this._workshopRepo.findByEmail(data.email);
         if (!workshop) {
             throw new CustomError(
                 ERROR_MESSAGES.INVALID_CREDENTIALS,
@@ -41,7 +39,7 @@ export class WorkshopLoginUseCase implements IWorkshopLoginUseCase {
         }
 
         if (data.password) {
-            const passMatch = await this.passwordBcrypt.compare(data.password, workshop.password);
+            const passMatch = await this._passwordBcrypt.compare(data.password, workshop.password);
             if(!passMatch){
                 throw new CustomError(
                     ERROR_MESSAGES.INVALID_CREDENTIALS,

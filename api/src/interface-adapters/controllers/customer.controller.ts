@@ -16,28 +16,32 @@ import { ICustomerLogutUseCase } from "../../entities/useCaseInterfaces/customer
 import { IGoogleUseCase } from "../../entities/useCaseInterfaces/customer/googlelogin.usecase.interface";
 import { loginSchema } from "./validations/customer-login.validation.schema";
 import { IRefreshTokenUseCase } from "../../entities/useCaseInterfaces/admin/admin-refresh-token.usecase.interface";
+import { IEditCustomerUseCase } from "../../entities/useCaseInterfaces/customer/edit-customer.interface.usecase";
+import { IDeleteCustomerUseCase } from "../../entities/useCaseInterfaces/customer/delete-customer.usecase.interface";
 
 @injectable()
 export class CustomerController implements ICustomerController {
     constructor(
-        @inject("ICustomerRegisterUseCase") private customerRegisterUseCase: ICustomerRegisterUseCase,
-        @inject("ILoginCustomerUseCase") private loginCustomer: ILoginCustomerUseCase,
-        @inject("IGenerateTokenUseCase") private generateTokenUseCase: IGenerateTokenUseCase,
-        @inject("IGetAllCustomersUseCase") private getAllCustomersUseCase: IGetAllCustomersUseCase,
-        @inject("IUpdateCustomerStatusUseCase") private updateCustomerStatusUseCase: IUpdateCustomerStatusUseCase,
-        @inject("ICustomerResetPasswordOtpUseCase") private customerResetPasswordOtpUseCase: IResetPasswordOtpUseCase,
-        @inject("ITokenService") private tokenService: ITokenService,
-        @inject("ICustomerResetPasswordUseCase") private customerResetPasswordUseCase: ICustomerResetPasswordUseCase,
-        @inject("ICustomerLogutUseCase") private customerLogutUseCase: ICustomerLogutUseCase,
-        @inject("IGoogleUseCase") private googleUseCase: IGoogleUseCase,
-        @inject("IRefreshTokenUseCase") private _refreshToken: IRefreshTokenUseCase
+        @inject("ICustomerRegisterUseCase") private _customerRegisterUseCase: ICustomerRegisterUseCase,
+        @inject("ILoginCustomerUseCase") private _loginCustomer: ILoginCustomerUseCase,
+        @inject("IGenerateTokenUseCase") private _generateTokenUseCase: IGenerateTokenUseCase,
+        @inject("IGetAllCustomersUseCase") private _getAllCustomersUseCase: IGetAllCustomersUseCase,
+        @inject("IUpdateCustomerStatusUseCase") private _updateCustomerStatusUseCase: IUpdateCustomerStatusUseCase,
+        @inject("ICustomerResetPasswordOtpUseCase") private _customerResetPasswordOtpUseCase: IResetPasswordOtpUseCase,
+        @inject("ITokenService") private _tokenService: ITokenService,
+        @inject("ICustomerResetPasswordUseCase") private _customerResetPasswordUseCase: ICustomerResetPasswordUseCase,
+        @inject("ICustomerLogutUseCase") private _customerLogutUseCase: ICustomerLogutUseCase,
+        @inject("IGoogleUseCase") private _googleUseCase: IGoogleUseCase,
+        @inject("IRefreshTokenUseCase") private _refreshToken: IRefreshTokenUseCase,
+        @inject("IEditCustomerUseCase") private _editCustomerUseCase: IEditCustomerUseCase,
+        @inject("IDeleteCustomerUseCase") private _deleteCustomer: IDeleteCustomerUseCase
     ) { }
 
     async signup(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const schema = customerSchema
             const validatedData = schema.parse(req.body);
-            await this.customerRegisterUseCase.execute(validatedData);
+            await this._customerRegisterUseCase.execute(validatedData);
             res.status(HTTP_STATUS.CREATED).json({
                 success: true,
                 message: SUCCESS_MESSAGES.REGISTRATION_SUCCESS,
@@ -52,12 +56,12 @@ export class CustomerController implements ICustomerController {
             const data = req.body
             const schema = loginSchema;
             const validatedData = schema.parse(data);
-            const user = await this.loginCustomer.execute(validatedData);
+            const user = await this._loginCustomer.execute(validatedData);
             if (!user.id || !user.email) {
                 throw new Error("User id or email is missing.")
             }
 
-            const tokens = await this.generateTokenUseCase.execute(
+            const tokens = await this._generateTokenUseCase.execute(
                 user.id,
                 user.email,
                 "customer"
@@ -79,10 +83,12 @@ export class CustomerController implements ICustomerController {
                 message: SUCCESS_MESSAGES.LOGIN_SUCCESS,
                 user: {
                     id: user.id,
+                    customerId: user.customerId,
                     name: user.name,
                     email: user.email,
-                    image: user?.profileImage,
+                    image: user?.image,
                     phone: user?.phone,
+                    bio: user?.bio
                 }
             })
         } catch (error) {
@@ -97,7 +103,7 @@ export class CustomerController implements ICustomerController {
             const pageSize = Number(limit);
             const searchTermString = typeof search === "string" ? search : "";
 
-            const { users, total } = await this.getAllCustomersUseCase.execute(
+            const { users, total } = await this._getAllCustomersUseCase.execute(
                 pageNumber,
                 pageSize,
                 searchTermString
@@ -116,7 +122,7 @@ export class CustomerController implements ICustomerController {
     async updateCustomerStatus(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const { userId } = req.params;
-            await this.updateCustomerStatusUseCase.execute(userId)
+            await this._updateCustomerStatusUseCase.execute(userId)
             res.status(HTTP_STATUS.OK).json({
                 success: true,
                 message: SUCCESS_MESSAGES.UPDATE_SUCCESS
@@ -129,8 +135,8 @@ export class CustomerController implements ICustomerController {
     async resetPasswordOtp(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const { email } = req.body;
-            await this.customerResetPasswordOtpUseCase.execute(email);
-            const token = await this.tokenService.generateResetToken(email)
+            await this._customerResetPasswordOtpUseCase.execute(email);
+            const token = await this._tokenService.generateResetToken(email)
 
             res.status(HTTP_STATUS.OK).json({
                 message: SUCCESS_MESSAGES.OTP_SEND_SUCCESS,
@@ -145,7 +151,7 @@ export class CustomerController implements ICustomerController {
     async resetPassword(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const { token, password, confirmPassword } = req.body;
-            await this.customerResetPasswordUseCase.execute(token, password, confirmPassword)
+            await this._customerResetPasswordUseCase.execute(token, password, confirmPassword)
             res.status(HTTP_STATUS.OK).json({
                 success: true,
                 message: SUCCESS_MESSAGES.PASSWORD_RESET_SUCCESS
@@ -166,7 +172,7 @@ export class CustomerController implements ICustomerController {
                 return;
             }
 
-            await this.customerLogutUseCase.execute(req.user)
+            await this._customerLogutUseCase.execute(req.user)
             clearAuthCookies(res, "customer_access_token", "customer_refresh_token");
 
             res.status(HTTP_STATUS.OK).json({
@@ -181,7 +187,7 @@ export class CustomerController implements ICustomerController {
     async googleAuth(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const { credential, client_id } = req.body;
-            const user = await this.googleUseCase.execute(
+            const user = await this._googleUseCase.execute(
                 credential,
                 client_id
             );
@@ -190,7 +196,7 @@ export class CustomerController implements ICustomerController {
                 throw new Error("User ID, email, or role is missing");
             }
 
-            const tokens = await this.generateTokenUseCase.execute(
+            const tokens = await this._generateTokenUseCase.execute(
                 user.id,
                 user.email,
                 "customer"
@@ -210,7 +216,15 @@ export class CustomerController implements ICustomerController {
             res.status(HTTP_STATUS.OK).json({
                 success: true,
                 message: SUCCESS_MESSAGES.LOGIN_SUCCESS,
-                user: user,
+                user: {
+                    name: user.name,
+                    email: user.email,
+                    customerId: user.customerId,
+                    image: user.image,
+                    id: user.id,
+                    phone: user?.phone,
+                    bio: user?.bio
+                },
             });
         } catch (error) {
             next(error)
@@ -240,4 +254,41 @@ export class CustomerController implements ICustomerController {
             next(error)
         }
     }
+
+    async editCustomer(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const data = req.body;
+            console.log("Data", data)
+            const user = await this._editCustomerUseCase.execute(data)
+            res.status(HTTP_STATUS.OK).json({
+                success: true,
+                message: SUCCESS_MESSAGES.UPDATE_SUCCESS,
+                user: {
+                    name: user.name,
+                    email: user.email,
+                    customerId: user.customerId,
+                    image: user.image,
+                    id: user.id,
+                    phone: user.phone,
+                    bio: user.bio
+                }
+            })
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    async deleteCustomer(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const userId = req.user?.id;
+            await this._deleteCustomer.execute(userId)
+            res.status(HTTP_STATUS.OK).json({
+                success: true,
+                message: SUCCESS_MESSAGES.DELETE_SUCCESS
+            })
+        } catch (error) {
+            next(error)
+        }
+    }
+
 }

@@ -12,6 +12,7 @@ import { AdminRoute } from "../routes/admin/admin.route";
 import { WorkshopRoute } from "../routes/workshop/workshop.route";
 import { errorHandler } from "../../interface-adapters/middlewares/error.middleware";
 import morganLogger from "./logger";
+import { AuthRoute } from "../routes/auth/auth.route";
 
 export class Server {
     private _app: Application;
@@ -45,6 +46,7 @@ export class Server {
         this._app.use('/api/v1/customer/', new CustomerRoute().router);
         this._app.use('/api/v1/admin/', new AdminRoute().router);
         this._app.use('/api/v1/workshop/', new WorkshopRoute().router);
+        this._app.use('/api/v1/auth/', new AuthRoute().router);
         // this._app.use("*", notFound);
     }
 

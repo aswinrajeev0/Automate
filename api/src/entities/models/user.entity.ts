@@ -5,7 +5,7 @@ export interface IUserEntity {
     email: string;
     password: string;
     phone: string;
-    profileImage?: string;
+    image?: string;
     isAdmin?: Boolean;
     isBlocked: Boolean;
     createdAt: Date;

@@ -1,11 +1,13 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit"
 
 interface Customer {
+    customerId: string,
     id: string,
     name: string,
     email: string,
     image?: string,
-    phone?: string
+    phone?: string,
+    bio?: string
 }
 
 export interface CustomerState {

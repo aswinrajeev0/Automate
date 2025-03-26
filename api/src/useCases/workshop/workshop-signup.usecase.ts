@@ -12,14 +12,12 @@ import { generateUniqueId } from "../../frameworks/security/uniqueuid.bcrypt";
 export class WorkshopSignUpUseCase implements IWorkshopSignupUseCase {
 
     constructor(
-        @inject("IWorkshopRepository")
-        private workshopRepo: IWorkshopRepository,
-        @inject("IPasswordBcrypt")
-        private passwordBcrypt: IBcrypt
+        @inject("IWorkshopRepository") private _workshopRepo: IWorkshopRepository,
+        @inject("IPasswordBcrypt") private _passwordBcrypt: IBcrypt
     ) { }
 
     async execute(workshop: WorkshopDTO): Promise<IWorkshopEntity> {
-        const existingWorkshop = await this.workshopRepo.findByEmail(workshop.email);
+        const existingWorkshop = await this._workshopRepo.findByEmail(workshop.email);
         if (existingWorkshop) {
             throw new CustomError(
                 ERROR_MESSAGES.EMAIL_EXISTS,
@@ -29,11 +27,11 @@ export class WorkshopSignUpUseCase implements IWorkshopSignupUseCase {
 
         let hashedPassword = null;
         if (workshop.password) {
-            hashedPassword = await this.passwordBcrypt.hash(workshop.password)
+            hashedPassword = await this._passwordBcrypt.hash(workshop.password)
         }
 
         let workshopId = generateUniqueId("workshop")
-        return await this.workshopRepo.save({
+        return await this._workshopRepo.save({
             name: workshop.name,
             email: workshop.email,
             phone: workshop.phoneNumber,

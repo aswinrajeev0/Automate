@@ -52,5 +52,13 @@ export class CustomerRoute extends BaseRoute {
         this.router.get("/workshops/featured", (req: Request, res: Response, next: NextFunction) => {
             workshopController.getFeaturedWorkshops(req, res, next);
         })
+
+        this.router.put("/update-customer", authenticate("customer"), (req: Request, res: Response, next: NextFunction) => {
+            customerController.editCustomer(req, res, next)
+        })
+
+        this.router.delete("/delete-customer", decodeToken("customer"), (req: Request, res: Response, next: NextFunction) => {
+            customerController.deleteCustomer(req, res, next)
+        })
     }
 }

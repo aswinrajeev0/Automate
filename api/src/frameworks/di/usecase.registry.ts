@@ -64,6 +64,12 @@ import { IRefreshTokenUseCase } from "../../entities/useCaseInterfaces/admin/adm
 import { RefreshTokenUseCase } from "../../useCases/refresh-token.usecase";
 import { IFeaturedWorkshopsUseCase } from "../../entities/useCaseInterfaces/workshop/getFeatured-workshops.usecase.interface";
 import { FeaturedWorkshopsUseCase } from "../../useCases/workshop/getFeatured-workshops.interface";
+import { IGenerateSignatureUseCase } from "../../entities/useCaseInterfaces/auth/generate-signature.usecase.interface";
+import { GenerateSignatureUseCase } from "../../useCases/generate-signature.usecase";
+import { IEditCustomerUseCase } from "../../entities/useCaseInterfaces/customer/edit-customer.interface.usecase";
+import { EditCustomerUseCase } from "../../useCases/customers/edit-customer.usecase";
+import { IDeleteCustomerUseCase } from "../../entities/useCaseInterfaces/customer/delete-customer.usecase.interface";
+import { DeleteCustomerUseCase } from "../../useCases/customers/delete-customer.usecase";
 
 export class UseCaseRegistry {
     static registerUseCases(): void {
@@ -166,6 +172,18 @@ export class UseCaseRegistry {
 
         container.register<IFeaturedWorkshopsUseCase>("IFeaturedWorkshopsUseCase", {
             useClass: FeaturedWorkshopsUseCase
+        })
+
+        container.register<IGenerateSignatureUseCase>("IGenerateSignatureUseCase", {
+            useClass: GenerateSignatureUseCase
+        })
+
+        container.register<IEditCustomerUseCase>("IEditCustomerUseCase", {
+            useClass: EditCustomerUseCase
+        })
+
+        container.register<IDeleteCustomerUseCase>("IDeleteCustomerUseCase", {
+            useClass: DeleteCustomerUseCase
         })
 
         //* ====== Register Strategies ====== *//

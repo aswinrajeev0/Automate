@@ -7,7 +7,8 @@ import {
     resetOtp,
     resetPassword,
     customerlogout,
-    googleAuth
+    googleAuth,
+    deleteCustomer
 } from '../../services/customer/authServices'
 import { CustomerRegisterData, CustomerLoginData, ResetPasswordFormData } from '../../types/auth'
 
@@ -79,3 +80,12 @@ export const useGoogleMutation = () => {
         mutationFn: googleAuth,
     })
 };
+
+export const useCustomerDelete = () => {
+    return useMutation({
+        mutationFn: deleteCustomer,
+        onError: (error: Error) => {
+            console.error("Error deleting account", error)
+        }
+    })
+}

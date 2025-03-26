@@ -1,24 +1,23 @@
 import { OAuth2Client } from "google-auth-library";
-import { IUserEntity } from "../../entities/models/user.entity";
 import { ICustomerRepository } from "../../entities/repositoryInterfaces/customer/customer-repository.interface";
 import { IGoogleUseCase } from "../../entities/useCaseInterfaces/customer/googlelogin.usecase.interface";
 import { injectable, inject } from "tsyringe";
 import { CustomError } from "../../entities/utils/custom.error";
 import { HTTP_STATUS } from "../../shared/constants";
 import { generateUniqueId } from "../../frameworks/security/uniqueuid.bcrypt";
+import { ICustomerEntity } from "../../entities/models/customer.entity";
 
 @injectable()
 export class GoogleUseCase implements IGoogleUseCase {
-    private oAuthClient: OAuth2Client;
+    private _oAuthClient: OAuth2Client;
     constructor(
-        @inject("ICustomerRepository")
-        private customerRepo: ICustomerRepository,
+        @inject("ICustomerRepository") private _customerRepo: ICustomerRepository,
     ) {
-        this.oAuthClient = new OAuth2Client();
+        this._oAuthClient = new OAuth2Client();
     }
 
-    async execute(credential: string, client_id: string): Promise<Partial<IUserEntity>> {
-        const ticket = await this.oAuthClient.verifyIdToken({
+    async execute(credential: string, client_id: string): Promise<Partial<ICustomerEntity>> {
+        const ticket = await this._oAuthClient.verifyIdToken({
             idToken: credential,
             audience: client_id,
         });
@@ -34,22 +33,22 @@ export class GoogleUseCase implements IGoogleUseCase {
         const googleId = payload.sub;
 		const email = payload.email;
         const name = payload.given_name;
-        const profileImage = payload.picture || "";
+        const image = payload.picture || "";
 
         if (!email) {
 			throw new CustomError("Email is required", HTTP_STATUS.BAD_REQUEST);
 		}
 
-        const existingUser = await this.customerRepo.findByEmail(email);
+        const existingUser = await this._customerRepo.findByEmail(email);
         if(!existingUser) {
             const customerId = generateUniqueId();
-            const newUser = await this.customerRepo.save({
+            const newUser = await this._customerRepo.save({
                 password: " ",
                 customerId,
                 googleId,
                 email,
                 name,
-                profileImage
+                image
             })
 
             if(!newUser) {

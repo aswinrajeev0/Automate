@@ -11,18 +11,14 @@ import { ERROR_MESSAGES, SUCCESS_MESSAGES, HTTP_STATUS } from "../shared/constan
 export class SendOtpUseCase implements ISendOtpUseCase {
 
     constructor(
-        @inject("IEmailService")
-        private emailService: IEmailService,
-        @inject("IOtpService")
-        private otpService: IOtpService,
-        @inject("IUserExistenceService")
-        private userExistanceService: IUserExistenceService,
-        @inject("IOtpBcrypt")
-        private otpBcrypt: IBcrypt
+        @inject("IEmailService") private _emailService: IEmailService,
+        @inject("IOtpService") private _otpService: IOtpService,
+        @inject("IUserExistenceService") private _userExistanceService: IUserExistenceService,
+        @inject("IOtpBcrypt") private _otpBcrypt: IBcrypt
     ){}
 
     async execute(email: string): Promise<void> {
-        const emailExists = await this.userExistanceService.emailExists(email);
+        const emailExists = await this._userExistanceService.emailExists(email);
         if(emailExists){
             throw new CustomError(
                 ERROR_MESSAGES.EMAIL_EXISTS,
@@ -30,11 +26,11 @@ export class SendOtpUseCase implements ISendOtpUseCase {
             )
         }
 
-        const otp = this.otpService.generateOtp();
+        const otp = this._otpService.generateOtp();
         console.log(`OTP: ${otp}`);
-        const hashOtp = await this.otpBcrypt.hash(otp);
-        await this.otpService.storeOtp(email, hashOtp);
-        await this.emailService.sendOtpEmail(
+        const hashOtp = await this._otpBcrypt.hash(otp);
+        await this._otpService.storeOtp(email, hashOtp);
+        await this._emailService.sendOtpEmail(
             email,
             "AutoMate - Verify your email.",
             otp

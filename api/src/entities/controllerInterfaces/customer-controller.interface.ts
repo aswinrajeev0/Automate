@@ -9,5 +9,7 @@ export interface ICustomerController {
     resetPassword(req: Request, res: Response, next: NextFunction): Promise<void>;
     logout(req: Request, res: Response, next: NextFunction): Promise<void>;
     googleAuth(req: Request, res: Response, next: NextFunction) : Promise<void>;
-    handleRefreshToken(req: Request, res: Response, next: NextFunction): void
+    handleRefreshToken(req: Request, res: Response, next: NextFunction): void;
+    editCustomer(req: Request, res: Response, next: NextFunction): Promise<void>;
+    deleteCustomer(req: Request, res: Response, next: NextFunction): Promise<void>
 }

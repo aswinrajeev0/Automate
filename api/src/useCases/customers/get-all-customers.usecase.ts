@@ -9,8 +9,7 @@ import { HTTP_STATUS } from "../../shared/constants";
 export class GetAllCustomersUseCase implements IGetAllCustomersUseCase {
 
     constructor(
-        @inject("ICustomerRepository")
-        private customerRepo: ICustomerRepository
+        @inject("ICustomerRepository") private _customerRepo: ICustomerRepository
     ){}
 
     async execute(pageNumber: number, pageSize: number, searchTerm: string): Promise<PaginatedCustomers> {
@@ -28,7 +27,7 @@ export class GetAllCustomersUseCase implements IGetAllCustomersUseCase {
 		const skip = (validPageNumber - 1) * validPageSize;
 		const limit = validPageSize;
 
-        const { users, total } = await this.customerRepo.find(
+        const { users, total } = await this._customerRepo.find(
             filter,
             skip,
             limit

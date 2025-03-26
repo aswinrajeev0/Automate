@@ -11,7 +11,7 @@ const redisClient = new RedisClient()
 @injectable()
 export class BlackListTokenUseCase implements IBlackListTokenUseCase {
     constructor(
-        @inject("ITokenService") private tokenService: ITokenService
+        @inject("ITokenService") private _tokenService: ITokenService
     ) { }
 
     async execute(token: string): Promise<void> {
@@ -23,7 +23,7 @@ export class BlackListTokenUseCase implements IBlackListTokenUseCase {
         }
 
         const decoded: string | JwtPayload | null =
-            this.tokenService.decodeAccessToken(token);
+            this._tokenService.decodeAccessToken(token);
         if (!decoded || typeof decoded === "string" || !decoded.exp) {
             throw new Error("Invalid Token: Missing expiration time");
         }

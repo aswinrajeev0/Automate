@@ -5,10 +5,9 @@ import { IUpdateCustomerStatusUseCase } from "../../entities/useCaseInterfaces/c
 @injectable()
 export class UpdateCustomerStatusUseCase implements IUpdateCustomerStatusUseCase {
     constructor(
-        @inject("ICustomerRepository")
-        private customerRepo: ICustomerRepository
+        @inject("ICustomerRepository") private _customerRepo: ICustomerRepository
     ){}
     async execute(id: string): Promise<void> {
-        await this.customerRepo.findByIdAndUpdateStatus(id)
+        await this._customerRepo.findByIdAndUpdateStatus(id)
     }
 }

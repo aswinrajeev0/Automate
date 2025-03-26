@@ -10,29 +10,25 @@ import { ICustomerRepository } from "../../entities/repositoryInterfaces/custome
 @injectable()
 export class CustomerResetPasswordOtpUseCase implements IResetPasswordOtpUseCase {
     constructor(
-        @inject("IEmailService")
-        private emailService: IEmailService,
-        @inject("IOtpService")
-        private otpService: IOtpService,
-        @inject("ICustomerRepository")
-        private customerRepo: ICustomerRepository,
-        @inject("IOtpBcrypt")
-        private otpBcrypt: IBcrypt
+        @inject("IEmailService") private _emailService: IEmailService,
+        @inject("IOtpService") private _otpService: IOtpService,
+        @inject("ICustomerRepository") private _customerRepo: ICustomerRepository,
+        @inject("IOtpBcrypt") private _otpBcrypt: IBcrypt
     ) { }
 
     async execute(email: string): Promise<void> {
-        const emailExists = await this.customerRepo.findByEmail(email)
+        const emailExists = await this._customerRepo.findByEmail(email)
         if (!emailExists) {
             throw new CustomError(
                 ERROR_MESSAGES.EMAIL_NOT_FOUND,
                 HTTP_STATUS.NOT_FOUND
             );
         }
-        const otp = this.otpService.generateOtp();
+        const otp = this._otpService.generateOtp();
         console.log(`OTP: ${otp}`);
-        const hashOtp = await this.otpBcrypt.hash(otp);
-        await this.otpService.storeOtp(email, hashOtp);
-        await this.emailService.sendOtpEmail(
+        const hashOtp = await this._otpBcrypt.hash(otp);
+        await this._otpService.storeOtp(email, hashOtp);
+        await this._emailService.sendOtpEmail(
             email,
             "AutoMate - Verify your reset password email.",
             otp

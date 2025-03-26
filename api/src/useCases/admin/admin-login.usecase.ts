@@ -11,14 +11,12 @@ import { CustomError } from "../../entities/utils/custom.error";
 export class AdminLoginUseCase implements IAdminLoginUseCase {
 
     constructor(
-        @inject("ICustomerRepository")
-        private adminRepo: ICustomerRepository,
-        @inject("IPasswordBcrypt")
-        private passwordBcrypt: IBcrypt
+        @inject("ICustomerRepository") private _adminRepo: ICustomerRepository,
+        @inject("IPasswordBcrypt") private _passwordBcrypt: IBcrypt
     ) { }
 
     async execute(user: AdminLoginDTO): Promise<Partial<IUserEntity>> {
-        const admin = await this.adminRepo.findByEmail(user.email)
+        const admin = await this._adminRepo.findByEmail(user.email)
         if (!admin) {
             throw new CustomError(
                 ERROR_MESSAGES.USER_NOT_FOUND,
@@ -34,7 +32,7 @@ export class AdminLoginUseCase implements IAdminLoginUseCase {
         }
 
         if(user.password){
-            const passMatch = await this.passwordBcrypt.compare(user.password, admin.password)
+            const passMatch = await this._passwordBcrypt.compare(user.password, admin.password)
             if(!passMatch){
                 throw new CustomError(
                     ERROR_MESSAGES.INVALID_CREDENTIALS,

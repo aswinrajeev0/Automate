@@ -7,8 +7,7 @@ import { inject, injectable } from "tsyringe";
 export class GetAllWorkshopsUseCase implements IGetAllWorkshopsUseCase {
 
     constructor(
-        @inject("IWorkshopRepository")
-        private workshopRepo: IWorkshopRepository
+        @inject("IWorkshopRepository") private _workshopRepo: IWorkshopRepository
     ) { }
 
     async execute(pageNumber: number, pageSize: number, searchTerm: string): Promise<PaginatedWorkshops> {
@@ -26,7 +25,7 @@ export class GetAllWorkshopsUseCase implements IGetAllWorkshopsUseCase {
         const skip = (validPageNumber - 1) * validPageSize;
         const limit = validPageSize;
 
-        const { workshops, total } = await this.workshopRepo.find(
+        const { workshops, total } = await this._workshopRepo.find(
             filter,
             skip,
             limit

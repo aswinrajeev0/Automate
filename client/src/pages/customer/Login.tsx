@@ -38,6 +38,7 @@ export default function LoginPage() {
                     title: "Success",
                     description: "You have successfully logged in",
                 });
+                console.log(response.user)
                 dispatch(customerLogin(response.user))
                 navigate("/");
             }

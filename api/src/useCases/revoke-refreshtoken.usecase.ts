@@ -5,10 +5,10 @@ import { IRefreshTokenRepository } from "../entities/repositoryInterfaces/refres
 @injectable()
 export class RevokeRefreshTokenUseCase implements IRevokeRefreshTokenUseCase {
     constructor(
-        @inject("IRefreshTokenRepository") private refreshTokenRepository: IRefreshTokenRepository
+        @inject("IRefreshTokenRepository") private _refreshTokenRepository: IRefreshTokenRepository
     ) { }
 
     async execute(token: string): Promise<void> {
-        await this.refreshTokenRepository.revokeRefreshToken(token);
+        await this._refreshTokenRepository.revokeRefreshToken(token);
     }
 }
