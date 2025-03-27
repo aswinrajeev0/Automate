@@ -6,6 +6,7 @@ interface Workshop {
     email: string,
     phone: string,
     image?: string,
+    bio?: string,
     country: string,
     state: string,
     city: string,

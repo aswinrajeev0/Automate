@@ -40,5 +40,17 @@ export class WorkshopRoute extends BaseRoute {
         this.router.post("/refresh-token", decodeToken("workshop"), (req: Request, res: Response, next: NextFunction) => {
             workshopController.handleRefreshToken(req, res, next)
         })
+
+        this.router.get("/workshop-address", authenticate("workshop"), (req: Request, res: Response, next: NextFunction) => {
+            workshopController.getWorkshopAddress(req, res, next)
+        })
+
+        this.router.put("/update-workshop", authenticate("workshop"), (req: Request, res: Response, next: NextFunction) => {
+            workshopController.updateWorkshop(req, res, next)
+        })
+
+        this.router.put("/edit-address", authenticate("workshop"), (req: Request, res: Response, next: NextFunction) => {
+            workshopController.editAddress(req, res, next)
+        })
     }
 }

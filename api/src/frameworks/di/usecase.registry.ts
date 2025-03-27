@@ -70,6 +70,16 @@ import { IEditCustomerUseCase } from "../../entities/useCaseInterfaces/customer/
 import { EditCustomerUseCase } from "../../useCases/customers/edit-customer.usecase";
 import { IDeleteCustomerUseCase } from "../../entities/useCaseInterfaces/customer/delete-customer.usecase.interface";
 import { DeleteCustomerUseCase } from "../../useCases/customers/delete-customer.usecase";
+import { IGetWorkshopAddressUseCase } from "../../entities/useCaseInterfaces/workshop/get-workshop-address.usecase.interface";
+import { GetWorkshopAddressUseCase } from "../../useCases/workshop/get-workshop-address.usecase";
+import { IEditWorkshopUseCase } from "../../entities/useCaseInterfaces/workshop/edit-workshop.usecase.interface";
+import { EditWorkshopUseCase } from "../../useCases/workshop/edit-workshop.usecase";
+import { IEditWorkshopAddressUseCase } from "../../entities/useCaseInterfaces/workshop/edit-workshop-address.usecase.interface";
+import { EditWorkshopAddressUseCase } from "../../useCases/workshop/edit-workshop-address.usecase";
+import { IGetCustomerAddressUseCase } from "../../entities/useCaseInterfaces/customer/get-customer-address.usecase.interface";
+import { GetCustomerAddressUseCase } from "../../useCases/customers/get-customer-address.usecase";
+import { IEditCustomerAddressUseCase } from "../../entities/useCaseInterfaces/customer/edit-customer-address.usecase.interface";
+import { EditCustomerAddressUseCase } from "../../useCases/customers/edit-customer-address.usecase";
 
 export class UseCaseRegistry {
     static registerUseCases(): void {
@@ -184,6 +194,26 @@ export class UseCaseRegistry {
 
         container.register<IDeleteCustomerUseCase>("IDeleteCustomerUseCase", {
             useClass: DeleteCustomerUseCase
+        })
+
+        container.register<IGetWorkshopAddressUseCase>("IGetWorkshopAddressUseCase", {
+            useClass: GetWorkshopAddressUseCase
+        })
+
+        container.register<IEditWorkshopUseCase>("IEditWorkshopUseCase", {
+            useClass: EditWorkshopUseCase
+        })
+
+        container.register<IEditWorkshopAddressUseCase>("IEditWorkshopAddressUseCase", {
+            useClass: EditWorkshopAddressUseCase
+        })
+
+        container.register<IGetCustomerAddressUseCase>("IGetCustomerAddressUseCase", {
+            useClass: GetCustomerAddressUseCase
+        })
+
+        container.register<IEditCustomerAddressUseCase>("IEditCustomerAddressUseCase", {
+            useClass: EditCustomerAddressUseCase
         })
 
         //* ====== Register Strategies ====== *//

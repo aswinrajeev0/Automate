@@ -36,7 +36,8 @@ export const ERROR_MESSAGES = {
    WRONG_CURRENT_PASSWORD: "Current password is wrong",
    SAME_CURR_NEW_PASSWORD: "Please enter a different password from current",
    INVALID_JSON: "Invalid JSON format in request body.",
-   INVALID_STATUS: "Invalid status provided"
+   INVALID_STATUS: "Invalid status provided",
+   WORKSHOP_NOT_FOUND: "Workshop not found"
 } as const;
 
 export const SUCCESS_MESSAGES = {

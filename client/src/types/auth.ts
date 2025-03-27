@@ -98,3 +98,19 @@ export interface CustomerEditUploadData {
   bio?: string,
   image?: string | undefined
 }
+
+export interface WorkshopEditFormData {
+  name?: string,
+  phone?: string,
+  email?: string,
+  bio?: string,
+  image?: string | undefined
+}
+
+export interface WorkshopAddressEditFormData {
+  country: string,
+  state: string,
+  city: string,
+  streetAddress: string,
+  buildingNo: string
+}

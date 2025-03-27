@@ -5,6 +5,7 @@ export interface IWorkshopEntity {
     name: string;
     email: string;
     phone: string;
+    bio?: string;
     password: string;
     country: string;
     state: string;

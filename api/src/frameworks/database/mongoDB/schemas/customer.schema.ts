@@ -10,7 +10,12 @@ export const customerSchema = new Schema<ICustomerModel>({
     isAdmin: { type: Boolean, default: false },
     image: { type: String },
     isBlocked: { type: Boolean, default: false },
-    bio: {type: String}
+    bio: {type: String},
+    country: {type: String},
+    state: {type: String},
+    city: {type: String},
+    streetAddress: {type: String},
+    buildingNo: {type: String}
 }, {
     timestamps: true
 })

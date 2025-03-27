@@ -16,6 +16,9 @@ import { IWorkshopLogoutUseCase } from "../../entities/useCaseInterfaces/worksho
 import { IUpdateWorkshopApprovalStatusUseCase } from "../../entities/useCaseInterfaces/workshop/update-workshop-approvalstatus.usecase.interface";
 import { IRefreshTokenUseCase } from "../../entities/useCaseInterfaces/admin/admin-refresh-token.usecase.interface";
 import { IFeaturedWorkshopsUseCase } from "../../entities/useCaseInterfaces/workshop/getFeatured-workshops.usecase.interface";
+import { IGetWorkshopAddressUseCase } from "../../entities/useCaseInterfaces/workshop/get-workshop-address.usecase.interface";
+import { IEditWorkshopUseCase } from "../../entities/useCaseInterfaces/workshop/edit-workshop.usecase.interface";
+import { IEditWorkshopAddressUseCase } from "../../entities/useCaseInterfaces/workshop/edit-workshop-address.usecase.interface";
 
 @injectable()
 export class WorkshopController implements IWorkshopController {
@@ -31,7 +34,10 @@ export class WorkshopController implements IWorkshopController {
         @inject("IWorkshopLogoutUseCase") private _workshopLogoutUseCase: IWorkshopLogoutUseCase,
         @inject("IUpdateWorkshopApprovalStatusUseCase") private _updateWorkshopApproval: IUpdateWorkshopApprovalStatusUseCase,
         @inject("IRefreshTokenUseCase") private _refreshToken: IRefreshTokenUseCase,
-        @inject("IFeaturedWorkshopsUseCase") private _featuredWorkshops: IFeaturedWorkshopsUseCase
+        @inject("IFeaturedWorkshopsUseCase") private _featuredWorkshops: IFeaturedWorkshopsUseCase,
+        @inject("IGetWorkshopAddressUseCase") private _workshopAddress: IGetWorkshopAddressUseCase,
+        @inject("IEditWorkshopUseCase") private _editWorkshop: IEditWorkshopUseCase,
+        @inject("IEditWorkshopAddressUseCase") private _editWorkshopAddress: IEditWorkshopAddressUseCase
     ) { }
 
     async signup(req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -81,7 +87,9 @@ export class WorkshopController implements IWorkshopController {
                     id: workshop.id,
                     name: workshop.name,
                     email: workshop.email,
+                    phone: workshop.phone,
                     image: workshop?.image,
+                    bio: workshop?.bio,
                     country: workshop.country,
                     state: workshop.state,
                     city: workshop.city,
@@ -94,7 +102,7 @@ export class WorkshopController implements IWorkshopController {
         }
     }
 
-    
+
     async resetPasswordOtp(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const { email } = req.body
@@ -122,7 +130,7 @@ export class WorkshopController implements IWorkshopController {
             next(error)
         }
     }
-    
+
     async logout(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             if (!req.user) {
@@ -132,10 +140,10 @@ export class WorkshopController implements IWorkshopController {
                 });
                 return;
             }
-            
+
             await this._workshopLogoutUseCase.execute(req.user)
             clearAuthCookies(res, "workshop_access_token", "workshop_refresh_token");
-            
+
             res.status(HTTP_STATUS.OK).json({
                 success: true,
                 message: SUCCESS_MESSAGES.LOGOUT_SUCCESS,
@@ -144,7 +152,7 @@ export class WorkshopController implements IWorkshopController {
             next(error)
         }
     }
-    
+
     handleRefreshToken(req: Request, res: Response, next: NextFunction): void {
         try {
             const refreshToken = req.user?.refresh_token;
@@ -168,7 +176,7 @@ export class WorkshopController implements IWorkshopController {
             next(error)
         }
     }
-    
+
     async getAllWorkshops(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const { page = 1, limit = 10, search = "" } = req.query;
@@ -229,6 +237,73 @@ export class WorkshopController implements IWorkshopController {
         } catch (error) {
             next(error)
         }
+    }
+
+    async getWorkshopAddress(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const workshopId = req.user?.id;
+            const response = await this._workshopAddress.execute(workshopId)
+            res.status(HTTP_STATUS.OK).json({
+                success: true,
+                message: SUCCESS_MESSAGES.DATA_RETRIEVED,
+                address: response
+            })
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    async updateWorkshop(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const workshopId = req.user?.id;
+            const data = req.body
+            const workshop = await this._editWorkshop.execute(workshopId, data)
+            res.status(HTTP_STATUS.OK).json({
+                success: true,
+                message: SUCCESS_MESSAGES.UPDATE_SUCCESS,
+                workshop: {
+                    name: workshop.name,
+                    email: workshop.email,
+                    customerId: workshop.workshopId,
+                    image: workshop.image,
+                    id: workshop.id,
+                    phone: workshop.phone,
+                    bio: workshop.bio,
+                    country: workshop.country,
+                    state: workshop.state,
+                    city: workshop.city,
+                    streetAddress: workshop.streetAddress,
+                    buildingNo: workshop.buildingNo
+                }
+            })
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    async editAddress(req: Request, res: Response, next: NextFunction): Promise<void> {
+        const workshopId = req.user?.id;
+        const data = req.body
+        const workshop = await this._editWorkshopAddress.execute(workshopId, data)
+
+        res.status(HTTP_STATUS.OK).json({
+            success: true,
+            message: SUCCESS_MESSAGES.UPDATE_SUCCESS,
+            workshop: {
+                name: workshop.name,
+                email: workshop.email,
+                customerId: workshop.workshopId,
+                image: workshop.image,
+                id: workshop.id,
+                phone: workshop.phone,
+                bio: workshop.bio,
+                country: workshop.country,
+                state: workshop.state,
+                city: workshop.city,
+                streetAddress: workshop.streetAddress,
+                buildingNo: workshop.buildingNo
+            }
+        })
     }
 
 }

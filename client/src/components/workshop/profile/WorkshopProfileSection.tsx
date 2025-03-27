@@ -1,23 +1,23 @@
 import React, { useEffect, useState } from "react";
+import * as yup from "yup"
+import { RootState } from "../../../store/store";
+import { useDispatch, useSelector } from "react-redux";
+import { useToaster } from "../../../hooks/ui/useToaster";
+import { useWorkshopUpdateProfile } from "../../../hooks/workshop/useWorkshopProfile";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { workshopLogin } from "../../../store/slices/workshopSlice";
+import { uploadImage } from "../../../services/cloudinary/cloudinary";
+import { WorkshopEditFormData } from "../../../types/auth";
 import { TabsContent } from "../../ui/Tabs";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../../ui/Card";
-import { Avatar, AvatarFallback, AvatarImage } from "../../ui/Avatar";
 import { Label } from "../../ui/Label";
+import { Avatar, AvatarFallback, AvatarImage } from "../../ui/Avatar";
 import { Input } from "../../ui/Input";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../../ui/Form";
 import { Loader2, Pencil, Phone, Save, User } from "lucide-react";
-import { Button } from "../../ui/button";
-import * as yup from "yup"
-import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../../../store/store";
-import { CustomerEditUploadData } from "../../../types/auth";
 import { Textarea } from "../../ui/Textarea";
-import { uploadImage } from "../../../services/cloudinary/cloudinary";
-import { customerLogin } from "../../../store/slices/customerSlice";
-import { useToaster } from "../../../hooks/ui/useToaster";
-import { useCustomerUpdateProfile } from "../../../hooks/customer/useCustomerProfile";
+import { Button } from "../../ui/button";
 
 const profileSchema = yup.object().shape({
     name: yup.string().required("Name is required"),
@@ -40,23 +40,20 @@ interface ProfileSectionProps {
     setIsLoadingProfile: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const ProfileSection: React.FC<ProfileSectionProps> = ({ isEditingProfile, setIsEditingProfile, isLoadingProfile, setIsLoadingProfile }) => {
-
-    const { customer } = useSelector((state: RootState) => state.customer)
+const WorkshopProfileSection: React.FC<ProfileSectionProps> = ({ isEditingProfile, setIsEditingProfile, isLoadingProfile, setIsLoadingProfile }) => {
+    const { workshop } = useSelector((state: RootState) => state.workshop)
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [imagePreview, setImagePreview] = useState<string | null>(null);
     const { successToast, errorToast } = useToaster();
-    const customerUpdate = useCustomerUpdateProfile();
+    const workshopUpdate = useWorkshopUpdateProfile();
     const dispatch = useDispatch();
 
     const defaultProfileValues: ProfileFormValues = {
-        name: customer?.name || "",
-        // email: customer?.email || "",
-        phone: customer?.phone || "",
-        bio: customer?.bio || "",
+        name: workshop?.name || "",
+        // email: workshop?.email || "",
+        phone: workshop?.phone || "",
+        bio: workshop?.bio || "",
     }
-
-    //Car enthusiast and regular customer. I own a 2018 Honda Civic and a 2015 Toyota Camry.
 
     const profileForm = useForm<ProfileFormValues>({
         resolver: yupResolver(profileSchema),
@@ -83,14 +80,13 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({ isEditingProfile, setIs
     const onSubmitProfile = async (values: ProfileFormValues) => {
         try {
             setIsLoadingProfile(true)
-            let imageUrl = customer?.image || undefined;
+            let imageUrl = workshop?.image || undefined;
 
             if (selectedFile) {
                 imageUrl = await uploadImage(selectedFile) || undefined;
             }
 
-            const customerEditData: CustomerEditUploadData = {
-                id: customer?.id,
+            const workshopEditData: WorkshopEditFormData = {
                 name: values.name,
                 // email: values.email,
                 phone: values.phone,
@@ -98,10 +94,10 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({ isEditingProfile, setIs
                 image: imageUrl
             }
 
-            const response = await customerUpdate.mutateAsync(customerEditData)
+            const response = await workshopUpdate.mutateAsync(workshopEditData)
             if (response.status === 200) {
                 successToast(response.data.message)
-                dispatch(customerLogin(response.data.user))
+                dispatch(workshopLogin(response.data.workshop))
                 setImagePreview(null);
                 setSelectedFile(null);
                 setIsEditingProfile(false)
@@ -138,8 +134,8 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({ isEditingProfile, setIs
                                 <Avatar className="w-32 h-32 mb-4">
                                     <AvatarImage src={
                                         imagePreview ||
-                                        (customer?.name ? customer?.image : "https://github.com/shadcn.png")
-                                    } alt={customer?.name} />
+                                        (workshop?.name ? workshop?.image : "https://github.com/shadcn.png")
+                                    } alt={workshop?.name} />
                                     <AvatarFallback className="text-3xl">
                                         {defaultProfileValues.name
                                             .split(" ")
@@ -288,4 +284,4 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({ isEditingProfile, setIs
     )
 }
 
-export default ProfileSection;
+export default WorkshopProfileSection

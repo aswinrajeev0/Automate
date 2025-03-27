@@ -11,4 +11,7 @@ export interface IWorkshopController {
     updateWorkshopApprovalStatus(req: Request, res: Response, next: NextFunction): Promise<void>;
     handleRefreshToken(req: Request, res: Response, next: NextFunction): void;
     getFeaturedWorkshops(req: Request, res: Response, next: NextFunction): Promise<void>;
+    getWorkshopAddress(req: Request, res: Response, next: NextFunction): Promise<void>;
+    updateWorkshop(req: Request, res: Response, next: NextFunction): Promise<void>;
+    editAddress(req: Request, res: Response, next: NextFunction): Promise<void>;
 }

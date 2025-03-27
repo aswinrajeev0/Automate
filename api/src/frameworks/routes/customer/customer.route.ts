@@ -60,5 +60,13 @@ export class CustomerRoute extends BaseRoute {
         this.router.delete("/delete-customer", decodeToken("customer"), (req: Request, res: Response, next: NextFunction) => {
             customerController.deleteCustomer(req, res, next)
         })
+
+        this.router.get("/customer-address", authenticate("customer"), (req: Request, res: Response, next: NextFunction) => {
+            customerController.getCustomerAddress(req, res, next)
+        })
+
+        this.router.put("/edit-address", authenticate("customer"), (req: Request, res: Response, next: NextFunction) => {
+            customerController.editAddress(req, res, next)
+        })
     }
 }

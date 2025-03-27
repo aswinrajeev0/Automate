@@ -15,35 +15,36 @@ import {
     AlertDialogTrigger
 } from "../../ui/alert-dialog";
 import { toast } from "sonner";
-import { customerLogout } from "../../../store/slices/customerSlice";
-import { useCustomerDelete, useCustomerLogout } from "../../../hooks/customer/useCustomerAuth";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { useWorkshopLogout } from "../../../hooks/workshop/useWorkshopAuth";
+import { workshopLogout } from "../../../store/slices/workshopSlice";
+import { useWorkshopDelete } from "../../../hooks/workshop/useWorkshopProfile";
 
 
-const AccountSection: React.FC = () => {
+const WorkshopAccountSection: React.FC = () => {
     
     const dispatch = useDispatch()
     const navigate = useNavigate()
     
-    const logout = useCustomerLogout()
-    const deleteAccount = useCustomerDelete()
+    const logout = useWorkshopLogout()
+    const deleteAccount = useWorkshopDelete()
 
     const handleLogout = async () => {
         const response = await logout.mutateAsync()
         if (response.success) {
-            dispatch(customerLogout())
+            dispatch(workshopLogout())
             toast.success("Logged out successfully.")
-            navigate("/login")
+            navigate("/workshop/login")
         }
     }
     
     const handleDeleteAccount = async () => {
         const response = await deleteAccount.mutateAsync()
         if(response.status === 200) {
-            dispatch(customerLogout())
+            dispatch(workshopLogout())
             toast.success("Account deleted successfully")
-            navigate("/login")
+            navigate("/workshop/login")
         }
     }
 
@@ -105,4 +106,4 @@ const AccountSection: React.FC = () => {
     )
 }
 
-export default AccountSection
+export default WorkshopAccountSection

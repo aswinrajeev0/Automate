@@ -11,5 +11,7 @@ export interface ICustomerController {
     googleAuth(req: Request, res: Response, next: NextFunction) : Promise<void>;
     handleRefreshToken(req: Request, res: Response, next: NextFunction): void;
     editCustomer(req: Request, res: Response, next: NextFunction): Promise<void>;
-    deleteCustomer(req: Request, res: Response, next: NextFunction): Promise<void>
+    deleteCustomer(req: Request, res: Response, next: NextFunction): Promise<void>;
+    getCustomerAddress(req: Request, res: Response, next: NextFunction): Promise<void>;
+    editAddress(req: Request, res: Response, next: NextFunction): Promise<void>;
 }

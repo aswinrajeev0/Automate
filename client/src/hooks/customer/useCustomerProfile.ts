@@ -1,6 +1,15 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { CustomerEditUploadData } from "../../types/auth"
 import { updateCustomer } from "../../services/customer/authServices"
+import { editCustomerAddress, getCustomerAddress } from "../../services/customer/customerProfileService"
+
+export interface ICustomerAddress {
+    country: string,
+    state: string,
+    city: string,
+    streetAddress: string,
+    buildingNo: string
+}
 
 export const useCustomerUpdateProfile = () => {
     const queryClient = useQueryClient()
@@ -11,6 +20,26 @@ export const useCustomerUpdateProfile = () => {
         },
         onError: (error: Error) => {
             console.error("Error in updating profile", error)
+        }
+    })
+}
+
+export const useCustomerAddress = () => {
+    return useQuery<ICustomerAddress, Error>({
+        queryKey: ["customer-address"],
+        queryFn: getCustomerAddress
+    });
+};
+
+export const useEditCustomerAddress = () => {
+    const queryClient = useQueryClient()
+    return useMutation({
+        mutationFn: (data: ICustomerAddress) => editCustomerAddress(data),
+        onSuccess: () => {
+            queryClient.invalidateQueries({queryKey: ["customer-address"]})
+        },
+        onError: (error: Error) => {
+            console.error("Error in editing address", error)
         }
     })
 }

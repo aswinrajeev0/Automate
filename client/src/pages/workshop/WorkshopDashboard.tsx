@@ -1,73 +1,69 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, Outlet, useNavigate } from "react-router-dom";
+import { LayoutDashboard, FileText, LogOut, Clock, CheckCircle, MessageSquare, Star, UserCircle } from "lucide-react";
 import {
-    LayoutDashboard,
-    FileText,
-    Clock,
-    CheckCircle,
-    MessageSquare,
-    Star,
-    UserCircle,
-    LogOut,
-} from "lucide-react";
-import { useToast } from "../../hooks/ui/useToast";
-import {
-    SidebarProvider,
-    Sidebar,
-    SidebarHeader,
-    SidebarContent,
-    SidebarFooter,
-    SidebarMenu,
-    SidebarMenuItem,
-    SidebarMenuButton,
-    SidebarInset
+    SidebarProvider
 } from "../../components/ui/Sidebar";
-import WorkshopDasboardContent from "../../components/workshop/DashboardContent";
-import WorkshopHeader from "../../components/workshop/Header";
 import { useDispatch } from "react-redux";
+import { useToaster } from "../../hooks/ui/useToaster";
+import WorkshopHeader from "../../components/workshop/Header";
+import { useIsMobile } from "../../hooks/useMobile";
 import { workshopLogout } from "../../store/slices/workshopSlice";
 import { useWorkshopLogout } from "../../hooks/workshop/useWorkshopAuth";
-
-
-export default function WorkshopDashboard() {
+export default function AdminDashboard() {
     const navigate = useNavigate();
-    const { toast } = useToast();
-    const [activeMenu, setActiveMenu] = useState("dashboard");
-    const [isSidebarOpen, setIsSidebarOpen] = useState(true)
-    const dispatch = useDispatch()
-    const logout = useWorkshopLogout()
+    const { successToast } = useToaster();
+    const [isSideBarOpen, setIsSidebarOpen] = useState(true);
+    const dispatch = useDispatch();
+    const logOut = useWorkshopLogout();
+    const isMobile = useIsMobile();
+
+    useEffect(() => {
+        if (isMobile) {
+            setIsSidebarOpen(false);
+        } else {
+            setIsSidebarOpen(true);
+        }
+    }, [isMobile]);
 
     const handleLogout = async () => {
-        const response = await logout.mutateAsync()
+        const response = await logOut.mutateAsync();
         if (response) {
-            dispatch(workshopLogout())
-            toast({
-                title: "Logged out",
-                description: "You have been successfully logged out",
-            });
+            dispatch(workshopLogout());
+            successToast("You have been successfully logged out of workshop");
             navigate("/workshop/login");
         }
     };
 
-    // Menu items based on the design
     const menuItems = [
-        { id: "dashboard", title: "Dashboard", icon: LayoutDashboard },
-        { id: "requests", title: "Requests", icon: FileText },
-        { id: "pending-jobs", title: "Pending Jobs", icon: Clock },
-        { id: "finished-jobs", title: "Finished Jobs", icon: CheckCircle },
-        { id: "chats", title: "Chats", icon: MessageSquare },
-        { id: "ratings", title: "Ratings and review", icon: Star },
-        { id: "profile", title: "Edit Profile", icon: UserCircle },
+        { id: "dashboard", title: "Dashboard", icon: LayoutDashboard, path: "/workshop" },
+        { id: "requests", title: "Requests", icon: FileText, path: "/workshop/requests" },
+        { id: "pending-jobs", title: "Pending Jobs", icon: Clock, path: "/workshop/pending-jobs" },
+        { id: "finished-jobs", title: "Finished Jobs", icon: CheckCircle, path: "/workshop/finished-jobs" },
+        { id: "chats", title: "Chats", icon: MessageSquare, path: "/workshop/chats" },
+        { id: "ratings", title: "Ratings and review", icon: Star, path: "/workshop/ratings" },
+        { id: "profile", title: "Edit Profile", icon: UserCircle, path: "/workshop/profile" },
     ];
 
     return (
-        <SidebarProvider defaultOpen={true}>
-            <div className="flex min-h-screen w-full bg-background">
-                {/* Workshop Sidebar */}
-                <Sidebar variant="sidebar" className="bg-red-500 text-black">
-                    <SidebarHeader className="border-b border-white/10">
+        <SidebarProvider>
+            <div className="flex min-h-screen w-full bg-background relative">
+                {/* Mobile & Desktop Sidebar */}
+                <aside
+                    className={`
+                fixed top-0 left-0 h-full bg-[#181616] z-50
+                transition-all duration-300 ease-in-out
+                ${isMobile
+                            ? isSideBarOpen ? "translate-x-0 w-64" : "-translate-x-full w-64"
+                            : isSideBarOpen ? "w-64" : "w-16"
+                        }
+                ${!isMobile ? "static" : ""}
+              `}
+                >
+                    {/* Header */}
+                    <div className="border-b border-white/10">
                         <div className="flex items-center gap-2 px-4 py-4">
-                            <div className="bg-black rounded-full p-1">
+                            <div className="bg-white rounded-full p-1">
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
                                     width="24"
@@ -78,55 +74,70 @@ export default function WorkshopDashboard() {
                                     strokeWidth="2"
                                     strokeLinecap="round"
                                     strokeLinejoin="round"
-                                    className="text-red-500"
+                                    className="text-red-400"
                                 >
                                     <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
                                 </svg>
                             </div>
-                            <span className="font-bold tracking-wide text-xl">AUTOMATE</span>
+                            {(isSideBarOpen || isMobile) && (
+                                <span className="font-bold tracking-wide text-xl text-white">AUTOMATE</span>
+                            )}
                         </div>
-                    </SidebarHeader>
+                    </div>
 
-                    <SidebarContent className="px-2 py-4">
-                        <SidebarMenu>
-                            {menuItems.map((item) => (
-                                <SidebarMenuItem key={item.id}>
-                                    <SidebarMenuButton
-                                        isActive={activeMenu === item.id}
-                                        onClick={() => setActiveMenu(item.id)}
-                                        className="py-3 text-black hover:bg-white/10 data-[active=true]:bg-white/20"
-                                    >
-                                        <item.icon className="h-5 w-5" />
-                                        <span className="text-base">{item.title}</span>
-                                    </SidebarMenuButton>
-                                </SidebarMenuItem>
-                            ))}
-                        </SidebarMenu>
-                    </SidebarContent>
+                    {/* Content */}
+                    <div className="px-2 py-4">
+                        <nav>
+                            <ul className="space-y-1">
+                                {menuItems.map((item) => (
+                                    <li key={item.id}>
+                                        <Link
+                                            to={item.path}
+                                            className="py-3 px-3 text-white hover:bg-white/10 flex items-center gap-2 rounded-md"
+                                            onClick={() => isMobile && setIsSidebarOpen(false)}
+                                        >
+                                            <item.icon className="h-5 w-5" />
+                                            {(isSideBarOpen || isMobile) && <span className="text-base">{item.title}</span>}
+                                        </Link>
+                                    </li>
+                                ))}
+                            </ul>
+                        </nav>
+                    </div>
 
-                    <SidebarFooter className="border-t border-white/10 p-4">
-                        <SidebarMenu>
-                            <SidebarMenuItem>
-                                <SidebarMenuButton onClick={handleLogout} className="py-3 text-black hover:bg-white/10">
-                                    <LogOut className="h-5 w-5" />
-                                    <span className="text-base">Logout</span>
-                                </SidebarMenuButton>
-                            </SidebarMenuItem>
-                        </SidebarMenu>
-                    </SidebarFooter>
-                </Sidebar>
+                    {/* Footer */}
+                    <div className="border-t border-white/10 p-4 absolute bottom-0 w-full">
+                        <button
+                            onClick={handleLogout}
+                            className="py-3 w-full px-3 text-white hover:bg-white/10 flex items-center gap-2 rounded-md"
+                        >
+                            <LogOut className="h-5 w-5" />
+                            {(isSideBarOpen || isMobile) && <span className="text-base">Logout</span>}
+                        </button>
+                    </div>
+                </aside>
+
+                {/* Overlay for mobile when sidebar is open */}
+                {isMobile && isSideBarOpen && (
+                    <div
+                        className="fixed inset-0 bg-black/50 z-40"
+                        onClick={() => setIsSidebarOpen(false)}
+                    />
+                )}
 
                 {/* Main Content */}
-                <SidebarInset className={`flex-1 bg-gray-50 ${isSidebarOpen ? "ml-50" : "ml-0"}`}>
-                    {/* Header */}
-                    <WorkshopHeader setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} />
-                    {/* Dashboard Content */}
-                    <main className="p-6">
-                        {activeMenu === "dashboard" && (
-                            <WorkshopDasboardContent />
-                        )}
+                <div
+                    className={`flex-1 flex flex-col transition-all duration-300 ${isSideBarOpen && !isMobile ? "ml-0" : isMobile ? "ml-0" : "ml-0"
+                        }`}
+                >
+                    <WorkshopHeader
+                        isSidebarOpen={isSideBarOpen}
+                        setIsSidebarOpen={setIsSidebarOpen}
+                    />
+                    <main className="p-4 md:p-6 bg-gray-50 flex-1">
+                        <Outlet />
                     </main>
-                </SidebarInset>
+                </div>
             </div>
         </SidebarProvider>
     );

@@ -1,14 +1,15 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { TabsContent } from "../../ui/Tabs";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../../ui/Card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../../ui/Form";
 import { Building, Globe, Home, Loader2, MapPin, Pencil, Save } from "lucide-react";
 import { Input } from "../../ui/Input";
 import { Button } from "../../ui/button";
-import * as yup from "yup"
+import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { toast } from "sonner";
+import { ICustomerAddress, useCustomerAddress, useEditCustomerAddress } from "../../../hooks/customer/useCustomerProfile";
 
 const addressSchema = yup.object().shape({
     country: yup.string().required("Country is required"),
@@ -16,14 +17,14 @@ const addressSchema = yup.object().shape({
     city: yup.string().required("City is required"),
     streetAddress: yup.string().required("Street address is required"),
     buildingNo: yup.string().required("Building number is required"),
-})
+});
 
-type AddressFormValues = yup.InferType<typeof addressSchema>
+type AddressFormValues = yup.InferType<typeof addressSchema>;
 
 interface AddressSectionProps {
-    isEditingAddress: boolean
+    isEditingAddress: boolean;
     setIsEditingAddress: React.Dispatch<React.SetStateAction<boolean>>;
-    isLoadingAddress: boolean
+    isLoadingAddress: boolean;
     setIsLoadingAddress: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
@@ -31,179 +32,243 @@ const AddressSection: React.FC<AddressSectionProps> = ({
     isEditingAddress,
     setIsEditingAddress,
     isLoadingAddress,
-    setIsLoadingAddress
+    setIsLoadingAddress,
 }) => {
-
-    const defaultAddressValues: AddressFormValues = {
-        country: "United States",
-        state: "California",
-        city: "San Francisco",
-        streetAddress: "123 Main Street",
-        buildingNo: "Apt 4B",
-    }
+    const { data, isLoading: isFetching, error, isError } = useCustomerAddress();
+    const editAddress = useEditCustomerAddress();
 
     const addressForm = useForm<AddressFormValues>({
         resolver: yupResolver(addressSchema),
-        defaultValues: defaultAddressValues,
-    })
+        defaultValues: {
+            country: "",
+            state: "",
+            city: "",
+            streetAddress: "",
+            buildingNo: "",
+        },
+    });
 
-    const onSubmitAddress = (data: AddressFormValues) => {
-        setIsLoadingAddress(true)
+    useEffect(() => {
+        if (data) {
+            console.log("Fetched customer address data:", data);
+            addressForm.reset({
+                country: data.country || "",
+                state: data.state || "",
+                city: data.city || "",
+                streetAddress: data.streetAddress || "",
+                buildingNo: data.buildingNo || "",
+            });
+        }
+    }, [data, addressForm]);
 
-        // Simulate API call
-        setTimeout(() => {
-            console.log("Address updated:", data)
-            toast.success("Address updated successfully")
-            setIsEditingAddress(false)
-            setIsLoadingAddress(false)
-        }, 1500)
-    }
+    const onSubmitAddress = async (values: AddressFormValues) => {
+        const editAddressData: ICustomerAddress = {
+            country: values.country,
+            state: values.state,
+            city: values.city,
+            streetAddress: values.streetAddress,
+            buildingNo: values.buildingNo,
+        };
+
+        try {
+            setIsLoadingAddress(true);
+            await editAddress.mutateAsync(editAddressData);
+            toast.success("Address updated successfully");
+            setIsEditingAddress(false);
+        } catch (err) {
+            console.error("Error updating address:", err);
+            toast.error("Failed to update address");
+        } finally {
+            setIsLoadingAddress(false);
+        }
+    };
 
     const handleEditAddressToggle = () => {
         if (isEditingAddress) {
-            addressForm.reset(defaultAddressValues)
+            addressForm.reset({
+                country: data?.country || "",
+                state: data?.state || "",
+                city: data?.city || "",
+                streetAddress: data?.streetAddress || "",
+                buildingNo: data?.buildingNo || "",
+            });
         }
-        setIsEditingAddress(!isEditingAddress)
-    }
+        setIsEditingAddress(!isEditingAddress);
+    };
 
-    return (
-        <>
+    if (isFetching) {
+        return (
             <TabsContent value="address">
                 <Card>
                     <CardHeader>
                         <CardTitle>Address Information</CardTitle>
-                        <CardDescription>Update your address details</CardDescription>
+                        <CardDescription>Loading address details...</CardDescription>
                     </CardHeader>
+                    <CardContent>
+                        <div className="flex justify-center">
+                            <Loader2 className="h-6 w-6 animate-spin" />
+                        </div>
+                    </CardContent>
+                </Card>
+            </TabsContent>
+        );
+    }
 
-                    <Form {...addressForm}>
-                        <form onSubmit={addressForm.handleSubmit(onSubmitAddress)}>
-                            <CardContent className="space-y-4">
-                                <FormField
-                                    control={addressForm.control}
-                                    name="country"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Country</FormLabel>
-                                            <FormControl>
-                                                <div className="relative">
-                                                    <Globe className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                                                    <Input {...field} disabled={!isEditingAddress} className="pl-10" />
-                                                </div>
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
+    if (isError) {
+        return (
+            <TabsContent value="address">
+                <Card>
+                    <CardHeader>
+                        <CardTitle>Address Information</CardTitle>
+                        <CardDescription>Error loading address: {error?.message}</CardDescription>
+                    </CardHeader>
+                </Card>
+            </TabsContent>
+        );
+    }
 
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    return (
+        <TabsContent value="address">
+            <Card>
+                <CardHeader>
+                    <CardTitle>Address Information</CardTitle>
+                    <CardDescription>Update your address details</CardDescription>
+                </CardHeader>
+
+                <Form {...addressForm}>
+                    <form onSubmit={addressForm.handleSubmit(onSubmitAddress)}>
+                        <CardContent className="space-y-4">
+                            {isEditingAddress ? (
+                                <>
                                     <FormField
                                         control={addressForm.control}
-                                        name="state"
+                                        name="country"
                                         render={({ field }) => (
                                             <FormItem>
-                                                <FormLabel>State</FormLabel>
+                                                <FormLabel>Country</FormLabel>
                                                 <FormControl>
                                                     <div className="relative">
-                                                        <MapPin className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                                                        <Input {...field} disabled={!isEditingAddress} className="pl-10" />
+                                                        <Globe className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                                                        <Input {...field} className="pl-10" />
                                                     </div>
                                                 </FormControl>
                                                 <FormMessage />
                                             </FormItem>
                                         )}
                                     />
-
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <FormField
+                                            control={addressForm.control}
+                                            name="state"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel>State</FormLabel>
+                                                    <FormControl>
+                                                        <div className="relative">
+                                                            <MapPin className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                                                            <Input {...field} className="pl-10" />
+                                                        </div>
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+                                        <FormField
+                                            control={addressForm.control}
+                                            name="city"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel>City</FormLabel>
+                                                    <FormControl>
+                                                        <div className="relative">
+                                                            <MapPin className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                                                            <Input {...field} className="pl-10" />
+                                                        </div>
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+                                    </div>
                                     <FormField
                                         control={addressForm.control}
-                                        name="city"
+                                        name="streetAddress"
                                         render={({ field }) => (
                                             <FormItem>
-                                                <FormLabel>City</FormLabel>
+                                                <FormLabel>Street Address</FormLabel>
                                                 <FormControl>
                                                     <div className="relative">
-                                                        <MapPin className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                                                        <Input {...field} disabled={!isEditingAddress} className="pl-10" />
+                                                        <Home className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                                                        <Input {...field} className="pl-10" />
                                                     </div>
                                                 </FormControl>
                                                 <FormMessage />
                                             </FormItem>
                                         )}
                                     />
+                                    <FormField
+                                        control={addressForm.control}
+                                        name="buildingNo"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Building/Apartment Number</FormLabel>
+                                                <FormControl>
+                                                    <div className="relative">
+                                                        <Building className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                                                        <Input {...field} className="pl-10" />
+                                                    </div>
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                </>
+                            ) : (
+                                <div className="space-y-2">
+                                    <p><Globe className="inline h-4 w-4 mr-2" /> Country: {data?.country || "N/A"}</p>
+                                    <p><MapPin className="inline h-4 w-4 mr-2" /> State: {data?.state || "N/A"}</p>
+                                    <p><MapPin className="inline h-4 w-4 mr-2" /> City: {data?.city || "N/A"}</p>
+                                    <p><Home className="inline h-4 w-4 mr-2" /> Street: {data?.streetAddress || "N/A"}</p>
+                                    <p><Building className="inline h-4 w-4 mr-2" /> Building No: {data?.buildingNo || "N/A"}</p>
                                 </div>
+                            )}
+                        </CardContent>
 
-                                <FormField
-                                    control={addressForm.control}
-                                    name="streetAddress"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Street Address</FormLabel>
-                                            <FormControl>
-                                                <div className="relative">
-                                                    <Home className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                                                    <Input {...field} disabled={!isEditingAddress} className="pl-10" />
-                                                </div>
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
+                        <CardFooter className="flex justify-between">
+                            <Button
+                                type="button"
+                                variant={isEditingAddress ? "outline" : "default"}
+                                onClick={handleEditAddressToggle}
+                            >
+                                {isEditingAddress ? "Cancel" : (
+                                    <>
+                                        <Pencil className="mr-2 h-4 w-4" />
+                                        Edit Address
+                                    </>
+                                )}
+                            </Button>
 
-                                <FormField
-                                    control={addressForm.control}
-                                    name="buildingNo"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Building/Apartment Number</FormLabel>
-                                            <FormControl>
-                                                <div className="relative">
-                                                    <Building className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                                                    <Input {...field} disabled={!isEditingAddress} className="pl-10" />
-                                                </div>
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                            </CardContent>
-
-                            <CardFooter className="flex justify-between">
-                                <Button
-                                    type="button"
-                                    variant={isEditingAddress ? "outline" : "default"}
-                                    onClick={handleEditAddressToggle}
-                                >
-                                    {isEditingAddress ? (
-                                        "Cancel"
+                            {isEditingAddress && (
+                                <Button type="submit" disabled={isLoadingAddress || editAddress.isLoading}>
+                                    {isLoadingAddress || editAddress.isLoading ? (
+                                        <>
+                                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                            Saving...
+                                        </>
                                     ) : (
                                         <>
-                                            <Pencil className="mr-2 h-4 w-4" />
-                                            Edit Address
+                                            <Save className="mr-2 h-4 w-4" />
+                                            Save Changes
                                         </>
                                     )}
                                 </Button>
+                            )}
+                        </CardFooter>
+                    </form>
+                </Form>
+            </Card>
+        </TabsContent>
+    );
+};
 
-                                {isEditingAddress && (
-                                    <Button type="submit" disabled={isLoadingAddress}>
-                                        {isLoadingAddress ? (
-                                            <>
-                                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                                Saving...
-                                            </>
-                                        ) : (
-                                            <>
-                                                <Save className="mr-2 h-4 w-4" />
-                                                Save Changes
-                                            </>
-                                        )}
-                                    </Button>
-                                )}
-                            </CardFooter>
-                        </form>
-                    </Form>
-                </Card>
-            </TabsContent>
-        </>
-    )
-}
-
-export default AddressSection
+export default AddressSection;

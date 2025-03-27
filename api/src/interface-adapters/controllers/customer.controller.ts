@@ -18,6 +18,8 @@ import { loginSchema } from "./validations/customer-login.validation.schema";
 import { IRefreshTokenUseCase } from "../../entities/useCaseInterfaces/admin/admin-refresh-token.usecase.interface";
 import { IEditCustomerUseCase } from "../../entities/useCaseInterfaces/customer/edit-customer.interface.usecase";
 import { IDeleteCustomerUseCase } from "../../entities/useCaseInterfaces/customer/delete-customer.usecase.interface";
+import { IGetCustomerAddressUseCase } from "../../entities/useCaseInterfaces/customer/get-customer-address.usecase.interface";
+import { IEditCustomerAddressUseCase } from "../../entities/useCaseInterfaces/customer/edit-customer-address.usecase.interface";
 
 @injectable()
 export class CustomerController implements ICustomerController {
@@ -34,7 +36,9 @@ export class CustomerController implements ICustomerController {
         @inject("IGoogleUseCase") private _googleUseCase: IGoogleUseCase,
         @inject("IRefreshTokenUseCase") private _refreshToken: IRefreshTokenUseCase,
         @inject("IEditCustomerUseCase") private _editCustomerUseCase: IEditCustomerUseCase,
-        @inject("IDeleteCustomerUseCase") private _deleteCustomer: IDeleteCustomerUseCase
+        @inject("IDeleteCustomerUseCase") private _deleteCustomer: IDeleteCustomerUseCase,
+        @inject("IGetCustomerAddressUseCase") private _getCustomerAddress: IGetCustomerAddressUseCase,
+        @inject("IEditCustomerAddressUseCase") private _editCustomerAddress: IEditCustomerAddressUseCase,
     ) { }
 
     async signup(req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -285,6 +289,35 @@ export class CustomerController implements ICustomerController {
             res.status(HTTP_STATUS.OK).json({
                 success: true,
                 message: SUCCESS_MESSAGES.DELETE_SUCCESS
+            })
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    async getCustomerAddress(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const customerId = req.user?.id;
+            const address = await this._getCustomerAddress.execute(customerId);
+            res.status(HTTP_STATUS.OK).json({
+                success: true,
+                message: SUCCESS_MESSAGES.DATA_RETRIEVED,
+                address
+            })
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    async editAddress(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const customerId = req.user?.id;
+            const data = req.body
+            const address = await this._editCustomerAddress.execute(customerId, data)
+            res.status(HTTP_STATUS.OK).json({
+                success: true,
+                message: SUCCESS_MESSAGES.DATA_RETRIEVED,
+                address
             })
         } catch (error) {
             next(error)

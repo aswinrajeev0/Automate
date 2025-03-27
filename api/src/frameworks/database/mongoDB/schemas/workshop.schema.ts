@@ -7,6 +7,7 @@ export const workshopSchema = new Schema<IWorkshopModel>({
     email: { type: String, required: true },
     phone: { type: String, required: true },
     image: { type: String },
+    bio: {type: String},
     password: { type: String, required: true },
     country: { type: String, required: true },
     state: { type: String, required: true },
