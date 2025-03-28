@@ -8,6 +8,8 @@ import { IRefreshTokenRepository } from "../../entities/repositoryInterfaces/ref
 import { RefreshTokenRepository } from "../../interface-adapters/repositories/refresh-token.repository";
 import { IWorkshopRepository } from "../../entities/repositoryInterfaces/workshop/workshop-repository.interface";
 import { WorkshopRepository } from "../../interface-adapters/repositories/workshop/workshop.repository";
+import { IReviewRepository } from "../../entities/repositoryInterfaces/review/review-repository.interface";
+import { ReviewRepository } from "../../interface-adapters/repositories/workshop/review-repository";
 
 export class RepositoryRegistry {
     static registerRepositories(): void {
@@ -25,6 +27,10 @@ export class RepositoryRegistry {
 
         container.register<IWorkshopRepository>("IWorkshopRepository", {
             useClass: WorkshopRepository
+        })
+
+        container.register<IReviewRepository>("IReviewRepository", {
+            useClass: ReviewRepository
         })
     }
 }

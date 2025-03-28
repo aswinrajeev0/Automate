@@ -20,6 +20,8 @@ import { IEditCustomerUseCase } from "../../entities/useCaseInterfaces/customer/
 import { IDeleteCustomerUseCase } from "../../entities/useCaseInterfaces/customer/delete-customer.usecase.interface";
 import { IGetCustomerAddressUseCase } from "../../entities/useCaseInterfaces/customer/get-customer-address.usecase.interface";
 import { IEditCustomerAddressUseCase } from "../../entities/useCaseInterfaces/customer/edit-customer-address.usecase.interface";
+import { IChangeCustomerPasswordUseCase } from "../../entities/useCaseInterfaces/customer/change-password.usecase.interface";
+import { passwordSchema } from "../../shared/validations/password.validation";
 
 @injectable()
 export class CustomerController implements ICustomerController {
@@ -39,6 +41,7 @@ export class CustomerController implements ICustomerController {
         @inject("IDeleteCustomerUseCase") private _deleteCustomer: IDeleteCustomerUseCase,
         @inject("IGetCustomerAddressUseCase") private _getCustomerAddress: IGetCustomerAddressUseCase,
         @inject("IEditCustomerAddressUseCase") private _editCustomerAddress: IEditCustomerAddressUseCase,
+        @inject("IChangeCustomerPasswordUseCase") private _changePasssword: IChangeCustomerPasswordUseCase,
     ) { }
 
     async signup(req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -319,6 +322,42 @@ export class CustomerController implements ICustomerController {
                 message: SUCCESS_MESSAGES.DATA_RETRIEVED,
                 address
             })
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    async changePassword(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const customerId = req.user?.id;
+            const data = req.body;
+
+            if(!customerId) {
+                res.status(HTTP_STATUS.UNAUTHORIZED).json({
+                    success: false,
+                    message: ERROR_MESSAGES.UNAUTHORIZED_ACCESS
+                })
+                return;
+            }
+
+            if(!data || !data.oldPassword || !data.newPassword || !data.confirmPassword) {
+                res.status(HTTP_STATUS.BAD_REQUEST).json({
+                    success: false,
+                    message: ERROR_MESSAGES.MISSING_PARAMETERS
+                })
+                return;
+            }
+
+            const schema = passwordSchema;
+            schema.parse(data.newPassword)
+
+            await this._changePasssword.execute(customerId, data)
+
+            res.status(HTTP_STATUS.OK).json({
+                success: true,
+                message: SUCCESS_MESSAGES.PASSWORD_RESET_SUCCESS
+            })
+
         } catch (error) {
             next(error)
         }

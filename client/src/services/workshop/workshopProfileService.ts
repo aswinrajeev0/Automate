@@ -1,6 +1,6 @@
 import { workshopApi } from "../../api/workshop.axios";
 import { IWorkshopAddress } from "../../hooks/workshop/useWorkshopProfile";
-import { WorkshopAddressEditFormData, WorkshopEditFormData } from "../../types/auth";
+import { ChangePasswordData, WorkshopAddressEditFormData, WorkshopEditFormData } from "../../types/auth";
 
 export const updateWorkshop = async (data: WorkshopEditFormData) => {
     try {
@@ -35,5 +35,14 @@ export const editWorkshopAddress = async (data: WorkshopAddressEditFormData) => 
         return response
     } catch (error: any) {
         throw error.response.data
+    }
+}
+
+export const changeWorkshopPassword = async (data: ChangePasswordData) => {
+    try {
+        const response = await workshopApi.patch("/change-password", data);
+        return response.data;
+    } catch (error: any) {
+        throw error.response.data;
     }
 }

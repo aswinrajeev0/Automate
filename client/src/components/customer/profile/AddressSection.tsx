@@ -249,8 +249,8 @@ const AddressSection: React.FC<AddressSectionProps> = ({
                             </Button>
 
                             {isEditingAddress && (
-                                <Button type="submit" disabled={isLoadingAddress || editAddress.isLoading}>
-                                    {isLoadingAddress || editAddress.isLoading ? (
+                                <Button type="submit" disabled={isLoadingAddress || editAddress.isPending}>
+                                    {isLoadingAddress || editAddress.isPending ? (
                                         <>
                                             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                                             Saving...

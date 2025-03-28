@@ -6,6 +6,14 @@ import ProfileSection from "../../components/customer/profile/ProfileSection"
 import { Header } from "../../components/customer/Header"
 import AddressSection from "../../components/customer/profile/AddressSection"
 import AccountSection from "../../components/customer/profile/AccountSection"
+import {
+    Breadcrumb,
+    BreadcrumbItem,
+    BreadcrumbLink,
+    BreadcrumbList,
+    BreadcrumbSeparator,
+} from "../../components/ui/breadcrumb"
+
 
 const UserProfile = () => {
     const [isEditingProfile, setIsEditingProfile] = useState(false)
@@ -17,7 +25,21 @@ const UserProfile = () => {
     return (
         <>
             <Header />
+
+
             <div className="container mx-auto py-8 px-4 max-w-4xl">
+
+                <Breadcrumb>
+                    <BreadcrumbList>
+                        <BreadcrumbItem>
+                            <BreadcrumbLink href="/">Home</BreadcrumbLink>
+                        </BreadcrumbItem>
+                        <BreadcrumbSeparator />
+                        <BreadcrumbItem>
+                            <BreadcrumbLink href="/profile">Profile</BreadcrumbLink>
+                        </BreadcrumbItem>
+                    </BreadcrumbList>
+                </Breadcrumb>
 
                 <h1 className="text-3xl font-bold mb-8 text-center">My Profile</h1>
 
@@ -35,7 +57,7 @@ const UserProfile = () => {
                         setIsLoadingProfile={setIsLoadingProfile}
                     />
 
-                    <AddressSection 
+                    <AddressSection
                         isEditingAddress={isEditingAddress}
                         setIsEditingAddress={setIsEditingAddress}
                         isLoadingAddress={isLoadingAddress}
@@ -43,7 +65,7 @@ const UserProfile = () => {
                     />
 
                     <AccountSection />
-                    
+
                 </Tabs>
             </div>
         </>

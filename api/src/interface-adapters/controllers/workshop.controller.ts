@@ -19,6 +19,9 @@ import { IFeaturedWorkshopsUseCase } from "../../entities/useCaseInterfaces/work
 import { IGetWorkshopAddressUseCase } from "../../entities/useCaseInterfaces/workshop/get-workshop-address.usecase.interface";
 import { IEditWorkshopUseCase } from "../../entities/useCaseInterfaces/workshop/edit-workshop.usecase.interface";
 import { IEditWorkshopAddressUseCase } from "../../entities/useCaseInterfaces/workshop/edit-workshop-address.usecase.interface";
+import { passwordSchema } from "../../shared/validations/password.validation";
+import { IChangeWorkshopPasswordUseCase } from "../../entities/useCaseInterfaces/workshop/change-password.usecase.interface";
+import { IWorkshopDetailsUseCase } from "../../entities/useCaseInterfaces/workshop/workshop-details.usecase.interface";
 
 @injectable()
 export class WorkshopController implements IWorkshopController {
@@ -37,7 +40,9 @@ export class WorkshopController implements IWorkshopController {
         @inject("IFeaturedWorkshopsUseCase") private _featuredWorkshops: IFeaturedWorkshopsUseCase,
         @inject("IGetWorkshopAddressUseCase") private _workshopAddress: IGetWorkshopAddressUseCase,
         @inject("IEditWorkshopUseCase") private _editWorkshop: IEditWorkshopUseCase,
-        @inject("IEditWorkshopAddressUseCase") private _editWorkshopAddress: IEditWorkshopAddressUseCase
+        @inject("IEditWorkshopAddressUseCase") private _editWorkshopAddress: IEditWorkshopAddressUseCase,
+        @inject("IChangeWorkshopPasswordUseCase") private _changePassword: IChangeWorkshopPasswordUseCase,
+        @inject("IWorkshopDetailsUseCase") private _workshopDetails: IWorkshopDetailsUseCase
     ) { }
 
     async signup(req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -303,6 +308,62 @@ export class WorkshopController implements IWorkshopController {
                 streetAddress: workshop.streetAddress,
                 buildingNo: workshop.buildingNo
             }
+        })
+    }
+
+    async changePassword(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const workshopId = req.user?.id;
+            const data = req.body;
+
+            if (!workshopId) {
+                res.status(HTTP_STATUS.UNAUTHORIZED).json({
+                    success: false,
+                    message: ERROR_MESSAGES.UNAUTHORIZED_ACCESS
+                })
+                return;
+            }
+
+            if (!data || !data.oldPassword || !data.newPassword || !data.confirmPassword) {
+                res.status(HTTP_STATUS.BAD_REQUEST).json({
+                    success: false,
+                    message: ERROR_MESSAGES.MISSING_PARAMETERS
+                })
+                return;
+            }
+
+            const schema = passwordSchema;
+            schema.parse(data.newPassword)
+
+            await this._changePassword.execute(workshopId, data)
+
+            res.status(HTTP_STATUS.OK).json({
+                success: true,
+                message: SUCCESS_MESSAGES.PASSWORD_RESET_SUCCESS
+            })
+
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    async getWorkshopDetails(req: Request, res: Response, next: NextFunction): Promise<void> {
+        const id = req.params.id;
+        if(!id){
+            res.status(HTTP_STATUS.BAD_REQUEST).json({
+                success: false,
+                message: ERROR_MESSAGES.ID_NOT_FOUND
+            })
+            return;
+        }
+
+        const {workshop, reviews} = await this._workshopDetails.execute(id)
+
+        res.status(HTTP_STATUS.OK).json({
+            success: true,
+            message: SUCCESS_MESSAGES.DATA_RETRIEVED,
+            workshop,
+            reviews
         })
     }
 

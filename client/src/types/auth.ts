@@ -114,3 +114,9 @@ export interface WorkshopAddressEditFormData {
   streetAddress: string,
   buildingNo: string
 }
+
+export interface ChangePasswordData {
+  oldPassword: string;
+  newPassword: string;
+  confirmPassword: string;
+}

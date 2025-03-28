@@ -6,6 +6,8 @@ import ForgotPasswordPage from "../pages/customer/ForgetPassword";
 import ResetPasswordPage from "../pages/customer/ResetPassword";
 import UserProfile from "../pages/customer/UserProfile";
 import Map from "../components/map/Map";
+import WorkshopDetail from "../pages/customer/WorkshopDetails";
+// import AllWorkshops from "../pages/customer/AllWorkshops";
 
 export const CustomerRoutes = () => {
     return (
@@ -17,6 +19,8 @@ export const CustomerRoutes = () => {
             <Route path="/reset-password" element={<ResetPasswordPage />} />
             <Route path="/profile" element={<UserProfile />} />
             <Route path="/map" element={<Map />} />
+            {/* <Route path="/workshops" element={<AllWorkshops />} /> */}
+            <Route path="/workshop-details/:id" element={<WorkshopDetail />} />
         </Routes>
     )
 }

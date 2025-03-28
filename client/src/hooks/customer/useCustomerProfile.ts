@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { CustomerEditUploadData } from "../../types/auth"
+import { ChangePasswordData, CustomerEditUploadData } from "../../types/auth"
 import { updateCustomer } from "../../services/customer/authServices"
-import { editCustomerAddress, getCustomerAddress } from "../../services/customer/customerProfileService"
+import { changePassword, editCustomerAddress, getCustomerAddress } from "../../services/customer/customerProfileService"
 
 export interface ICustomerAddress {
     country: string,
@@ -40,6 +40,15 @@ export const useEditCustomerAddress = () => {
         },
         onError: (error: Error) => {
             console.error("Error in editing address", error)
+        }
+    })
+}
+
+export const useChangePassword = () => {
+    return useMutation({
+        mutationFn: (data: ChangePasswordData) => changePassword(data),
+        onError: (error: Error) => {
+            console.error("Change password error", error)
         }
     })
 }

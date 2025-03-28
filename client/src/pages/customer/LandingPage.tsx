@@ -88,11 +88,11 @@ export default function LandingPage() {
             <h2 className="text-2xl font-bold mb-8">Featured Workshops</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {workshops.map((workshop) => (
-                <WorkshopCard workshop={workshop} />
+                <WorkshopCard workshop={workshop} key={workshop._id}/>
               ))}
             </div>
             <div className="flex justify-end mt-4">
-              <button className="flex items-center text-black font-medium">
+              <button onClick={()=>navigate("/workshops")} className="flex items-center text-black font-medium cursor-pointer">
                 See More <ArrowRight className="ml-1 h-4 w-4" />
               </button>
             </div>

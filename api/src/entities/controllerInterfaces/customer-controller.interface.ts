@@ -14,4 +14,5 @@ export interface ICustomerController {
     deleteCustomer(req: Request, res: Response, next: NextFunction): Promise<void>;
     getCustomerAddress(req: Request, res: Response, next: NextFunction): Promise<void>;
     editAddress(req: Request, res: Response, next: NextFunction): Promise<void>;
+    changePassword(req: Request, res: Response, next: NextFunction): Promise<void>;
 }

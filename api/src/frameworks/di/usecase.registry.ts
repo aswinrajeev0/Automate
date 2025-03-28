@@ -80,6 +80,14 @@ import { IGetCustomerAddressUseCase } from "../../entities/useCaseInterfaces/cus
 import { GetCustomerAddressUseCase } from "../../useCases/customers/get-customer-address.usecase";
 import { IEditCustomerAddressUseCase } from "../../entities/useCaseInterfaces/customer/edit-customer-address.usecase.interface";
 import { EditCustomerAddressUseCase } from "../../useCases/customers/edit-customer-address.usecase";
+import { IChangeCustomerPasswordUseCase } from "../../entities/useCaseInterfaces/customer/change-password.usecase.interface";
+import { ChangeCustomerPasswordUseCase } from "../../useCases/customers/change-password.usecase";
+import { IChangeWorkshopPasswordUseCase } from "../../entities/useCaseInterfaces/workshop/change-password.usecase.interface";
+import { ChangeWorkshopPasswordUseCase } from "../../useCases/workshop/workshop-change-password.usecase";
+import { IWorkshopDetailsUseCase } from "../../entities/useCaseInterfaces/workshop/workshop-details.usecase.interface";
+import { WorkshopDetailsUseCase } from "../../useCases/workshop/workshop-details.usecase";
+import { ISubmitReviewUseCase } from "../../entities/useCaseInterfaces/review/submit-review.usecase.interface";
+import { SubmitReviewUseCase } from "../../useCases/review/submit-review.usecase";
 
 export class UseCaseRegistry {
     static registerUseCases(): void {
@@ -214,6 +222,22 @@ export class UseCaseRegistry {
 
         container.register<IEditCustomerAddressUseCase>("IEditCustomerAddressUseCase", {
             useClass: EditCustomerAddressUseCase
+        })
+
+        container.register<IChangeCustomerPasswordUseCase>("IChangeCustomerPasswordUseCase", {
+            useClass: ChangeCustomerPasswordUseCase
+        })
+
+        container.register<IChangeWorkshopPasswordUseCase>("IChangeWorkshopPasswordUseCase", {
+            useClass: ChangeWorkshopPasswordUseCase
+        })
+
+        container.register<IWorkshopDetailsUseCase>("IWorkshopDetailsUseCase", {
+            useClass: WorkshopDetailsUseCase
+        })
+
+        container.register<ISubmitReviewUseCase>("ISubmitReviewUseCase", {
+            useClass: SubmitReviewUseCase
         })
 
         //* ====== Register Strategies ====== *//

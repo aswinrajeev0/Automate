@@ -26,14 +26,13 @@ export const errorHandler = (
         statusCode = err.statusCode;
         message = err.message;
     } else {
-        logger.error(`[${req.method}] ${req.url} - ${err.message}`, {stack: err.stack});
         console.error("Unhandled Error:", err);
         if (err.name === "TokenExpiredError") {
             statusCode = HTTP_STATUS.UNAUTHORIZED
             message = ERROR_MESSAGES.TOKEN_EXPIRED
         }
     }
-
+    logger.error(`[${req.method}] ${req.url} - ${err.message}`, { stack: err.stack });
     res.status(statusCode).json({
         success: false,
         statusCode,

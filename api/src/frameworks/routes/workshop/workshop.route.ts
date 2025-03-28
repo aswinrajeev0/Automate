@@ -52,5 +52,9 @@ export class WorkshopRoute extends BaseRoute {
         this.router.put("/edit-address", authenticate("workshop"), (req: Request, res: Response, next: NextFunction) => {
             workshopController.editAddress(req, res, next)
         })
+
+        this.router.patch("/change-password", authenticate("workshop"), (req: Request, res: Response, next: NextFunction) => {
+            workshopController.changePassword(req, res, next)
+        })
     }
 }

@@ -1,5 +1,6 @@
 import { customerApi } from "../../api/customer.axios";
 import { ICustomerAddress } from "../../hooks/customer/useCustomerProfile";
+import { ChangePasswordData } from "../../types/auth";
 
 export const getCustomerAddress = async (): Promise<ICustomerAddress> => {
     try {
@@ -16,5 +17,14 @@ export const editCustomerAddress = async (data: ICustomerAddress): Promise<ICust
         return response.data.address
     } catch (error: any) {
         throw error.response.data
+    }
+}
+
+export const changePassword = async (data: ChangePasswordData) => {
+    try {
+        const response = await customerApi.patch("/change-password", data);
+        return response.data;
+    } catch (error: any) {
+        throw error.response.data;
     }
 }

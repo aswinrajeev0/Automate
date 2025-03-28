@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { editWorkshopAddress, updateWorkshop, workshopDelete } from "../../services/workshop/workshopProfileService"
-import { WorkshopAddressEditFormData, WorkshopEditFormData } from "../../types/auth"
+import { changeWorkshopPassword, editWorkshopAddress, updateWorkshop, workshopDelete } from "../../services/workshop/workshopProfileService"
+import { ChangePasswordData, WorkshopAddressEditFormData, WorkshopEditFormData } from "../../types/auth"
 
 export interface IWorkshopAddress {
     country: string;
@@ -41,7 +41,16 @@ export const useEditWorkshopAddress = () => {
             queryClient.invalidateQueries({ queryKey: ["workshop-address"] })
         },
         onError: (error: Error) => {
-            console.error("Error editing address",error)
+            console.error("Error editing address", error)
+        }
+    })
+}
+
+export const useChangeWorkshopPassword = () => {
+    return useMutation({
+        mutationFn: (data: ChangePasswordData) => changeWorkshopPassword(data),
+        onError: (error: Error) => {
+            console.error("Change password error", error)
         }
     })
 }

@@ -3,6 +3,7 @@ import { BaseRoute } from "../base.route";
 import {
     customerController,
     otpController,
+    reviewController,
     workshopController
 } from "../../di/resolver";
 import { authenticate, decodeToken } from "../../../interface-adapters/middlewares/auth.midleware";
@@ -67,6 +68,18 @@ export class CustomerRoute extends BaseRoute {
 
         this.router.put("/edit-address", authenticate("customer"), (req: Request, res: Response, next: NextFunction) => {
             customerController.editAddress(req, res, next)
+        })
+
+        this.router.patch("/change-password", authenticate("customer"), (req: Request, res: Response, next: NextFunction) => {
+            customerController.changePassword(req, res, next)
+        })
+
+        this.router.get("/workshop-details/:id", (req: Request, res: Response, next: NextFunction) => {
+            workshopController.getWorkshopDetails(req, res, next)
+        })
+
+        this.router.post("/submit-review", authenticate("customer"), (req: Request, res: Response, next: NextFunction) => {
+            reviewController.submitReview(req, res, next)
         })
     }
 }

@@ -31,14 +31,12 @@ export default function LoginPage() {
                 password: values.password
             }
             const response = await loginCustomer.mutateAsync(loginData)
-            console.log(response)
 
             if (response.success) {
                 toast({
                     title: "Success",
                     description: "You have successfully logged in",
                 });
-                console.log(response.user)
                 dispatch(customerLogin(response.user))
                 navigate("/");
             }
@@ -46,7 +44,7 @@ export default function LoginPage() {
         } catch (error: any) {
             toast({
                 title: "Error",
-                description: error.message || "Invalid email or password",
+                description: "Invalid email or password",
                 variant: "destructive",
             });
             console.error("Login error:", error);
