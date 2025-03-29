@@ -13,12 +13,43 @@ const WorkshopDetail = () => {
 
     const { data, isLoading, error } = useWorkshopDetails(id!)
 
+    if (isLoading) {
+        return (
+            <div className="min-h-screen bg-background">
+                <Header />
+                <div className="container mx-auto px-4 py-6">
+                    <div className="flex justify-center items-center h-64">
+                        <p className="text-gray-500 text-lg">Loading workshop details...</p>
+                    </div>
+                </div>
+                <Footer />
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="min-h-screen bg-background">
+                <Header />
+                <div className="container mx-auto px-4 py-6">
+                    <div className="flex justify-center items-center h-64">
+                        <p className="text-red-500 text-lg">
+                            Error loading workshop details: {error.message || 'Something went wrong'}
+                        </p>
+                    </div>
+                </div>
+                <Footer />
+            </div>
+        );
+    }
+
     return (
         <div className="min-h-screen bg-background">
             <Header />
             <div className="container mx-auto px-4 py-6">
 
                 <WorkshopDetailsSection
+                    reviewCount={data?.reviews.length || 0}
                     workshop={data?.workshop as IWorkshop}
                 />
 
@@ -29,7 +60,7 @@ const WorkshopDetail = () => {
             </div>
 
             <RatingDialog
-                workshopId = {data?.workshop.id as string}
+                workshopId={data?.workshop.id as string}
                 showRatingDialog={showRatingDialog}
                 setShowRatingDialog={setShowRatingDialog}
             />

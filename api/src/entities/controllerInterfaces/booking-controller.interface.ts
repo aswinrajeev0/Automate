@@ -1,0 +1,6 @@
+import { NextFunction, Request, Response } from "express";
+
+export interface IBookingController {
+    getBookedSlots(req: Request, res: Response, next: NextFunction): Promise<void>;
+    bookSlot(req: Request, res: Response, next: NextFunction): Promise<void>;
+}

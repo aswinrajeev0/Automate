@@ -6,6 +6,7 @@ import { ICustomerRepository } from "../../entities/repositoryInterfaces/custome
 import { CustomError } from "../../entities/utils/custom.error";
 import { ERROR_MESSAGES, HTTP_STATUS } from "../../shared/constants";
 import { generateUniqueId } from "../../frameworks/security/uniqueuid.bcrypt";
+import { IReviewModel } from "../../frameworks/database/mongoDB/models/review.model";
 
 @injectable()
 export class SubmitReviewUseCase implements ISubmitReviewUseCase {
@@ -14,7 +15,7 @@ export class SubmitReviewUseCase implements ISubmitReviewUseCase {
         @inject("ICustomerRepository") private _customerRepo: ICustomerRepository
     ){}
 
-    async execute(customerId: string, data: Partial<IWorkshopReviewEntity>): Promise<void> {
+    async execute(customerId: string, data: Partial<IWorkshopReviewEntity>): Promise<IReviewModel> {
         const customer = await this._customerRepo.findById(customerId);
         if(!customer) {
             throw new CustomError(
@@ -26,6 +27,7 @@ export class SubmitReviewUseCase implements ISubmitReviewUseCase {
         const reviewId = generateUniqueId("rev")
         
 
-        await this._reviewRepo.save({...data, userId: customerId, reviewId, })
+        const review = await this._reviewRepo.save({...data, userId: customerId, reviewId, })
+        return review
     }
 }

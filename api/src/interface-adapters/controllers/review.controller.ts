@@ -30,11 +30,20 @@ export class ReviewController implements IReviewController {
                 return
             }
 
-            await this._submitReview.execute(customerId, data);
+            const review = await this._submitReview.execute(customerId, data);
 
             res.status(HTTP_STATUS.CREATED).json({
                 success: true,
-                message: SUCCESS_MESSAGES.CREATED
+                message: SUCCESS_MESSAGES.CREATED,
+                review: {
+                    id: review.reviewId,
+                    comment: review.comment,
+                    createdAt: review.createdAt,
+                    rating: review.rating,
+                    updatedAt: review.updatedAt,
+                    userId: review.userId,
+                    workshopId: review.workshopId
+                }
             })
         } catch (error) {
             next(error)

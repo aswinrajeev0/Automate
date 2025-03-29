@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { BaseRoute } from "../base.route";
 import {
+    bookingController,
     customerController,
     otpController,
     reviewController,
@@ -80,6 +81,14 @@ export class CustomerRoute extends BaseRoute {
 
         this.router.post("/submit-review", authenticate("customer"), (req: Request, res: Response, next: NextFunction) => {
             reviewController.submitReview(req, res, next)
+        })
+
+        this.router.get("/booked-slots/:workshopId", authenticate("customer"), (req: Request, res: Response, next: NextFunction) => {
+            bookingController.getBookedSlots(req, res, next)
+        })
+
+        this.router.post("/book-slot", authenticate("customer"), (req: Request, res: Response, next: NextFunction) => {
+            bookingController.bookSlot(req, res, next);
         })
     }
 }

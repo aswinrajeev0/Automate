@@ -12,6 +12,7 @@ function App() {
         <Route path="/*" element={<CustomerRoutes />} />
         <Route path="/admin/*" element={<AdminRoutes />} />
         <Route path="/workshop/*" element={<WorkshopRoutes />} />
+        {/* <Route path="/test" element={<SlotBookingPage />} /> */}
       </Routes>
     </BrowserRouter>
   )

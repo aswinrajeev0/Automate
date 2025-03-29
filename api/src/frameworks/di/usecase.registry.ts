@@ -88,6 +88,10 @@ import { IWorkshopDetailsUseCase } from "../../entities/useCaseInterfaces/worksh
 import { WorkshopDetailsUseCase } from "../../useCases/workshop/workshop-details.usecase";
 import { ISubmitReviewUseCase } from "../../entities/useCaseInterfaces/review/submit-review.usecase.interface";
 import { SubmitReviewUseCase } from "../../useCases/review/submit-review.usecase";
+import { IGetBookedSlotsUseCase } from "../../entities/useCaseInterfaces/bookings/get-booked-slots.usecase.interface";
+import { GetBookedSlotsUseCase } from "../../useCases/bookings/get-booked-slots.usecase";
+import { IBookSlotUseCase } from "../../entities/useCaseInterfaces/bookings/slot-book.usecase.interface";
+import { BookSlotUseCase } from "../../useCases/bookings/book-slot.usecase";
 
 export class UseCaseRegistry {
     static registerUseCases(): void {
@@ -238,6 +242,14 @@ export class UseCaseRegistry {
 
         container.register<ISubmitReviewUseCase>("ISubmitReviewUseCase", {
             useClass: SubmitReviewUseCase
+        })
+
+        container.register<IGetBookedSlotsUseCase>("IGetBookedSlotsUseCase", {
+            useClass: GetBookedSlotsUseCase
+        })
+
+        container.register<IBookSlotUseCase>("IBookSlotUseCase", {
+            useClass: BookSlotUseCase
         })
 
         //* ====== Register Strategies ====== *//

@@ -349,7 +349,7 @@ export class WorkshopController implements IWorkshopController {
 
     async getWorkshopDetails(req: Request, res: Response, next: NextFunction): Promise<void> {
         const id = req.params.id;
-        if(!id){
+        if (!id) {
             res.status(HTTP_STATUS.BAD_REQUEST).json({
                 success: false,
                 message: ERROR_MESSAGES.ID_NOT_FOUND
@@ -357,13 +357,21 @@ export class WorkshopController implements IWorkshopController {
             return;
         }
 
-        const {workshop, reviews} = await this._workshopDetails.execute(id)
+        const { workshop, reviews } = await this._workshopDetails.execute(id)
 
         res.status(HTTP_STATUS.OK).json({
             success: true,
             message: SUCCESS_MESSAGES.DATA_RETRIEVED,
             workshop,
-            reviews
+            reviews: reviews.map((review) => ({
+                id: review.reviewId,
+                comment: review.comment,
+                createdAt: review.createdAt,
+                rating: review.rating,
+                updatedAt: review.updatedAt,
+                userId: review.userId,
+                workshopId: review.workshopId
+            }))
         })
     }
 

@@ -3,8 +3,12 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogC
 import { Textarea } from "../../ui/Textarea";
 import { Button } from "../../ui/button";
 import { Star } from "lucide-react";
-import { useSubmitReview } from "../../../hooks/customer/useWorkshops";
+import { IReview, useSubmitReview, WorkshopDetailsResponse } from "../../../hooks/customer/useWorkshops";
 import { useToaster } from "../../../hooks/ui/useToaster";
+import { useQueryClient } from "@tanstack/react-query";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../store/store";
+import { generateUniqueId } from "../../../utils/uuid";
 
 interface RatingDialogProps {
     workshopId: string;
@@ -17,7 +21,10 @@ const RatingDialog: React.FC<RatingDialogProps> = ({ workshopId, showRatingDialo
     const [comment, setComment] = useState("");
     const [loading, setLoading] = useState(false);
 
+    const queryClient = useQueryClient();
+
     const { successToast, errorToast } = useToaster()
+    const {customer} = useSelector((state: RootState) => state.customer)
 
     const submitReview = useSubmitReview()
 
@@ -28,19 +35,57 @@ const RatingDialog: React.FC<RatingDialogProps> = ({ workshopId, showRatingDialo
         }
 
         setLoading(true);
+
+        const guestId = generateUniqueId("guest")
+
+        const optimisticReview: IReview = {
+            reviewId: `temp-${Date.now()}`,
+            workshopId,
+            userId: { _id: customer?.id || guestId, name: customer?.name || "Guest" },
+            rating,
+            comment,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+        };
+
+        queryClient.setQueryData<WorkshopDetailsResponse>(["workshop-details", workshopId], (oldData) => {
+            if (!oldData) return oldData;
+            return {
+                ...oldData,
+                reviews: [...oldData.reviews, optimisticReview],
+            };
+        });
+
         try {
             const response = await submitReview.mutateAsync({ workshopId, rating, comment })
             if (response.status === 201) {
                 successToast("Your review has been submitted")
 
+                queryClient.setQueryData<WorkshopDetailsResponse>(["workshop-details", workshopId], (oldData) => {
+                    if (!oldData) return oldData;
+                    const newReview = response.data.review;
+                    return {
+                        ...oldData,
+                        reviews: oldData.reviews.map((r) =>
+                            r.reviewId === optimisticReview.reviewId ? newReview : r
+                        ),
+                    };
+                });
+
                 setRating(0);
                 setComment('');
+                setShowRatingDialog(false);
             } else {
                 errorToast(response.data?.message || "Error submitting review")
+                queryClient.setQueryData<WorkshopDetailsResponse>(["workshop-details", workshopId], (oldData) =>
+                    oldData ? { ...oldData, reviews: oldData.reviews.filter((r) => r.reviewId !== optimisticReview.reviewId) } : oldData
+                );
             }
-            setShowRatingDialog(false);
         } catch (error: any) {
             errorToast(error.response?.data || "Something went wrong")
+            queryClient.setQueryData<WorkshopDetailsResponse>(["workshop-details", workshopId], (oldData) =>
+                oldData ? { ...oldData, reviews: oldData.reviews.filter((r) => r.reviewId !== optimisticReview.reviewId) } : oldData
+            );
         } finally {
             setLoading(false);
         }

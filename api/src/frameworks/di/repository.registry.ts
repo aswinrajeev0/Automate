@@ -10,6 +10,8 @@ import { IWorkshopRepository } from "../../entities/repositoryInterfaces/worksho
 import { WorkshopRepository } from "../../interface-adapters/repositories/workshop/workshop.repository";
 import { IReviewRepository } from "../../entities/repositoryInterfaces/review/review-repository.interface";
 import { ReviewRepository } from "../../interface-adapters/repositories/workshop/review-repository";
+import { IBookingRepository } from "../../entities/repositoryInterfaces/booking/booking-repository.interface";
+import { BookingRepository } from "../../interface-adapters/repositories/booking/booking.repository";
 
 export class RepositoryRegistry {
     static registerRepositories(): void {
@@ -31,6 +33,10 @@ export class RepositoryRegistry {
 
         container.register<IReviewRepository>("IReviewRepository", {
             useClass: ReviewRepository
+        })
+
+        container.register<IBookingRepository>("IBookingRepository", {
+            useClass: BookingRepository
         })
     }
 }

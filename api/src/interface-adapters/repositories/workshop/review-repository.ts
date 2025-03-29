@@ -7,7 +7,7 @@ import { IWorkshopReviewEntity } from "../../../entities/models/review.entity";
 @injectable()
 export class ReviewRepository implements IReviewRepository {
     async find(condition: FilterQuery<IReviewModel>): Promise<IReviewModel[] | null> {
-        const reviews = await ReviewModel.find(condition).populate("userId", "name")
+        const reviews = await ReviewModel.find(condition).populate("userId", "name image")
         return reviews
     }
 
@@ -18,6 +18,6 @@ export class ReviewRepository implements IReviewRepository {
 
     async save(data: Partial<IWorkshopReviewEntity>): Promise<IReviewModel> {
         const review = await ReviewModel.create(data);
-        return review;
+        return await review.populate("userId", "name image");
     }
 }

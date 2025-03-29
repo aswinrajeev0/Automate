@@ -6,6 +6,7 @@ import { CustomError } from "../../entities/utils/custom.error";
 import { ERROR_MESSAGES, HTTP_STATUS } from "../../shared/constants";
 import { IReviewRepository } from "../../entities/repositoryInterfaces/review/review-repository.interface";
 import { IWorkshopReviewEntity } from "../../entities/models/review.entity";
+import { IReviewModel } from "../../frameworks/database/mongoDB/models/review.model";
 
 
 @injectable()
@@ -15,7 +16,7 @@ export class WorkshopDetailsUseCase implements IWorkshopDetailsUseCase {
         @inject("IReviewRepository") private _reviewRepo: IReviewRepository
     ) { }
 
-    async execute(id: string): Promise<{ workshop: Partial<IWorkshopEntity>; reviews: IWorkshopReviewEntity[] }> {
+    async execute(id: string): Promise<{ workshop: Partial<IWorkshopEntity>; reviews: IReviewModel[] }> {
         const workshop = await this._workshopRepo.findById(id);
         if (!workshop) {
             throw new CustomError(
@@ -40,15 +41,7 @@ export class WorkshopDetailsUseCase implements IWorkshopDetailsUseCase {
                 bio: workshop.bio,
                 image: workshop.image,
             },
-            reviews: reviews.map(review => ({
-                reviewId: review.reviewId,
-                workshopId: review.workshopId.toString(),
-                userId: review.userId.toString(),
-                rating: review.rating,
-                comment: review.comment,
-                createdAt: review.createdAt,
-                updatedAt: review.updatedAt,
-            }))
+            reviews
         }
     }
 }

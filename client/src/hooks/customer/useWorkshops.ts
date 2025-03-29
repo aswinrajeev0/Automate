@@ -29,7 +29,9 @@ export type WorkshopDetailsResponse = {
 export interface IReview {
     reviewId: string;
     workshopId: string;
-    userId: { _id: string; name: string };
+    userId: {
+        image?: string; _id?: string; name?: string 
+};
     rating: number;
     comment?: string;
     createdAt: Date;
