@@ -12,6 +12,8 @@ import { IReviewRepository } from "../../entities/repositoryInterfaces/review/re
 import { ReviewRepository } from "../../interface-adapters/repositories/workshop/review-repository";
 import { IBookingRepository } from "../../entities/repositoryInterfaces/booking/booking-repository.interface";
 import { BookingRepository } from "../../interface-adapters/repositories/booking/booking.repository";
+import { IRequestRepository } from "../../entities/repositoryInterfaces/requests/request-repository.interface";
+import { RequestRepository } from "../../interface-adapters/repositories/requests/request.repository";
 
 export class RepositoryRegistry {
     static registerRepositories(): void {
@@ -37,6 +39,10 @@ export class RepositoryRegistry {
 
         container.register<IBookingRepository>("IBookingRepository", {
             useClass: BookingRepository
+        })
+
+        container.register<IRequestRepository>("IRequestRepository", {
+            useClass: RequestRepository
         })
     }
 }

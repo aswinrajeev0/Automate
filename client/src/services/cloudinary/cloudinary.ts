@@ -7,12 +7,14 @@ const UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
 // const CLOUDINARY_API_KEY = import.meta.env.VITE_CLOUDINARY_API_KEY;
 
 
-export const uploadImage = async (file: File): Promise<string | null> => {
+export const uploadImage = async (file: File | null): Promise<string | null> => {
     try {
 
         // const response = await authApi.get("/generate-signature");
         // const signature = response.data.signature;
         // const timestamp = response.data.timestamp;
+
+        if(!file) return null
 
         const formData = new FormData();
         formData.append("file", file);

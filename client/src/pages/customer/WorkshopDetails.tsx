@@ -6,6 +6,7 @@ import { IReview, IWorkshop, useWorkshopDetails } from '../../hooks/customer/use
 import RatingDialog from '../../components/customer/workshop/RatingModal';
 import WorkshopDetailsSection from '../../components/customer/workshop/WorkshopDetailsSection';
 import ReviewSection from '../../components/customer/workshop/ReviewSection';
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbSeparator } from '../../components/ui/breadcrumb';
 
 const WorkshopDetail = () => {
     const { id } = useParams();
@@ -46,7 +47,22 @@ const WorkshopDetail = () => {
     return (
         <div className="min-h-screen bg-background">
             <Header />
+
             <div className="container mx-auto px-4 py-6">
+
+                <Breadcrumb>
+                    <BreadcrumbList>
+                        <BreadcrumbItem>
+                            <BreadcrumbLink href="/">Home</BreadcrumbLink>
+                        </BreadcrumbItem>
+                        <BreadcrumbSeparator />
+                        <BreadcrumbItem>
+                            <BreadcrumbLink href={`/workshop-details/${id}`}>Workshop</BreadcrumbLink>
+                        </BreadcrumbItem>
+                    </BreadcrumbList>
+                </Breadcrumb>
+
+                <br />
 
                 <WorkshopDetailsSection
                     reviewCount={data?.reviews.length || 0}

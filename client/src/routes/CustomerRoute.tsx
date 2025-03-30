@@ -10,6 +10,8 @@ import WorkshopDetail from "../pages/customer/WorkshopDetails";
 import ServicesPage from "../pages/customer/RequestService";
 import ServiceSelectionPage from "../pages/customer/SeriviceSelection";
 import SlotBookingPage from "../pages/customer/SlotBookingPage";
+import CarLiftServiceForm from "../pages/customer/CarLiftRequestPage";
+import MobileWorkshop from "../pages/customer/MobileWorkshop";
 // import AllWorkshops from "../pages/customer/AllWorkshops";
 
 export const CustomerRoutes = () => {
@@ -27,6 +29,8 @@ export const CustomerRoutes = () => {
             <Route path="/request-service/:workshopId" element={<ServicesPage />} />
             <Route path="/request-service/service/:workshopId" element={<ServiceSelectionPage />} />
             <Route path="/request-service/slot-booking/:workshopId" element={<SlotBookingPage />} />
+            <Route path="/request-service/car-lift/:workshopId" element={<CarLiftServiceForm />} />
+            <Route path="/request-service/mobile-workshop/:workshopId" element={<MobileWorkshop />} />
         </Routes>
     )
 }

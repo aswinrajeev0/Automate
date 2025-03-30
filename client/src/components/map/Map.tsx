@@ -171,7 +171,7 @@ const deg2rad = (deg: number): number => {
 }
 
 // Use forwardRef to expose the button ref to parent components
-const MapModal = forwardRef<HTMLButtonElement, {}>((props, ref) => {
+const MapModal = forwardRef<HTMLButtonElement, {}>((_, ref) => {
     const [open, setOpen] = useState(false)
     const [initialPosition, setInitialPosition] = useState<LatLngExpression>([9.936434, 76.318366])
     const [markedPosition, setMarkedPosition] = useState<[number, number] | null>(null)

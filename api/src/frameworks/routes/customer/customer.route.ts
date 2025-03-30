@@ -4,6 +4,7 @@ import {
     bookingController,
     customerController,
     otpController,
+    requestController,
     reviewController,
     workshopController
 } from "../../di/resolver";
@@ -89,6 +90,14 @@ export class CustomerRoute extends BaseRoute {
 
         this.router.post("/book-slot", authenticate("customer"), (req: Request, res: Response, next: NextFunction) => {
             bookingController.bookSlot(req, res, next);
+        })
+
+        this.router.post("/car-lift", authenticate("customer"), (req: Request, res: Response, next: NextFunction) => {
+            requestController.carLift(req, res, next)
+        })
+
+        this.router.post("/mobile-workshop", authenticate("customer"), (req: Request, res: Response, next: NextFunction) => {
+            requestController.mobileWorkshop(req, res, next)
         })
     }
 }

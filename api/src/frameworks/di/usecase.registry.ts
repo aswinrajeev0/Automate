@@ -92,6 +92,10 @@ import { IGetBookedSlotsUseCase } from "../../entities/useCaseInterfaces/booking
 import { GetBookedSlotsUseCase } from "../../useCases/bookings/get-booked-slots.usecase";
 import { IBookSlotUseCase } from "../../entities/useCaseInterfaces/bookings/slot-book.usecase.interface";
 import { BookSlotUseCase } from "../../useCases/bookings/book-slot.usecase";
+import { ICarLiftRequestUseCase } from "../../entities/useCaseInterfaces/requests/carlift-request.usecase.interface";
+import { CarLiftRequestUseCase } from "../../useCases/requests/carlift-request.usecase";
+import { IMobileWorkshopRequestUseCase } from "../../entities/useCaseInterfaces/requests/mobileworkshop-request.usecase.interface";
+import { MobileWorkshopRequestUseCase } from "../../useCases/requests/mobileworkshop-request.usecase";
 
 export class UseCaseRegistry {
     static registerUseCases(): void {
@@ -250,6 +254,14 @@ export class UseCaseRegistry {
 
         container.register<IBookSlotUseCase>("IBookSlotUseCase", {
             useClass: BookSlotUseCase
+        })
+
+        container.register<ICarLiftRequestUseCase>("ICarLiftRequestUseCase", {
+            useClass: CarLiftRequestUseCase
+        })
+
+        container.register<IMobileWorkshopRequestUseCase>("IMobileWorkshopRequestUseCase", {
+            useClass: MobileWorkshopRequestUseCase
         })
 
         //* ====== Register Strategies ====== *//

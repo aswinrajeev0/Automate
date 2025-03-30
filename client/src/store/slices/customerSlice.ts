@@ -7,7 +7,12 @@ interface Customer {
     email: string,
     image?: string,
     phone?: string,
-    bio?: string
+    bio?: string,
+    country?: string,
+    state?: string,
+    city?: string,
+    streetAddress?: string,
+    buildingNo?: string
 }
 
 export interface CustomerState {

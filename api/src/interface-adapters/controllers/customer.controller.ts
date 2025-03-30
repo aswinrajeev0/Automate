@@ -95,7 +95,12 @@ export class CustomerController implements ICustomerController {
                     email: user.email,
                     image: user?.image,
                     phone: user?.phone,
-                    bio: user?.bio
+                    bio: user?.bio,
+                    country: user.country,
+                    state: user.state,
+                    city: user.state,
+                    streetAddress: user.streetAddress,
+                    buildingNo: user.buildingNo
                 }
             })
         } catch (error) {

@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { CustomerRoutes } from "./routes/CustomerRoute";
 import { AdminRoutes } from "./routes/AdminRoute";
 import { WorkshopRoutes } from "./routes/WorkshopRoute";
+import CarLiftServiceForm from "./pages/customer/CarLiftRequestPage";
 function App() {
 
   return (
@@ -12,7 +13,7 @@ function App() {
         <Route path="/*" element={<CustomerRoutes />} />
         <Route path="/admin/*" element={<AdminRoutes />} />
         <Route path="/workshop/*" element={<WorkshopRoutes />} />
-        {/* <Route path="/test" element={<SlotBookingPage />} /> */}
+        <Route path="/test" element={<CarLiftServiceForm />} />
       </Routes>
     </BrowserRouter>
   )

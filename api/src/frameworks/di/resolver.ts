@@ -8,6 +8,7 @@ import { OtpController } from "../../interface-adapters/controllers/otp.controll
 import { AuthController } from "../../interface-adapters/controllers/auth.controller";
 import { ReviewController } from "../../interface-adapters/controllers/review.controller";
 import { BookingController } from "../../interface-adapters/controllers/booking.controller";
+import { RequestController } from "../../interface-adapters/controllers/request.controller";
 
 DependencyInjection.registerAll();
 
@@ -18,3 +19,4 @@ export const workshopController = container.resolve(WorkshopController)
 export const authController = container.resolve(AuthController);
 export const reviewController = container.resolve(ReviewController);
 export const bookingController = container.resolve(BookingController);
+export const requestController = container.resolve(RequestController)
