@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { submitReview, workshopDetails } from "../../services/customer/workshopServices";
+import { getAllWorkshops, submitReview, workshopDetails } from "../../services/customer/workshopServices";
 
 export interface IWorkshop {
     id: string;
@@ -30,8 +30,8 @@ export interface IReview {
     reviewId: string;
     workshopId: string;
     userId: {
-        image?: string; _id?: string; name?: string 
-};
+        image?: string; _id?: string; name?: string
+    };
     rating: number;
     comment?: string;
     createdAt: Date;
@@ -45,11 +45,13 @@ export interface IReveiwSubmitData {
 }
 
 export const useWorkshopsQuery = <T extends WorkshopData>(
-    queryFunc: () => Promise<workshopsResponse<T>>
+    page: number,
+    limit: number,
+    searchQuery: string
 ) => {
     return useQuery({
         queryKey: ["workshops"],
-        queryFn: () => queryFunc(),
+        queryFn: () => getAllWorkshops(page, limit, searchQuery),
         placeholderData: (prevData) => prevData ? { ...prevData } : undefined,
     });
 };

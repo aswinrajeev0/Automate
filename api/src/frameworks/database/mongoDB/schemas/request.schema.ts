@@ -13,6 +13,10 @@ export const requestSchema = new Schema<IRequestModel>({
     workshopId: { type: Types.ObjectId, required: true },
     customerId: { type: Types.ObjectId, required: true },
     type: {type: String, enum: ["car-lift", "mobile-workshop"]},
+    status: {type: String, enum: ["submitted", "pending", "finished", "accepted", "rejected"], default: "submitted"},
+    paymentStatus: {type: String, enum: ["pending", "completed"], default: "pending"},
     description: {type: String},
     notes: {type: String}
+},{
+    timestamps: true
 });

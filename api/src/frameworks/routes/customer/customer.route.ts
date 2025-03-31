@@ -99,5 +99,9 @@ export class CustomerRoute extends BaseRoute {
         this.router.post("/mobile-workshop", authenticate("customer"), (req: Request, res: Response, next: NextFunction) => {
             requestController.mobileWorkshop(req, res, next)
         })
+
+        this.router.get("/all-workshops", (req: Request, res: Response, next: NextFunction) => {
+            workshopController.getAllWorkshopsWithRating(req, res, next)
+        })
     }
 }

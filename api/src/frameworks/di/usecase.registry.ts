@@ -96,6 +96,16 @@ import { ICarLiftRequestUseCase } from "../../entities/useCaseInterfaces/request
 import { CarLiftRequestUseCase } from "../../useCases/requests/carlift-request.usecase";
 import { IMobileWorkshopRequestUseCase } from "../../entities/useCaseInterfaces/requests/mobileworkshop-request.usecase.interface";
 import { MobileWorkshopRequestUseCase } from "../../useCases/requests/mobileworkshop-request.usecase";
+import { IAllPendingRequestsUseCAse } from "../../entities/useCaseInterfaces/requests/all-pending-request.usecase.interface";
+import { AllPendingRequestsUseCAse } from "../../useCases/requests/all-pending-requests.usecase";
+import { IRequestDetailsUseCase } from "../../entities/useCaseInterfaces/requests/request-details.usecase.interface";
+import { RequestDetailsUseCase } from "../../useCases/requests/request-details.usecase";
+import { IAcceptRequestUseCase } from "../../entities/useCaseInterfaces/requests/update-request.usecase.interface";
+import { AcceptRequestUseCase } from "../../useCases/requests/request-update.usecase";
+import { IRejectRequestUSeCase } from "../../entities/useCaseInterfaces/requests/reject-request.usecase.interface";
+import { RejectRequestUSeCase } from "../../useCases/requests/reject-request.usecase";
+import { GetAllWorkshopsWithRatingUseCase } from "../../useCases/workshop/get-all-workshops-with-ratings.usecase";
+import { IGetAllWorkshopsWithRatingUseCase } from "../../entities/useCaseInterfaces/workshop/get-all-workshops-with-rating.usecase.interface";
 
 export class UseCaseRegistry {
     static registerUseCases(): void {
@@ -262,6 +272,26 @@ export class UseCaseRegistry {
 
         container.register<IMobileWorkshopRequestUseCase>("IMobileWorkshopRequestUseCase", {
             useClass: MobileWorkshopRequestUseCase
+        })
+
+        container.register<IAllPendingRequestsUseCAse>("IAllPendingRequestsUseCAse", {
+            useClass: AllPendingRequestsUseCAse
+        })
+
+        container.register<IRequestDetailsUseCase>("IRequestDetailsUseCase", {
+            useClass: RequestDetailsUseCase
+        })
+
+        container.register<IAcceptRequestUseCase>("IAcceptRequestUseCase", {
+            useClass: AcceptRequestUseCase
+        })
+
+        container.register<IRejectRequestUSeCase>("IRejectRequestUSeCase", {
+            useClass: RejectRequestUSeCase
+        })
+
+        container.register<IGetAllWorkshopsWithRatingUseCase>("IGetAllWorkshopsWithRatingUseCase", {
+            useClass: GetAllWorkshopsWithRatingUseCase
         })
 
         //* ====== Register Strategies ====== *//

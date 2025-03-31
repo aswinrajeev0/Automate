@@ -21,7 +21,7 @@ export enum ERROR_MESSAGES {
    BLOCKED = "Your account has been blocked.",
    NOT_ALLOWED = "You are not allowed",
    EMAIL_EXISTS = "Email Already Exists",
-   REQUEST_NOT_FOUND = "Category Request Not Found",
+   REQUEST_NOT_FOUND = "Request Not Found",
    CATEGORY_EXISTS = "Category Already Exists",
    CATEGORY_NOT_FOUND = "Category Not Found",
    INVALID_TOKEN = "Invalid token",
@@ -41,7 +41,7 @@ export enum ERROR_MESSAGES {
    PASSWORD_NOT_MATCH = "New password and confirm password is not matching",
    ID_NOT_FOUND = "ID not found",
    DATA_MISSING = "Some data are missing",
-   NOT_FOUND = "Data not found",
+   NOT_FOUND = "Data not found"
 }
 
 

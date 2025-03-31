@@ -5,19 +5,27 @@ import { ERROR_MESSAGES, HTTP_STATUS, SUCCESS_MESSAGES } from "../../shared/cons
 import { ICarLiftRequestUseCase } from "../../entities/useCaseInterfaces/requests/carlift-request.usecase.interface";
 import { carLiftRequestValidationSchema, mobileWorkshopRequestValidationSchema } from "./validations/request.validation";
 import { IMobileWorkshopRequestUseCase } from "../../entities/useCaseInterfaces/requests/mobileworkshop-request.usecase.interface";
+import { IAllPendingRequestsUseCAse } from "../../entities/useCaseInterfaces/requests/all-pending-request.usecase.interface";
+import { IRequestDetailsUseCase } from "../../entities/useCaseInterfaces/requests/request-details.usecase.interface";
+import { IAcceptRequestUseCase } from "../../entities/useCaseInterfaces/requests/update-request.usecase.interface";
+import { IRejectRequestUSeCase } from "../../entities/useCaseInterfaces/requests/reject-request.usecase.interface";
 
 @injectable()
 export class RequestController implements IRequestController {
     constructor(
         @inject("ICarLiftRequestUseCase") private _carLiftRequest: ICarLiftRequestUseCase,
-        @inject("IMobileWorkshopRequestUseCase") private _mobileWorkshop: IMobileWorkshopRequestUseCase
+        @inject("IMobileWorkshopRequestUseCase") private _mobileWorkshop: IMobileWorkshopRequestUseCase,
+        @inject("IAllPendingRequestsUseCAse") private _pendingRequests: IAllPendingRequestsUseCAse,
+        @inject("IRequestDetailsUseCase") private _requestDetails: IRequestDetailsUseCase,
+        @inject("IAcceptRequestUseCase") private _acceptRequest: IAcceptRequestUseCase,
+        @inject("IRejectRequestUSeCase") private _rejectRequest: IRejectRequestUSeCase
     ) { }
 
     async carLift(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const customerId = req.user?.id;
             const data = req.body
-            const { workshopId, image } = data.workshopId;
+            const { workshopId, image } = data;
             if (!customerId) {
                 res.status(HTTP_STATUS.UNAUTHORIZED).json({
                     success: false,
@@ -44,25 +52,130 @@ export class RequestController implements IRequestController {
     }
 
     async mobileWorkshop(req: Request, res: Response, next: NextFunction): Promise<void> {
-        const customerId = req.user?.id;
-        const data = req.body;
-        const { workshopId } = data;
-        if (!customerId) {
-            res.status(HTTP_STATUS.UNAUTHORIZED).json({
-                success: false,
-                message: ERROR_MESSAGES.INVALID_ROLE
+        try {
+            const customerId = req.user?.id;
+            const data = req.body;
+            const { workshopId } = data;
+            if (!customerId) {
+                res.status(HTTP_STATUS.UNAUTHORIZED).json({
+                    success: false,
+                    message: ERROR_MESSAGES.INVALID_ROLE
+                })
+                return
+            }
+
+            const schema = mobileWorkshopRequestValidationSchema;
+            const validatedData = schema.parse(data)
+
+            const request = await this._mobileWorkshop.execute({ ...validatedData, workshopId, customerId })
+            res.status(HTTP_STATUS.CREATED).json({
+                success: true,
+                message: SUCCESS_MESSAGES.BOOKING_SUCCESS,
+                request
             })
-            return
+        } catch (error) {
+            next(error)
         }
+    }
 
-        const schema = mobileWorkshopRequestValidationSchema;
-        const validatedData = schema.parse(data)
+    async allPendingRequests(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const workshopId = req.user?.id;
+            const { page = 1, limit = 10, search = "" } = req.query;
+            if (!workshopId) {
+                res.status(HTTP_STATUS.UNAUTHORIZED).json({
+                    success: false,
+                    message: ERROR_MESSAGES.UNAUTHORIZED_ACCESS
+                })
+                return
+            }
 
-        const request = await this._mobileWorkshop.execute({...validatedData, workshopId, customerId})
-        res.status(HTTP_STATUS.CREATED).json({
-            success: true,
-            message: SUCCESS_MESSAGES.BOOKING_SUCCESS,
-            request
-        })
+            const pageNumber = Number(page);
+            const pageSize = Number(limit);
+            const searchTermString = typeof search === "string" ? search : "";
+
+            const { requests, total } = await this._pendingRequests.execute(workshopId, pageNumber, pageSize, searchTermString)
+
+            res.status(HTTP_STATUS.OK).json({
+                success: true,
+                message: SUCCESS_MESSAGES.DATA_RETRIEVED,
+                requests: requests.map(request => ({
+                    name: request.name,
+                    requestId: request.requestId,
+                    vehicleNo: request.vehicleNo,
+                    location: request.location,
+                    date: request.createdAt,
+                    type: request.type,
+                })),
+                totaPages: total,
+                currentPage: pageNumber
+            })
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    async requestDetails(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const requestId = req.params.requestId;
+            if (!requestId) {
+                res.status(HTTP_STATUS.UNAUTHORIZED).json({
+                    success: false,
+                    message: ERROR_MESSAGES.UNAUTHORIZED_ACCESS
+                })
+            }
+            const request = await this._requestDetails.execute(requestId)
+            res.status(HTTP_STATUS.OK).json({
+                success: true,
+                message: SUCCESS_MESSAGES.DATA_RETRIEVED,
+                request
+            })
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    async acceptRequest(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const requestId = req.params.requestId;
+            if (!requestId) {
+                res.status(HTTP_STATUS.UNAUTHORIZED).json({
+                    success: false,
+                    message: ERROR_MESSAGES.UNAUTHORIZED_ACCESS
+                })
+            }
+
+            const request = await this._acceptRequest.execute(requestId)
+
+            res.status(HTTP_STATUS.OK).json({
+                success: true,
+                message: SUCCESS_MESSAGES.UPDATE_SUCCESS,
+                request
+            })
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    async rejectRequest(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const requestId = req.params.requestId;
+            if (!requestId) {
+                res.status(HTTP_STATUS.UNAUTHORIZED).json({
+                    success: false,
+                    message: ERROR_MESSAGES.UNAUTHORIZED_ACCESS
+                })
+            }
+
+            const request = await this._rejectRequest.execute(requestId)
+
+            res.status(HTTP_STATUS.OK).json({
+                success: true,
+                message: SUCCESS_MESSAGES.UPDATE_SUCCESS,
+                request
+            })
+        } catch (error) {
+            next(error)
+        }
     }
 }

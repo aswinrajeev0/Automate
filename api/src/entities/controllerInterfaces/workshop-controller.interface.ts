@@ -16,4 +16,5 @@ export interface IWorkshopController {
     editAddress(req: Request, res: Response, next: NextFunction): Promise<void>;
     changePassword(req: Request, res: Response, next: NextFunction): Promise<void>;
     getWorkshopDetails(req: Request, res: Response, next: NextFunction): Promise<void>;
+    getAllWorkshopsWithRating(req: Request, res: Response, next: NextFunction): Promise<void>;
 }

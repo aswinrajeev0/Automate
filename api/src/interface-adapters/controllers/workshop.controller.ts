@@ -22,6 +22,7 @@ import { IEditWorkshopAddressUseCase } from "../../entities/useCaseInterfaces/wo
 import { passwordSchema } from "../../shared/validations/password.validation";
 import { IChangeWorkshopPasswordUseCase } from "../../entities/useCaseInterfaces/workshop/change-password.usecase.interface";
 import { IWorkshopDetailsUseCase } from "../../entities/useCaseInterfaces/workshop/workshop-details.usecase.interface";
+import { IGetAllWorkshopsWithRatingUseCase } from "../../entities/useCaseInterfaces/workshop/get-all-workshops-with-rating.usecase.interface";
 
 @injectable()
 export class WorkshopController implements IWorkshopController {
@@ -42,7 +43,8 @@ export class WorkshopController implements IWorkshopController {
         @inject("IEditWorkshopUseCase") private _editWorkshop: IEditWorkshopUseCase,
         @inject("IEditWorkshopAddressUseCase") private _editWorkshopAddress: IEditWorkshopAddressUseCase,
         @inject("IChangeWorkshopPasswordUseCase") private _changePassword: IChangeWorkshopPasswordUseCase,
-        @inject("IWorkshopDetailsUseCase") private _workshopDetails: IWorkshopDetailsUseCase
+        @inject("IWorkshopDetailsUseCase") private _workshopDetails: IWorkshopDetailsUseCase,
+        @inject("IGetAllWorkshopsWithRatingUseCase") private _getAllWorkshopWithRating: IGetAllWorkshopsWithRatingUseCase
     ) { }
 
     async signup(req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -373,6 +375,25 @@ export class WorkshopController implements IWorkshopController {
                 workshopId: review.workshopId
             }))
         })
+    }
+
+    async getAllWorkshopsWithRating(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const { page = 1, limit = 8, search = "" } = req.query;
+            const pageNumber = Number(page);
+            const pageSize = Number(limit);
+            const searchTermString = typeof search === "string" ? search : "";
+
+            const { workshops, total } = await this._getAllWorkshopWithRating.execute(pageNumber, pageSize, searchTermString);
+            // res.status(HTTP_STATUS.OK).json({
+            //     success: true,
+            //     workshops: workshops,
+            //     totalPages: total,
+            //     currentPage: pageNumber,
+            // });
+        } catch (error) {
+            next(error)
+        }
     }
 
 }

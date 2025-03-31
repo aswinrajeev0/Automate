@@ -8,9 +8,13 @@ export interface IRequestEntity {
     carBrand: string;
     location: string;
     type: "car-lift" | "mobile-workshop";
+    status: "submitted" | "pending" | "finished" | "accepted" | "rejected";
+    paymentStatus: "pending" | "completed";
     workshopId: string;
     customerId: string;
     image?: string;
     description?: string;
     notes?: string;
+    createdAt: Date;
+    updatesAt: Date;
 }

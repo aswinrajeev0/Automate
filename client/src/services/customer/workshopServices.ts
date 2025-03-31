@@ -19,3 +19,18 @@ export const submitReview = async (data: IReveiwSubmitData) => {
         throw error.response.data
     }
 }
+
+export const getAllWorkshops = async (page: number, limit: number = 8, searchQuery: string = "") => {
+    try {
+        const response = await customerApi.get("/all-workshops", {
+            params: {
+                page,
+                limit,
+                searchQuery
+            }
+        })
+        return response.data
+    } catch (error: any) {
+        throw error.response.data
+    }
+}
