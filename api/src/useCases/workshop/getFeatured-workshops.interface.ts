@@ -10,7 +10,7 @@ export class FeaturedWorkshopsUseCase implements IFeaturedWorkshopsUseCase {
     ) { }
 
     async execute(): Promise<IWorkshopEntity[] | []> {
-        const filter = { isBlocked: false }
+        const filter = { isBlocked: false, approvalStatus: "approved" }
         const {workshops, total} = await this._workshopRepo.find(filter, 0, 4)
 
         return workshops

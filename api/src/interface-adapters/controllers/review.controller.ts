@@ -3,11 +3,13 @@ import { IReviewController } from "../../entities/controllerInterfaces/review-co
 import { inject, injectable } from "tsyringe";
 import { ERROR_MESSAGES, HTTP_STATUS, SUCCESS_MESSAGES } from "../../shared/constants";
 import { ISubmitReviewUseCase } from "../../entities/useCaseInterfaces/review/submit-review.usecase.interface";
+import { IWorkshopReviewsUseCase } from "../../entities/useCaseInterfaces/review/get-workshop-reviews.usecase.interface";
 
 @injectable()
 export class ReviewController implements IReviewController {
     constructor(
-        @inject("ISubmitReviewUseCase") private _submitReview: ISubmitReviewUseCase
+        @inject("ISubmitReviewUseCase") private _submitReview: ISubmitReviewUseCase,
+        @inject("IWorkshopReviewsUseCase") private _workshopReviews: IWorkshopReviewsUseCase
     ) { }
     async submitReview(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
@@ -45,6 +47,30 @@ export class ReviewController implements IReviewController {
                     workshopId: review.workshopId
                 }
             })
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    async getWorkshopReviews(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const workshopId = req.user?.id;
+            if(!workshopId) {
+                res.status(HTTP_STATUS.UNAUTHORIZED).json({
+                    success: false,
+                    message: ERROR_MESSAGES.UNAUTHORIZED_ACCESS
+                })
+                return;
+            }
+
+            const reviews = await this._workshopReviews.execute(workshopId)
+
+            res.status(HTTP_STATUS.OK).json({
+                success: true,
+                messagae: SUCCESS_MESSAGES.DATA_RETRIEVED,
+                reviews
+            })
+
         } catch (error) {
             next(error)
         }

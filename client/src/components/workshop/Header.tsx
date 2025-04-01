@@ -1,5 +1,5 @@
 import React from "react"
-import { Bell, Menu } from "lucide-react";
+import { Bell, LogOut, Menu } from "lucide-react";
 import { Button } from "../ui/button";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/store";
@@ -8,9 +8,10 @@ import { Avatar, AvatarFallback, AvatarImage } from "../ui/Avatar";
 interface WorkshopHeaderProps {
     setIsSidebarOpen: React.Dispatch<React.SetStateAction<boolean>>;
     isSidebarOpen: boolean;
+    handleLogout: () => Promise<void>
 }
 
-const WorkshopHeader: React.FC<WorkshopHeaderProps> = ({ setIsSidebarOpen, isSidebarOpen }) => {
+const WorkshopHeader: React.FC<WorkshopHeaderProps> = ({ setIsSidebarOpen, isSidebarOpen, handleLogout }) => {
 
     const { workshop } = useSelector((state: RootState) => state.workshop)
 
@@ -51,7 +52,7 @@ const WorkshopHeader: React.FC<WorkshopHeaderProps> = ({ setIsSidebarOpen, isSid
                             <AvatarFallback className="bg-black text-amber-300 font-medium">{getInitials()}</AvatarFallback>
                         </Avatar>
                     </div>
-                    {/* <Button
+                    <Button
                         variant="ghost"
                         size="sm"
                         onClick={handleLogout}
@@ -62,7 +63,7 @@ const WorkshopHeader: React.FC<WorkshopHeaderProps> = ({ setIsSidebarOpen, isSid
                     </Button>
                     <Button variant="ghost" size="icon" onClick={handleLogout} className="md:hidden text-white hover:bg-white/10">
                         <LogOut className="h-5 w-5" />
-                    </Button> */}
+                    </Button>
                 </div>
             </div>
         </header>

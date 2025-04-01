@@ -50,3 +50,30 @@ export const rejectRequest = async (requestId: string) => {
         throw error.response.data;
     }
 }
+
+export const pendngJobs = async (page: number = 1, limit: number = 10, searchTerm: string = "") => {
+    try {
+        const response = await workshopApi.get("/pending-jobs", {
+            params: {
+                page,
+                limit,
+                searchTerm
+            }
+        })
+        return response.data;
+    } catch (error: any) {
+        throw error.response.data;
+    }
+}
+
+export const updateRequestStatus = async ({ status, requestId }: { status: string; requestId: string }) => {
+    try {
+        const response = await workshopApi.patch("/update-request-status", {
+            status,
+            requestId
+        });
+        return response.data;
+    } catch (error: any) {
+        throw error.response?.data || "An error occurred";
+    }
+};

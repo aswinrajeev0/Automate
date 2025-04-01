@@ -65,58 +65,59 @@ export class WorkshopRepository implements IWorkshopRepository {
     }
 
     async getWorkshopsWithRatings(skip: number, limit: number, searchTerm?: string): Promise<Partial<IWorkshopWithRatings[]>> {
-
         const searchFilter: any = {
             "workshopDetails.approvalStatus": "approved",
         };
 
         if (searchTerm) {
             searchFilter.$or = [
-                { "workshopDetails.name": { $regex: searchTerm, $options: "i" } }, // Case-insensitive search
+                { "workshopDetails.name": { $regex: searchTerm, $options: "i" } },
                 { "workshopDetails.city": { $regex: searchTerm, $options: "i" } },
                 { "workshopDetails.email": { $regex: searchTerm, $options: "i" } },
             ];
         }
 
-        const workshops = await ReviewModel.aggregate([
+        const workshops = await WorkshopModel.aggregate([
             {
-                $group: {
-                    _id: "$workshopId",
-                    averageRating: { $avg: "$rating" }
-                },
+                $match: { approvalStatus: "approved" }
             },
             {
                 $lookup: {
-                    from: "workshops",
+                    from: "reviews",
                     localField: "_id",
-                    foreignField: "_id",
-                    as: "workshopDetails"
+                    foreignField: "workshopId",
+                    as: "reviews",
                 },
             },
             {
-                $unwind: "$workshopDetails",
-            },
-            {
-                $match: {
-                    "workshopDetails.approvalStatus": "approved",
+                $addFields: {
+                    averageRating: {
+                        $cond: {
+                            if: { $gt: [{ $size: "$reviews" }, 0] },
+                            then: { $round: [{ $avg: "$reviews.rating" }, 1] },
+                            else: 0,
+                        },
+                    },
                 },
             },
             {
                 $project: {
                     _id: 0,
                     workshopId: "$_id",
-                    name: "$workshopDetails.name",
-                    city: "$workshopDetails.city",
-                    streetAddress: "$workshopDetails.streetAddress",
-                    averageRating: { $round: ["$averageRating", 1] },
-                    image: "$workshopDetails.image"
+                    name: "$name",
+                    city: "$city",
+                    streetAddress: "$streetAddress",
+                    averageRating: 1,
+                    image: "$image",
+                    country: "$country",
+                    description: "$bio"
                 },
             },
             { $skip: skip },
             { $limit: limit },
         ]);
 
-        return workshops
+        return workshops;
     }
 
 }

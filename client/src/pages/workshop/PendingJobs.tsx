@@ -1,17 +1,17 @@
 "use client"
 
 import { useCallback, useEffect, useState } from "react"
-import RequestsTable from "../../components/workshop/requests/RequestsTable"
 import RequestsCards from "../../components/workshop/requests/RequestsCards"
 import { Pagination1 } from "../../components/admin/Pagination1"
 import { debounce } from "lodash"
-import { useAllPendingRequests } from "../../hooks/workshop/useWorkshopRequests"
+import { usePendingJobs } from "../../hooks/workshop/useWorkshopRequests"
 import type { IAllPendingRequests } from "../../types/requests"
 import { Input } from "../../components/ui/Input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../components/ui/select"
 import { useMediaQuery } from "../../hooks/use-media-query"
+import JobsTable from "../../components/workshop/pendingJobs/JobsTable"
 
-const RequestsPage = () => {
+const PendingJobspage = () => {
     const [activeTab, setActiveTab] = useState("requests")
     const [searchQuery, setSearchQuery] = useState("")
     const [debouncedSearch, setDebouncedSearch] = useState(searchQuery)
@@ -30,7 +30,7 @@ const RequestsPage = () => {
         return () => debounceSearch.cancel()
     }, [searchQuery, debounceSearch])
 
-    const { data, isLoading, isError } = useAllPendingRequests(currentPage, limit, debouncedSearch)
+    const { data, isLoading, isError } = usePendingJobs(currentPage, limit, debouncedSearch)
     const requests = (data?.requests ?? []) as IAllPendingRequests[]
     const totalPages = data?.totalPages || 1
 
@@ -64,8 +64,8 @@ const RequestsPage = () => {
         <>
             <div className="bg-gray-50 p-4 md:p-6 rounded-lg shadow-sm h-[calc(100vh-80px)] flex flex-col overflow-hidden">
                 <div className="mb-4">
-                    <h1 className="text-xl md:text-2xl font-bold text-gray-800">Service Management</h1>
-                    <p className="text-sm text-gray-600">Manage your service requests and bookings</p>
+                    <h1 className="text-xl md:text-2xl font-bold text-gray-800">Pending Jobs</h1>
+                    <p className="text-sm text-gray-600"></p>
                 </div>
 
                 <div className="flex border-b border-gray-200 mb-4">
@@ -91,7 +91,6 @@ const RequestsPage = () => {
                                 <Input
                                     type="search"
                                     placeholder="Search..."
-                                    value={searchQuery}
                                     className="pl-8 bg-black/5 border-black/20 text-black placeholder:text-black/40 h-9"
                                     onChange={(e) => setSearchQuery(e.target.value)}
                                 />
@@ -116,7 +115,7 @@ const RequestsPage = () => {
 
                         {/* Table or Cards based on screen size */}
                         <div className="flex-grow overflow-auto mb-4">
-                            {isDesktop ? <RequestsTable requests={requests} /> : <RequestsCards requests={requests} />}
+                            {isDesktop ? <JobsTable requests={requests} /> : <RequestsCards requests={requests} />}
                         </div>
 
                         {/* Pagination */}
@@ -137,5 +136,5 @@ const RequestsPage = () => {
     )
 }
 
-export default RequestsPage
+export default PendingJobspage
 

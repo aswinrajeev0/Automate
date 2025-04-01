@@ -9,6 +9,8 @@ import { IAllPendingRequestsUseCAse } from "../../entities/useCaseInterfaces/req
 import { IRequestDetailsUseCase } from "../../entities/useCaseInterfaces/requests/request-details.usecase.interface";
 import { IAcceptRequestUseCase } from "../../entities/useCaseInterfaces/requests/update-request.usecase.interface";
 import { IRejectRequestUSeCase } from "../../entities/useCaseInterfaces/requests/reject-request.usecase.interface";
+import { IPendingJobsUseCase } from "../../entities/useCaseInterfaces/requests/pending-jobs.usecase.interface";
+import { IUpdateRequestStatusUseCase } from "../../entities/useCaseInterfaces/requests/update-request-status.usecase.interface";
 
 @injectable()
 export class RequestController implements IRequestController {
@@ -18,7 +20,9 @@ export class RequestController implements IRequestController {
         @inject("IAllPendingRequestsUseCAse") private _pendingRequests: IAllPendingRequestsUseCAse,
         @inject("IRequestDetailsUseCase") private _requestDetails: IRequestDetailsUseCase,
         @inject("IAcceptRequestUseCase") private _acceptRequest: IAcceptRequestUseCase,
-        @inject("IRejectRequestUSeCase") private _rejectRequest: IRejectRequestUSeCase
+        @inject("IRejectRequestUSeCase") private _rejectRequest: IRejectRequestUSeCase,
+        @inject("IPendingJobsUseCase") private _pendingJobs: IPendingJobsUseCase,
+        @inject("IUpdateRequestStatusUseCase") private _updateRequestStatus: IUpdateRequestStatusUseCase
     ) { }
 
     async carLift(req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -169,6 +173,64 @@ export class RequestController implements IRequestController {
 
             const request = await this._rejectRequest.execute(requestId)
 
+            res.status(HTTP_STATUS.OK).json({
+                success: true,
+                message: SUCCESS_MESSAGES.UPDATE_SUCCESS,
+                request
+            })
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    async pendingJobs(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const workshopId = req.user?.id;
+            const { page = 1, limit = 10, search = "" } = req.query;
+            if (!workshopId) {
+                res.status(HTTP_STATUS.UNAUTHORIZED).json({
+                    success: false,
+                    message: ERROR_MESSAGES.UNAUTHORIZED_ACCESS
+                })
+                return
+            }
+
+            const pageNumber = Number(page);
+            const pageSize = Number(limit);
+            const searchTermString = typeof search === "string" ? search : "";
+
+            const { requests, total } = await this._pendingJobs.execute(workshopId, pageNumber, pageSize, searchTermString)
+
+            res.status(HTTP_STATUS.OK).json({
+                success: true,
+                message: SUCCESS_MESSAGES.DATA_RETRIEVED,
+                requests: requests.map(request => ({
+                    name: request.name,
+                    requestId: request.requestId,
+                    vehicleNo: request.vehicleNo,
+                    location: request.location,
+                    date: request.createdAt,
+                    type: request.type,
+                })),
+                totaPages: total,
+                currentPage: pageNumber
+            })
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    async updateRequestStatus(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const {requestId, status} = req.body;
+            if(!requestId || !status) {
+                res.status(HTTP_STATUS.BAD_REQUEST).json({
+                    success: false,
+                    message: ERROR_MESSAGES.DATA_MISSING
+                })
+                return;
+            }
+            const request = await this._updateRequestStatus.execute(requestId, status)
             res.status(HTTP_STATUS.OK).json({
                 success: true,
                 message: SUCCESS_MESSAGES.UPDATE_SUCCESS,

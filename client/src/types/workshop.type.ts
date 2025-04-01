@@ -14,3 +14,14 @@ export interface Workshop {
     image?: string | null
     rejectionReason?: string
 }
+
+export interface IWorkshopWithRating {
+    description: string
+    streetAddress: string
+    workshopId: string;
+    name: string;
+    city: string;
+    country?: string;
+    image?: string;
+    averageRating: number;
+}

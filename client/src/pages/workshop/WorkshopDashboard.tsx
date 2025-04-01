@@ -10,7 +10,8 @@ import WorkshopHeader from "../../components/workshop/Header";
 import { useIsMobile } from "../../hooks/useMobile";
 import { workshopLogout } from "../../store/slices/workshopSlice";
 import { useWorkshopLogout } from "../../hooks/workshop/useWorkshopAuth";
-export default function AdminDashboard() {
+
+export default function WorkshopDashboard() {
     const navigate = useNavigate();
     const { successToast } = useToaster();
     const [isSideBarOpen, setIsSidebarOpen] = useState(true);
@@ -47,11 +48,11 @@ export default function AdminDashboard() {
 
     return (
         <SidebarProvider>
-            <div className="flex min-h-screen w-full bg-background relative">
-                {/* Mobile & Desktop Sidebar */}
+            <div className="flex h-screen w-full bg-background overflow-hidden">
                 <aside
                     className={`
-                fixed top-0 left-0 h-full bg-[#181616] z-50
+                fixed top-0 left-0 h-full bg-[#181616] z-50 overflow-y-auto
+                flex flex-col
                 transition-all duration-300 ease-in-out
                 ${isMobile
                             ? isSideBarOpen ? "translate-x-0 w-64" : "-translate-x-full w-64"
@@ -61,7 +62,7 @@ export default function AdminDashboard() {
               `}
                 >
                     {/* Header */}
-                    <div className="border-b border-white/10">
+                    <div className="border-b border-white/10 shrink-0">
                         <div className="flex items-center gap-2 px-4 py-4">
                             <div className="bg-white rounded-full p-1">
                                 <svg
@@ -85,8 +86,8 @@ export default function AdminDashboard() {
                         </div>
                     </div>
 
-                    {/* Content */}
-                    <div className="px-2 py-4">
+                    {/* Content - flex-grow to push logout to bottom */}
+                    <div className="px-2 py-4 flex-grow">
                         <nav>
                             <ul className="space-y-1">
                                 {menuItems.map((item) => (
@@ -106,7 +107,7 @@ export default function AdminDashboard() {
                     </div>
 
                     {/* Footer */}
-                    <div className="border-t border-white/10 p-4 absolute bottom-0 w-full">
+                    <div className="border-t border-white/10 p-4 shrink-0">
                         <button
                             onClick={handleLogout}
                             className="py-3 w-full px-3 text-white hover:bg-white/10 flex items-center gap-2 rounded-md"
@@ -125,16 +126,18 @@ export default function AdminDashboard() {
                     />
                 )}
 
-                {/* Main Content */}
+                {/* Main Content - Now with flex-col and overflow handling */}
                 <div
-                    className={`flex-1 flex flex-col transition-all duration-300 ${isSideBarOpen && !isMobile ? "ml-0" : isMobile ? "ml-0" : "ml-0"
+                    className={`flex-1 flex flex-col transition-all duration-300 overflow-hidden ${isSideBarOpen && !isMobile ? "ml-0" : isMobile ? "ml-0" : "ml-0"
                         }`}
                 >
                     <WorkshopHeader
                         isSidebarOpen={isSideBarOpen}
                         setIsSidebarOpen={setIsSidebarOpen}
+                        handleLogout={handleLogout}
+                        // className="shrink-0"
                     />
-                    <main className="p-4 md:p-6 bg-gray-50 flex-1">
+                    <main className="p-4 md:p-6 bg-gray-50 flex-1 overflow-y-auto">
                         <Outlet />
                     </main>
                 </div>

@@ -1,123 +1,90 @@
 "use client"
 
-import { useState, useEffect } from "react"
-// import Image from "next/image"
+import { useState, useEffect, useCallback } from "react"
 import { Input } from "../../components/ui/Input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../components/ui/select"
-import { useMediaQuery } from "../../hooks/use-media-query"
-import { Card, CardContent } from "../../components/ui/Card"
-import { Star, MapPin, AlertCircle, Search, Filter, ChevronLeft, ChevronRight } from "lucide-react"
+import { Search } from "lucide-react"
 import { Header } from "../../components/customer/Header"
 import { Footer } from "../../components/customer/Footer"
-import { Workshop } from "../../types/workshop.type"
-import { useAllWorkshopsQuery } from "../../hooks/admin/useAllWorkshops"
+import { IWorkshopWithRating } from "../../types/workshop.type"
 import { useWorkshopsQuery } from "../../hooks/customer/useWorkshops"
-import { getAllWorkshops } from "../../services/customer/workshopServices"
+import debounce from "lodash/debounce"
+import { Pagination1 } from "../../components/admin/Pagination1"
+import WorkshopDisplaySection from "../../components/customer/workshop/WorkshopDisplaySection"
 
-// Status filter type
-type StatusFilterType = "all" | "approved" | "pending" | "rejected"
+type SortOptionType = "none" | "alphabetic-asc" | "alphabetic-desc" | "rating-high" | "rating-low"
 
 const WorkshopsPage = () => {
-    // Sample data - this would normally be fetched from an API
-    const [workshops, setWorkshops] = useState<Workshop[]>([
-        {
-            _id: "67d6993d567b65cdfee823b0",
-            workshopId: "amt-workshop-38f-4133-8eb0-b7030cd7cc8f",
-            name: "Adonz Automotive",
-            email: "adonz@gmail.com",
-            city: "Cochin",
-            state: "Kerala",
-            country: "India",
-            streetAddress: "Maradu",
-            approvalStatus: "approved",
-            isActive: false,
-            isBlocked: false,
-            bio: "At Adonz Auto Care, we provide top-quality automotive repair and maintenance...",
-            image: "https://res.cloudinary.com/duxbbxnus/image/upload/v1743065890/qby9hdog…",
-        },
-        {
-            _id: "67da78a37a3916d015111307",
-            workshopId: "amt-workshop-be9-422a-8e53-7f61fff60775",
-            name: "Sample Workshop",
-            email: "workshop@gmail.com",
-            city: "Cochin",
-            state: "Kerala",
-            country: "India",
-            streetAddress: "Maradu",
-            approvalStatus: "approved",
-            isActive: false,
-            isBlocked: false,
-            image: null,
-        },
-        {
-            _id: "67dcf4dce6e3641df0f6c167",
-            workshopId: "amt-workshop-cf0-460f-816e-dbd4898fd72e",
-            name: "Wshop",
-            email: "geyebad356@barodis.com",
-            city: "Cochin",
-            state: "Kerala",
-            country: "India",
-            streetAddress: "Maradu",
-            approvalStatus: "rejected",
-            isActive: false,
-            isBlocked: false,
-            rejectionReason: "Not enough details",
-            image: null,
-        },
-        {
-            _id: "67e2357757ba255b45c2d1bb",
-            workshopId: "amt-workshop-b18-47e3-9b2a-56c0aaff8b9b",
-            name: "workshop sample",
-            email: "asw@gmail.com",
-            city: "Cochin",
-            state: "Kerala",
-            country: "India",
-            streetAddress: "Maradu",
-            approvalStatus: "approved",
-            isActive: false,
-            isBlocked: false,
-            image: null,
-        },
-    ])
-
-    
-    const [filteredWorkshops, setFilteredWorkshops] = useState<Workshop[]>([])
+    const [filteredWorkshops, setFilteredWorkshops] = useState<IWorkshopWithRating[]>([])
     const [searchQuery, setSearchQuery] = useState<string>("")
-    const [statusFilter, setStatusFilter] = useState<StatusFilterType>("all")
+    const [debouncedSearchQuery, setDebouncedSearchQuery] = useState<string>("")
     const [locationFilter, setLocationFilter] = useState<string>("all")
+    const [sortOption, setSortOption] = useState<SortOptionType>("none")
     const [currentPage, setCurrentPage] = useState<number>(1)
     const [isLoading, setIsLoading] = useState<boolean>(false)
     const [isError, setIsError] = useState<boolean>(false)
-    
-    const isDesktop = useMediaQuery("(min-width: 768px)")
-    const workshopsPerPage: number = 8
-    
-    const {data} = useWorkshopsQuery(currentPage, 8, searchQuery )
-    const workshops1 = data?.workshops
 
+    const { data } = useWorkshopsQuery(currentPage, 8, debouncedSearchQuery)
+    const workshops = (data?.workshops as IWorkshopWithRating[]) || []
+    const totalPages = data?.totalpages || 1;
+
+    // Debounced search implementation
+    const debouncedSearch = useCallback(
+        debounce((query: string) => {
+            setDebouncedSearchQuery(query)
+        }, 500),
+        []
+    )
+
+    useEffect(() => {
+        debouncedSearch(searchQuery)
+        return () => {
+            debouncedSearch.cancel()
+        }
+    }, [searchQuery, debouncedSearch])
+
+    // Sort and filter workshops
     useEffect(() => {
         setIsLoading(true)
         setTimeout(() => {
             try {
                 let results = [...workshops]
 
-                if (searchQuery) {
+                // Apply search filter
+                if (debouncedSearchQuery) {
                     results = results.filter(
                         (workshop) =>
-                            workshop.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                            workshop.city.toLowerCase().includes(searchQuery.toLowerCase()),
+                            workshop.name.toLowerCase().includes(debouncedSearchQuery.toLowerCase()) ||
+                            workshop.city.toLowerCase().includes(debouncedSearchQuery.toLowerCase()),
                     )
                 }
 
-                if (statusFilter !== "all") {
-                    results = results.filter((workshop) => workshop.approvalStatus === statusFilter)
-                }
-
+                // Apply location filter
                 if (locationFilter !== "all") {
                     results = results.filter((workshop) => workshop.city === locationFilter)
                 }
 
+                // Apply sorting
+                switch (sortOption) {
+                    case "alphabetic-asc":
+                        results.sort((a, b) => a.name.localeCompare(b.name))
+                        break
+                    case "alphabetic-desc":
+                        results.sort((a, b) => b.name.localeCompare(a.name))
+                        break
+                    case "rating-high":
+                        results.sort((a, b) => (b.averageRating || 0) - (a.averageRating || 0))
+                        break
+                    case "rating-low":
+                        results.sort((a, b) => (a.averageRating || 0) - (b.averageRating || 0))
+                        break
+                    default:
+                        // No sorting or default sorting
+                        break
+                }
+
                 setFilteredWorkshops(results)
+                setCurrentPage(1)
                 setIsLoading(false)
             } catch (error) {
                 console.error("Error filtering workshops:", error)
@@ -125,17 +92,9 @@ const WorkshopsPage = () => {
                 setIsLoading(false)
             }
         }, 300)
-    }, [searchQuery, statusFilter, locationFilter, workshops])
+    }, [debouncedSearchQuery, locationFilter, sortOption, workshops])
 
     const locations = [...new Set(workshops.map((workshop) => workshop.city))]
-
-    const indexOfLastWorkshop = currentPage * workshopsPerPage
-    const indexOfFirstWorkshop = indexOfLastWorkshop - workshopsPerPage
-    const currentWorkshops = filteredWorkshops.slice(indexOfFirstWorkshop, indexOfLastWorkshop)
-
-    const totalPages = Math.ceil(filteredWorkshops.length / workshopsPerPage)
-
-    const placeholderImages = ["/api/placeholder/400/300", "/api/placeholder/400/300"]
 
     if (isLoading) {
         return (
@@ -165,7 +124,7 @@ const WorkshopsPage = () => {
 
     return (
         <>
-        <Header />
+            <Header />
             <div className="bg-gray-50 min-h-[calc(100vh-200px)]">
                 <div className="container mx-auto px-4 py-6">
                     {/* Page Header */}
@@ -195,20 +154,7 @@ const WorkshopsPage = () => {
                                 />
                             </div>
 
-                            <div className="flex gap-3">
-                                <div className="w-full md:w-40">
-                                    <Select value={statusFilter} onValueChange={(value: StatusFilterType) => setStatusFilter(value)}>
-                                        <SelectTrigger className="bg-gray-50 border-gray-200">
-                                            <SelectValue placeholder="Status" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value="all">All Statuses</SelectItem>
-                                            <SelectItem value="approved">Approved</SelectItem>
-                                            <SelectItem value="pending">Pending</SelectItem>
-                                            <SelectItem value="rejected">Rejected</SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                </div>
+                            <div className="flex flex-wrap gap-3">
 
                                 <div className="w-full md:w-48">
                                     <Select value={locationFilter} onValueChange={setLocationFilter}>
@@ -225,145 +171,40 @@ const WorkshopsPage = () => {
                                         </SelectContent>
                                     </Select>
                                 </div>
+
+                                <div className="w-full md:w-48">
+                                    <Select value={sortOption} onValueChange={(value: SortOptionType) => setSortOption(value)}>
+                                        <SelectTrigger className="bg-gray-50 border-gray-200">
+                                            <SelectValue placeholder="Sort by" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="none">Sort by</SelectItem>
+                                            <SelectItem value="alphabetic-asc">Name (A-Z)</SelectItem>
+                                            <SelectItem value="alphabetic-desc">Name (Z-A)</SelectItem>
+                                            <SelectItem value="rating-high">Highest Rated</SelectItem>
+                                            <SelectItem value="rating-low">Lowest Rated</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                </div>
                             </div>
                         </div>
                     </div>
 
                     {/* Results Count */}
-                    <div className="flex justify-between items-center mb-4">
-                        <p className="text-gray-600">
-                            Showing <span className="font-medium">{filteredWorkshops.length}</span> workshops
-                        </p>
-                        {filteredWorkshops.length > 0 && (
-                            <div className="flex items-center gap-1">
-                                <Filter size={16} className="text-gray-500" />
-                                <span className="text-sm text-gray-500">
-                                    Filtered by: {statusFilter !== "all" ? statusFilter : ""}
-                                    {statusFilter !== "all" && locationFilter !== "all" ? ", " : ""}
-                                    {locationFilter !== "all" ? locationFilter : ""}
-                                    {statusFilter === "all" && locationFilter === "all" ? "None" : ""}
-                                </span>
-                            </div>
-                        )}
-                    </div>
+                    <WorkshopDisplaySection
+                        filteredWorkshops={filteredWorkshops}
+                        sortOption={sortOption}
+                        currentPage={currentPage}
+                        locationFilter={locationFilter}
+                        searchQuery={searchQuery}
+                    />
 
-                    {/* Workshops Grid */}
-                    {filteredWorkshops.length === 0 ? (
-                        <div className="bg-white rounded-xl shadow-sm p-8 text-center">
-                            <div className="mx-auto w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-                                <AlertCircle size={24} className="text-gray-400" />
-                            </div>
-                            <h3 className="text-lg font-medium text-gray-800 mb-2">No workshops found</h3>
-                            <p className="text-gray-600 max-w-md mx-auto">
-                                {searchQuery || statusFilter !== "all" || locationFilter !== "all"
-                                    ? "No results match your search criteria. Try adjusting your filters."
-                                    : "There are no workshops available at the moment."}
-                            </p>
-                        </div>
-                    ) : (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-                            {currentWorkshops.map((workshop, index) => (
-                                <Card key={workshop._id} className="overflow-hidden hover:shadow-md transition-shadow group">
-                                    <div className="relative h-44">
-                                        {/* <Image
-                    src={placeholderImages[index % 2] || "/placeholder.svg"}
-                    alt={workshop.name}
-                    fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-300"
-                  /> */}
-                  
-                                        {workshop.approvalStatus === "rejected" && (
-                                            <div className="absolute top-2 right-2 bg-red-500 text-white text-xs px-2 py-1 rounded">
-                                                Rejected
-                                            </div>
-                                        )}
-                                        <button
-                                            className="absolute top-2 left-2 bg-white/80 hover:bg-white p-1.5 rounded-full transition-colors"
-                                            aria-label="Add to favorites"
-                                        >
-                                            <Star size={16} className="text-gray-400 hover:text-yellow-500" />
-                                        </button>
-                                    </div>
-                                    <CardContent className="p-4">
-                                        <h3 className="font-semibold text-lg text-gray-800 mb-1 truncate">{workshop.name}</h3>
-                                        <div className="flex items-center text-sm text-gray-500 mb-3">
-                                            <MapPin size={14} className="mr-1" />
-                                            <span className="truncate">
-                                                {workshop.streetAddress}, {workshop.city}
-                                            </span>
-                                        </div>
-                                        {workshop.bio ? (
-                                            <p className="text-sm text-gray-600 line-clamp-2">{workshop.bio}</p>
-                                        ) : (
-                                            <p className="text-sm text-gray-400 italic">No description available</p>
-                                        )}
-                                        <div className="mt-3 pt-3 border-t border-gray-100 flex justify-between items-center">
-                                            <span className="text-sm text-gray-500">{workshop.country}</span>
-                                            <a
-                                                href={`/workshops/${workshop.workshopId}`}
-                                                className="text-sm font-medium text-yellow-600 hover:text-yellow-700"
-                                            >
-                                                View Details
-                                            </a>
-                                        </div>
-                                    </CardContent>
-                                </Card>
-                            ))}
-                        </div>
-                    )}
-
-                    {/* Pagination */}
-                    {filteredWorkshops.length > 0 && (
-                        <div className="flex justify-center items-center gap-2 mt-8">
-                            <button
-                                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                                disabled={currentPage === 1}
-                                className={`p-2 rounded-md ${currentPage === 1 ? "bg-gray-100 text-gray-400" : "bg-white text-gray-700 hover:bg-gray-50"} border border-gray-200`}
-                                aria-label="Previous page"
-                            >
-                                <ChevronLeft size={16} />
-                            </button>
-
-                            {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => {
-                                const pageNumber = i + 1
-                                return (
-                                    <button
-                                        key={pageNumber}
-                                        onClick={() => setCurrentPage(pageNumber)}
-                                        className={`w-10 h-10 flex items-center justify-center rounded-md ${currentPage === pageNumber ? "bg-yellow-500 text-white" : "bg-white text-gray-700 hover:bg-gray-50"
-                                            } border border-gray-200`}
-                                        aria-label={`Page ${pageNumber}`}
-                                        aria-current={currentPage === pageNumber ? "page" : undefined}
-                                    >
-                                        {pageNumber}
-                                    </button>
-                                )
-                            })}
-
-                            {totalPages > 5 && <span className="px-2 text-gray-500">...</span>}
-
-                            {totalPages > 5 && (
-                                <button
-                                    onClick={() => setCurrentPage(totalPages)}
-                                    className={`w-10 h-10 flex items-center justify-center rounded-md ${currentPage === totalPages ? "bg-yellow-500 text-white" : "bg-white text-gray-700 hover:bg-gray-50"
-                                        } border border-gray-200`}
-                                    aria-label={`Page ${totalPages}`}
-                                    aria-current={currentPage === totalPages ? "page" : undefined}
-                                >
-                                    {totalPages}
-                                </button>
-                            )}
-
-                            <button
-                                onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-                                disabled={currentPage === totalPages}
-                                className={`p-2 rounded-md ${currentPage === totalPages ? "bg-gray-100 text-gray-400" : "bg-white text-gray-700 hover:bg-gray-50"} border border-gray-200`}
-                                aria-label="Next page"
-                            >
-                                <ChevronRight size={16} />
-                            </button>
-                        </div>
-                    )}
+                    <Pagination1
+                        currentPage={currentPage}
+                        totalPages={totalPages}
+                        onPageNext={() => currentPage + 1}
+                        onPagePrev={() => currentPage - 1}
+                    />
                 </div>
             </div>
             <Footer />
@@ -372,4 +213,3 @@ const WorkshopsPage = () => {
 }
 
 export default WorkshopsPage
-

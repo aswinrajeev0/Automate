@@ -53,3 +53,12 @@ export interface IRequest {
     carType: string;
     carBrand: string;
 }
+
+export interface IJobs {
+    name: string;
+    createdAt: string;
+    location: string;
+    requestId: string;
+    vehicleNo: string;
+    type: string;
+}

@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { BaseRoute } from "../base.route";
-import { otpController, requestController, workshopController } from "../../di/resolver";
+import { otpController, requestController, reviewController, workshopController } from "../../di/resolver";
 import { authenticate, decodeToken } from "../../../interface-adapters/middlewares/auth.midleware";
 
 export class WorkshopRoute extends BaseRoute {
@@ -71,6 +71,18 @@ export class WorkshopRoute extends BaseRoute {
         
         this.router.patch("/reject-request/:requestId", authenticate("workshop"), (req: Request, res: Response, next: NextFunction) => {
             requestController.rejectRequest(req, res, next);
+        })
+
+        this.router.get("/pending-jobs", authenticate("workshop"), (req: Request, res: Response, next: NextFunction) => {
+            requestController.pendingJobs(req, res, next)
+        })
+
+        this.router.patch("/update-request-status", authenticate("workshop"), (req: Request, res: Response, next: NextFunction) => {
+            requestController.updateRequestStatus(req, res, next);
+        })
+
+        this.router.get("/workshop-reviews", authenticate("workshop"), (req: Request, res: Response, next: NextFunction) => {
+            reviewController.getWorkshopReviews(req, res, next)
         })
     }
 }

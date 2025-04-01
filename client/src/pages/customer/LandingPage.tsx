@@ -41,8 +41,8 @@ export default function LandingPage() {
               </div>
               <span className="text-red-500 font-semibold">Home</span>
             </div>
-            <div className="flex flex-col items-center">
-              <div className="p-3 rounded-full bg-gray-500 text-white mb-2">
+            <div className="flex flex-col items-center cursor-pointer">
+              <div onClick={() => navigate("/workshops")} className="p-3 rounded-full bg-gray-500 text-white mb-2">
                 <Wrench className="w-6 h-6" />
               </div>
               <span className="text-gray-500 font-semibold">Workshop</span>

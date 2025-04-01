@@ -385,12 +385,12 @@ export class WorkshopController implements IWorkshopController {
             const searchTermString = typeof search === "string" ? search : "";
 
             const { workshops, total } = await this._getAllWorkshopWithRating.execute(pageNumber, pageSize, searchTermString);
-            // res.status(HTTP_STATUS.OK).json({
-            //     success: true,
-            //     workshops: workshops,
-            //     totalPages: total,
-            //     currentPage: pageNumber,
-            // });
+            res.status(HTTP_STATUS.OK).json({
+                success: true,
+                workshops: workshops,
+                totalPages: total,
+                currentPage: pageNumber,
+            });
         } catch (error) {
             next(error)
         }

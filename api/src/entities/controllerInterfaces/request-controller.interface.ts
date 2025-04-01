@@ -7,4 +7,6 @@ export interface IRequestController {
     requestDetails(req: Request, res: Response, next: NextFunction): Promise<void>;
     acceptRequest(req: Request, res: Response, next: NextFunction): Promise<void>;
     rejectRequest(req: Request, res: Response, next: NextFunction): Promise<void>;
+    pendingJobs(req: Request, res: Response, next: NextFunction): Promise<void>;
+    updateRequestStatus(req: Request, res: Response, next: NextFunction): Promise<void>;
 }

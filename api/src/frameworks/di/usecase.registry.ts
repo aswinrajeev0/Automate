@@ -106,6 +106,14 @@ import { IRejectRequestUSeCase } from "../../entities/useCaseInterfaces/requests
 import { RejectRequestUSeCase } from "../../useCases/requests/reject-request.usecase";
 import { GetAllWorkshopsWithRatingUseCase } from "../../useCases/workshop/get-all-workshops-with-ratings.usecase";
 import { IGetAllWorkshopsWithRatingUseCase } from "../../entities/useCaseInterfaces/workshop/get-all-workshops-with-rating.usecase.interface";
+import { IPendingJobsUseCase } from "../../entities/useCaseInterfaces/requests/pending-jobs.usecase.interface";
+import { PendingJobsUseCase } from "../../useCases/requests/pending-jobs.usecase";
+import { IUpdateRequestStatusUseCase } from "../../entities/useCaseInterfaces/requests/update-request-status.usecase.interface";
+import { UpdateRequestStatusUseCase } from "../../useCases/requests/update-request-status.usecase";
+import { IReviewRepository } from "../../entities/repositoryInterfaces/review/review-repository.interface";
+import { ReviewRepository } from "../../interface-adapters/repositories/workshop/review-repository";
+import { IWorkshopReviewsUseCase } from "../../entities/useCaseInterfaces/review/get-workshop-reviews.usecase.interface";
+import { WorkshopReviewsUseCase } from "../../useCases/review/get-workshop-reviews.usecase";
 
 export class UseCaseRegistry {
     static registerUseCases(): void {
@@ -292,6 +300,18 @@ export class UseCaseRegistry {
 
         container.register<IGetAllWorkshopsWithRatingUseCase>("IGetAllWorkshopsWithRatingUseCase", {
             useClass: GetAllWorkshopsWithRatingUseCase
+        })
+
+        container.register<IPendingJobsUseCase>("IPendingJobsUseCase", {
+            useClass: PendingJobsUseCase
+        })
+
+        container.register<IUpdateRequestStatusUseCase>("IUpdateRequestStatusUseCase", {
+            useClass: UpdateRequestStatusUseCase
+        })
+
+        container.register<IWorkshopReviewsUseCase>("IWorkshopReviewsUseCase", {
+            useClass: WorkshopReviewsUseCase
         })
 
         //* ====== Register Strategies ====== *//

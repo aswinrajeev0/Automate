@@ -9,6 +9,7 @@ import { AuthController } from "../../interface-adapters/controllers/auth.contro
 import { ReviewController } from "../../interface-adapters/controllers/review.controller";
 import { BookingController } from "../../interface-adapters/controllers/booking.controller";
 import { RequestController } from "../../interface-adapters/controllers/request.controller";
+import { BlockStatusMiddleware } from "../../interface-adapters/middlewares/block-status.middleware";
 
 DependencyInjection.registerAll();
 
@@ -20,3 +21,5 @@ export const authController = container.resolve(AuthController);
 export const reviewController = container.resolve(ReviewController);
 export const bookingController = container.resolve(BookingController);
 export const requestController = container.resolve(RequestController)
+
+export const blockStatusMiddleware = container.resolve(BlockStatusMiddleware);

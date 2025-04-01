@@ -71,7 +71,7 @@ const WorkshopDetailsSection: React.FC<WorkshopDetailsSectionProps> = ({ worksho
                                     size={18} 
                                     className={i < (workshop?.rating || 4) ? "text-yellow-400 fill-yellow-400" : "text-gray-200"} 
                                 />
-                            ))}
+                            ))} 
                             <span className="ml-1 text-sm text-gray-600">({reviewCount || 0})</span>
                         </div>
                     </div>

@@ -8,7 +8,7 @@ export interface IRequestEntity {
     carBrand: string;
     location: string;
     type: "car-lift" | "mobile-workshop";
-    status: "submitted" | "pending" | "finished" | "accepted" | "rejected";
+    status: "submitted" | "pending" | "on_way" | "in_progress" | "completed" |  "delivered" | "accepted" | "rejected";
     paymentStatus: "pending" | "completed";
     workshopId: string;
     customerId: string;

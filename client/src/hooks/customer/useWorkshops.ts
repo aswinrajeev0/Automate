@@ -2,6 +2,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { getAllWorkshops, submitReview, workshopDetails } from "../../services/customer/workshopServices";
 
 export interface IWorkshop {
+    rating: number;
     id: string;
     workshopId: string;
     name: string;

@@ -12,7 +12,7 @@ export class GetAllWorkshopsWithRatingUseCase implements IGetAllWorkshopsWithRat
         @inject("IWorkshopRepository") private _workshopRepo: IWorkshopRepository
     ) { }
 
-    async execute(page: number, limit: number, searchTerm?: string): Promise<Partial<IWorkshopWithRatings[]>> {
+    async execute(page: number, limit: number, searchTerm?: string): Promise<{workshops: Partial<IWorkshopWithRatings[]>; total: number}> {
         const skip = (page - 1) * limit;
         const workshops = await this._workshopRepo.getWorkshopsWithRatings(skip, limit, searchTerm)
         if(!workshops) {
@@ -21,7 +21,7 @@ export class GetAllWorkshopsWithRatingUseCase implements IGetAllWorkshopsWithRat
                 HTTP_STATUS.NOT_FOUND
             )
         }
-        const length = workshops.length;
-        return {workshops, length}
+        const total = workshops.length;
+        return {workshops, total}
     }
 }
