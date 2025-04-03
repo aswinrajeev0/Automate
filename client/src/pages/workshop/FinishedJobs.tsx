@@ -3,16 +3,15 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react"
 import { Pagination1 } from "../../components/admin/Pagination1"
 import { debounce } from "lodash"
-import { usePendingJobs } from "../../hooks/workshop/useWorkshopRequests"
+import { useFinishedJobs } from "../../hooks/workshop/useWorkshopRequests"
 import type { IJobs } from "../../types/requests"
 import { Input } from "../../components/ui/Input"
 import { useMediaQuery } from "../../hooks/use-media-query"
-import JobsTable from "../../components/workshop/pendingJobs/JobsTable"
-import JobsCards from "../../components/workshop/pendingJobs/JobsCards"
 import IsLoading from "../../components/workshop/IsLoading"
-import IsError from "../../components/workshop/IsError"
+import FinishedJobsTable from "../../components/workshop/finishedJobs/FinishedJobsTable"
+import FinishedJobsCards from "../../components/workshop/finishedJobs/FinishedJobsCard"
 
-const PendingJobspage = () => {
+const FinishedJobspage = () => {
     const [activeTab, setActiveTab] = useState("requests")
     const [searchQuery, setSearchQuery] = useState("")
     const [debouncedSearch, setDebouncedSearch] = useState(searchQuery)
@@ -27,7 +26,7 @@ const PendingJobspage = () => {
         [],
     )
 
-    const { data, isLoading, isError } = usePendingJobs(currentPage, limit, debouncedSearch)
+    const { data, isLoading, isError } = useFinishedJobs(currentPage, limit, debouncedSearch)
     const requests = (data?.requests ?? []) as IJobs[]
     const totalPages = data?.totalPages || 1
 
@@ -50,7 +49,7 @@ const PendingJobspage = () => {
 
     if (isError) {
         return (
-            <IsError content="jobs" />
+            <IsLoading content="jobs" />
         )
     }
 
@@ -58,8 +57,8 @@ const PendingJobspage = () => {
         <>
             <div className="bg-gray-50 p-4 md:p-6 rounded-lg shadow-sm h-[calc(100vh-80px)] flex flex-col overflow-hidden">
                 <div className="mb-4">
-                    <h1 className="text-xl md:text-2xl font-bold text-gray-800">Pending Jobs</h1>
-                    <p className="text-sm text-gray-600">Manage all your pending jobs</p>
+                    <h1 className="text-xl md:text-2xl font-bold text-gray-800">Finished Jobs</h1>
+                    <p className="text-sm text-gray-600">Find all the finished jobs</p>
                 </div>
 
                 <div className="flex border-b border-gray-200 mb-4">
@@ -68,7 +67,7 @@ const PendingJobspage = () => {
                             }`}
                         onClick={() => setActiveTab("requests")}
                     >
-                        Pending Jobs
+                        Finished Jobs
                     </button>
                 </div>
 
@@ -102,7 +101,7 @@ const PendingJobspage = () => {
                             <p className="text-gray-700 font-medium">No pending requests</p>
                         </div>
                     ) : (
-                        isDesktop ? <JobsTable requests={requests} /> : <JobsCards requests={requests} />
+                        isDesktop ? <FinishedJobsTable requests={requests} /> : <FinishedJobsCards requests={requests} />
                     )}
                 </div>
 
@@ -123,5 +122,5 @@ const PendingJobspage = () => {
     )
 }
 
-export default PendingJobspage
+export default FinishedJobspage
 

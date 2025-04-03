@@ -51,7 +51,7 @@ export const rejectRequest = async (requestId: string) => {
     }
 }
 
-export const pendngJobs = async (page: number = 1, limit: number = 10, searchTerm: string = "") => {
+export const pendingJobs = async (page: number = 1, limit: number = 10, searchTerm: string = "") => {
     try {
         const response = await workshopApi.get("/pending-jobs", {
             params: {
@@ -77,3 +77,18 @@ export const updateRequestStatus = async ({ status, requestId }: { status: strin
         throw error.response?.data || "An error occurred";
     }
 };
+
+export const finishedJobs = async (page: number = 1, limit: number = 10, searchTerm: string = "") => {
+    try {
+        const response = await workshopApi.get("/finished-jobs", {
+            params: {
+                page,
+                limit,
+                searchTerm
+            }
+        })
+        return response.data
+    } catch (error: any) {
+        throw error.response.data
+    }
+}

@@ -57,10 +57,6 @@ export class CustomerRoute extends BaseRoute {
             customerController.handleRefreshToken(req, res, next)
         })
 
-        this.router.get("/workshops/featured", blockStatusMiddleware.checkStatus("customer"), (req: Request, res: Response, next: NextFunction) => {
-            workshopController.getFeaturedWorkshops(req, res, next);
-        })
-
         this.router.put("/update-customer", authenticate("customer"), blockStatusMiddleware.checkStatus("customer"), (req: Request, res: Response, next: NextFunction) => {
             customerController.editCustomer(req, res, next)
         })
@@ -79,10 +75,6 @@ export class CustomerRoute extends BaseRoute {
 
         this.router.patch("/change-password", authenticate("customer"), blockStatusMiddleware.checkStatus("customer"), (req: Request, res: Response, next: NextFunction) => {
             customerController.changePassword(req, res, next)
-        })
-
-        this.router.get("/workshop-details/:id", blockStatusMiddleware.checkStatus("customer"), (req: Request, res: Response, next: NextFunction) => {
-            workshopController.getWorkshopDetails(req, res, next)
         })
 
         this.router.post("/submit-review", authenticate("customer"), blockStatusMiddleware.checkStatus("customer"), (req: Request, res: Response, next: NextFunction) => {
@@ -105,8 +97,8 @@ export class CustomerRoute extends BaseRoute {
             requestController.mobileWorkshop(req, res, next)
         })
 
-        this.router.get("/all-workshops", blockStatusMiddleware.checkStatus("customer"), (req: Request, res: Response, next: NextFunction) => {
-            workshopController.getAllWorkshopsWithRating(req, res, next)
+        this.router.delete("/cancel-slot/:bookingId", authenticate("customer"), (req: Request, res: Response, next: NextFunction) => {
+            bookingController.cancelslot(req, res, next)
         })
     }
 }

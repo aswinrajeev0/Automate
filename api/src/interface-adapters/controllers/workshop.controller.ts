@@ -196,6 +196,7 @@ export class WorkshopController implements IWorkshopController {
                 pageSize,
                 searchTermString
             );
+
             res.status(HTTP_STATUS.OK).json({
                 success: true,
                 workshops: workshops,
@@ -391,6 +392,7 @@ export class WorkshopController implements IWorkshopController {
                 totalPages: total,
                 currentPage: pageNumber,
             });
+            console.log(workshops)
         } catch (error) {
             next(error)
         }

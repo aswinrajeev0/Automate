@@ -1,51 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, MapPin, Calendar, Clock, Car, Wrench, CreditCard, User, Phone } from 'lucide-react';
+import { ArrowLeft, MapPin, Calendar, Car, Wrench, CreditCard, User, Phone } from 'lucide-react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useRequestDetails, useUpdateRequestStatus } from '../../../hooks/workshop/useWorkshopRequests';
+import { useRequestDetails } from '../../../hooks/workshop/useWorkshopRequests';
 import { IRequest } from '../../../types/requests';
-import { useToaster } from '../../../hooks/ui/useToaster';
 
-const JobDetailsPage: React.FC = () => {
+const FinishedJobDetailsPage: React.FC = () => {
     const [requestStatus, setRequestStatus] = useState<string | undefined>(undefined);
-    const [selectedStatus, setSelectedStatus] = useState<string | undefined>(requestStatus);
-    const { successToast, errorToast } = useToaster();
     const navigate = useNavigate();
 
     const { requestId } = useParams();
 
     const { data } = useRequestDetails(requestId as string);
     const requestDetails: IRequest = data?.request as IRequest;
-    const updateRequestStatus = useUpdateRequestStatus();
-
-    const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        setSelectedStatus(e.target.value);
-    };
 
     useEffect(() => {
         if (requestDetails?.status) {
             setRequestStatus(requestDetails.status);
         }
     }, [requestDetails]);
-
-    const handleUpdateStatus = async () => {
-        if (!selectedStatus || selectedStatus === requestStatus) return; // Prevent unnecessary calls
-
-        try {
-            const response = await updateRequestStatus.mutateAsync({
-                requestId: requestId as string,
-                status: selectedStatus
-            });
-
-            if (response.success) {
-                setRequestStatus(selectedStatus);
-                successToast(response?.message || `Status updated to ${selectedStatus}`);
-            } else {
-                errorToast(response.message || "Failed to update status");
-            }
-        } catch (error) {
-            errorToast("An error occurred while updating the status");
-        }
-    };
 
     const handleBack = () => {
         navigate(-1);
@@ -58,13 +30,6 @@ const JobDetailsPage: React.FC = () => {
             </div>
         );
     }
-
-    const statusOptions = [
-        { value: "on_way", label: "On Way", color: "bg-blue-500" },
-        { value: "in_progress", label: "In Progress", color: "bg-yellow-500" },
-        { value: "completed", label: "Completed", color: "bg-green-500" },
-        { value: "delivered", label: "Delivered", color: "bg-purple-500" },
-    ];
 
     const getStatusBadgeColor = (status: string) => {
         switch (status) {
@@ -203,42 +168,6 @@ const JobDetailsPage: React.FC = () => {
                                 </div>
                             </div>
                         </div>
-
-                        <div className="bg-gray-50 rounded-lg p-5 border border-gray-200">
-                            <h3 className="font-medium text-gray-800 mb-4">Update Job Status</h3>
-                            <div className="relative">
-                                <select
-                                    value={requestStatus || 'pending'}
-                                    onChange={handleSelectChange}
-                                    className="block w-full px-4 py-3 pr-8 border border-gray-300 bg-white rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none"
-                                >
-                                    <option value="#">Select an option</option>
-                                    {statusOptions.map(option => (
-                                        <option key={option.value} value={option.value}>
-                                            {option.label}
-                                        </option>
-                                    ))}
-                                </select>
-                                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                                    <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                                        <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
-                                    </svg>
-                                </div>
-                            </div>
-
-                            <button
-                                className="mt-4 w-full bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg font-medium transition duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
-                                onClick={handleUpdateStatus}
-                                disabled={updateRequestStatus.isPending}
-                            >
-                                {updateRequestStatus.isPending ? "Updating..." : "Update Status"}
-                            </button>
-
-                            <div className="mt-4 flex items-center">
-                                <div className={`w-4 h-4 rounded-full mr-2 ${statusOptions.find(option => option.value === requestStatus)?.color || 'bg-gray-500'}`}></div>
-                                <span className="text-gray-600 text-sm">Current: {formatStatus(requestStatus || 'pending')}</span>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -246,4 +175,4 @@ const JobDetailsPage: React.FC = () => {
     );
 };
 
-export default JobDetailsPage;
+export default FinishedJobDetailsPage;

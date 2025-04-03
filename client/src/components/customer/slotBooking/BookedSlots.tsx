@@ -6,17 +6,58 @@ import { RootState } from "../../../store/store";
 export interface BookedSlot {
     date: Date;
     time: string;
+    endTime?: string;
     customerId?: string;
     workshopId?: string;
+    type?: string;
+    duration?: number;
+    bookingId: string;
 }
 
 interface BookedSlotsProps {
-    bookedSlots: BookedSlot[]
+    bookedSlots: BookedSlot[];
+    onCancelBooking: (slotId: string) => void;
 }
 
-const BookedSlots: React.FC<BookedSlotsProps> = ({bookedSlots}) => {
+const BookedSlots: React.FC<BookedSlotsProps> = ({ bookedSlots, onCancelBooking }) => {
+    const { customer } = useSelector((state: RootState) => state.customer);
 
-    const {customer} = useSelector((state: RootState) => state.customer)
+    // Helper function to format the time range
+    const formatTimeRange = (slot: BookedSlot) => {
+        const startTime = slot.time.includes(':') ? slot.time : `${slot.time}:00`;
+        
+        // If we have an endTime, use it
+        if (slot.endTime) {
+            const formattedEndTime = slot.endTime.includes(':') ? slot.endTime : `${slot.endTime}:00`;
+            return `${startTime} - ${formattedEndTime}`;
+        }
+        
+        // Otherwise calculate based on duration
+        if (slot.duration) {
+            // Parse the start time
+            const [hours, minutes] = startTime.split(':').map(Number);
+            // Calculate end time
+            const endHour = hours + slot.duration;
+            const endHourFormatted = endHour.toString().padStart(2, '0');
+            return `${startTime} - ${endHourFormatted}:${minutes.toString().padStart(2, '0')}`;
+        }
+        
+        // Fallback - just show start time
+        return startTime;
+    };
+
+    // Get the service type label
+    const getServiceTypeLabel = (type?: string) => {
+        if (!type) return "";
+        
+        const types: Record<string, string> = {
+            minor: "Minor Service (1h)",
+            interim: "Interim Service (2h)",
+            major: "Major Service (3h)"
+        };
+        
+        return types[type] || type;
+    };
 
     return (
         <div className="border-t border-gray-200 p-6">
@@ -26,17 +67,23 @@ const BookedSlots: React.FC<BookedSlotsProps> = ({bookedSlots}) => {
                 <div className="space-y-2">
                     {bookedSlots
                         .filter(slot => slot.customerId === customer?.id)
-                        // .sort((a, b) => a.date.getTime() - b.date.getTime())
+                        .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
                         .map((slot, index) => (
                             <div key={index} className="bg-blue-50 p-3 rounded-lg flex justify-between items-center">
                                 <div>
-                                    <div className="font-medium">{format(slot.date, 'EEEE, MMMM d, yyyy')}</div>
-                                    <div className="text-gray-600">{slot.time.includes(':') ? slot.time : `${slot.time}:00`}</div>
+                                    <div className="font-medium">{format(new Date(slot.date), 'EEEE, MMMM d, yyyy')}</div>
+                                    <div className="text-gray-600">{formatTimeRange(slot)}</div>
+                                    {slot.type && (
+                                        <div className="text-xs text-blue-600 mt-1">
+                                            {getServiceTypeLabel(slot.type)}
+                                        </div>
+                                    )}
                                 </div>
-                                <button className="text-red-600 hover:text-red-800">
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                        <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
-                                    </svg>
+                                <button 
+                                    className="text-white hover:text-whitw-800 bg-red-500 p-1 rounded w-20"
+                                    onClick={() => onCancelBooking && onCancelBooking(slot.bookingId)}
+                                >
+                                    Cancel
                                 </button>
                             </div>
                         ))}
@@ -45,7 +92,7 @@ const BookedSlots: React.FC<BookedSlotsProps> = ({bookedSlots}) => {
                 <p className="text-gray-500">You don't have any upcoming appointments.</p>
             )}
         </div>
-    )
-}
+    );
+};
 
-export default BookedSlots
+export default BookedSlots;

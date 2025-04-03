@@ -59,6 +59,7 @@ export enum SUCCESS_MESSAGES {
    VERIFICATION_SUCCESS = "Verification completed successfully",
    DATA_RETRIEVED = "Data retrieved successfully",
    ACTION_SUCCESS = "Action performed successfully",
+   BOOKING_CANCELED = "Booking cancelled"
 }
 
 export enum WALLET_TRANSACTION_TYPES {

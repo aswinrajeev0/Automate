@@ -22,3 +22,12 @@ export const bookSlot = async (data: BookSlot) => {
         return error.response.data
     }
 }
+
+export const cancelSlot = async (bookingId: string) => {
+    try {
+        const response = await customerApi.delete(`/cancel-slot/${bookingId}`);
+        return response.data;
+    } catch (error: any) {
+        return error.response.data
+    }
+}

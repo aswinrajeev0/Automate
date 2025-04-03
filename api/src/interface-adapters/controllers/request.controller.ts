@@ -11,6 +11,7 @@ import { IAcceptRequestUseCase } from "../../entities/useCaseInterfaces/requests
 import { IRejectRequestUSeCase } from "../../entities/useCaseInterfaces/requests/reject-request.usecase.interface";
 import { IPendingJobsUseCase } from "../../entities/useCaseInterfaces/requests/pending-jobs.usecase.interface";
 import { IUpdateRequestStatusUseCase } from "../../entities/useCaseInterfaces/requests/update-request-status.usecase.interface";
+import { IFinishedJobsUseCase } from "../../entities/useCaseInterfaces/requests/finished-jobs.usecase.interface";
 
 @injectable()
 export class RequestController implements IRequestController {
@@ -22,7 +23,8 @@ export class RequestController implements IRequestController {
         @inject("IAcceptRequestUseCase") private _acceptRequest: IAcceptRequestUseCase,
         @inject("IRejectRequestUSeCase") private _rejectRequest: IRejectRequestUSeCase,
         @inject("IPendingJobsUseCase") private _pendingJobs: IPendingJobsUseCase,
-        @inject("IUpdateRequestStatusUseCase") private _updateRequestStatus: IUpdateRequestStatusUseCase
+        @inject("IUpdateRequestStatusUseCase") private _updateRequestStatus: IUpdateRequestStatusUseCase,
+        @inject("IFinishedJobsUseCase") private _finishedJobs: IFinishedJobsUseCase
     ) { }
 
     async carLift(req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -85,7 +87,7 @@ export class RequestController implements IRequestController {
     async allPendingRequests(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const workshopId = req.user?.id;
-            const { page = 1, limit = 10, search = "" } = req.query;
+            const { page = 1, limit = 10, searchTerm = "" } = req.query;
             if (!workshopId) {
                 res.status(HTTP_STATUS.UNAUTHORIZED).json({
                     success: false,
@@ -96,7 +98,7 @@ export class RequestController implements IRequestController {
 
             const pageNumber = Number(page);
             const pageSize = Number(limit);
-            const searchTermString = typeof search === "string" ? search : "";
+            const searchTermString = typeof searchTerm === "string" ? searchTerm : "";
 
             const { requests, total } = await this._pendingRequests.execute(workshopId, pageNumber, pageSize, searchTermString)
 
@@ -186,7 +188,7 @@ export class RequestController implements IRequestController {
     async pendingJobs(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const workshopId = req.user?.id;
-            const { page = 1, limit = 10, search = "" } = req.query;
+            const { page = 1, limit = 10, searchTerm = "" } = req.query;
             if (!workshopId) {
                 res.status(HTTP_STATUS.UNAUTHORIZED).json({
                     success: false,
@@ -197,7 +199,7 @@ export class RequestController implements IRequestController {
 
             const pageNumber = Number(page);
             const pageSize = Number(limit);
-            const searchTermString = typeof search === "string" ? search : "";
+            const searchTermString = typeof searchTerm === "string" ? searchTerm : "";
 
             const { requests, total } = await this._pendingJobs.execute(workshopId, pageNumber, pageSize, searchTermString)
 
@@ -222,8 +224,8 @@ export class RequestController implements IRequestController {
 
     async updateRequestStatus(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const {requestId, status} = req.body;
-            if(!requestId || !status) {
+            const { requestId, status } = req.body;
+            if (!requestId || !status) {
                 res.status(HTTP_STATUS.BAD_REQUEST).json({
                     success: false,
                     message: ERROR_MESSAGES.DATA_MISSING
@@ -235,6 +237,43 @@ export class RequestController implements IRequestController {
                 success: true,
                 message: SUCCESS_MESSAGES.UPDATE_SUCCESS,
                 request
+            })
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    async finishedJobs(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const workshopId = req.user?.id;
+            const { page = 1, limit = 10, searchTerm = "" } = req.query;
+            if (!workshopId) {
+                res.status(HTTP_STATUS.UNAUTHORIZED).json({
+                    success: false,
+                    message: ERROR_MESSAGES.UNAUTHORIZED_ACCESS
+                })
+                return
+            }
+
+            const pageNumber = Number(page);
+            const pageSize = Number(limit);
+            const searchTermString = typeof searchTerm === "string" ? searchTerm : "";
+
+            const { requests, total } = await this._finishedJobs.execute(workshopId, pageNumber, pageSize, searchTermString)
+
+            res.status(HTTP_STATUS.OK).json({
+                success: true,
+                message: SUCCESS_MESSAGES.DATA_RETRIEVED,
+                requests: requests.map(request => ({
+                    name: request.name,
+                    requestId: request.requestId,
+                    vehicleNo: request.vehicleNo,
+                    location: request.location,
+                    date: request.createdAt,
+                    type: request.type,
+                })),
+                totaPages: total,
+                currentPage: pageNumber
             })
         } catch (error) {
             next(error)

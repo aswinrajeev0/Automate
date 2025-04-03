@@ -14,4 +14,9 @@ export class BookingRepository implements IBookingRepository {
         const booking = await BookingModel.create(data);
         return booking;
     }
+
+    async findOneAndDelete(filter: Partial<IBookingEntity>): Promise<IBookingModel | null> {
+        const booking = await BookingModel.findOneAndDelete(filter);
+        return booking ? booking : null
+    }
 }

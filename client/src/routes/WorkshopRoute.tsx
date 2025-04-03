@@ -6,12 +6,14 @@ import { WorkshopProtected } from "../utils/protected/WorkshopProtected";
 import WokshopForgotPasswordPage from "../pages/workshop/WorkshopForgetPassword";
 import WorkshopResetPasswordPage from "../pages/workshop/WorkshopResetPassword";
 import WorkshopDasboardContent from "../components/workshop/DashboardContent";
-import ProfileContent from "../components/workshop/profile/ProfileContent";
 import RequestsPage from "../pages/workshop/Requests";
 import RequestDetailsPage from "../components/workshop/requests/RequestDetails";
 import PendingJobspage from "../pages/workshop/PendingJobs";
 import JobDetailsPage from "../components/workshop/pendingJobs/JobDetails";
 import WorkshopReviews from "../pages/workshop/ReviewPage";
+import WorkshopProfilePage from "../pages/workshop/WorkshopProfile";
+import FinishedJobspage from "../pages/workshop/FinishedJobs";
+import FinishedJobDetailsPage from "../components/workshop/finishedJobs/FinishedJobDetails";
 
 export const WorkshopRoutes = () => {
     return (
@@ -20,12 +22,13 @@ export const WorkshopRoutes = () => {
                 <Route index element={<WorkshopProtected><WorkshopDasboardContent /></WorkshopProtected>} />
                 <Route path="requests" element={<RequestsPage />} />
                 <Route path="pending-jobs" element={<PendingJobspage />} />
-                <Route path="finished-jobs" />
+                <Route path="finished-jobs" element={<FinishedJobspage />} />
                 <Route path="chats" />
                 <Route path="ratings" element={<WorkshopReviews />} />
-                <Route path="profile" element={<ProfileContent />} />
+                <Route path="profile" element={<WorkshopProfilePage />} />
                 <Route path="requests/request-details/:requestId" element={<RequestDetailsPage />} />
                 <Route path="pending-jobs/request-details/:requestId" element={<JobDetailsPage />} />
+                <Route path="finished-jobs/request-details/:requestId" element={<FinishedJobDetailsPage />} />
             </Route>
             <Route path="/login" element={<WorkshopLoginPage />} />
             <Route path="/signup" element={<WorkshopSignupPage />} />

@@ -4,11 +4,11 @@ import type { IJobs } from "../../../types/requests"
 import truncateText from "../../../utils/truncate"
 import { useNavigate } from "react-router-dom"
 
-interface JobsTableProps {
+interface FinishedJobsTableProps {
     requests: IJobs[]
 }
 
-const JobsTable: React.FC<JobsTableProps> = ({ requests }) => {
+const FinishedJobsTable: React.FC<FinishedJobsTableProps> = ({ requests }) => {
 
     const navigate = useNavigate()
 
@@ -64,7 +64,7 @@ const JobsTable: React.FC<JobsTableProps> = ({ requests }) => {
                                 </div>
                             </td>
                             <td className="px-4 py-3 whitespace-nowrap text-sm font-medium">
-                                <button onClick={() => navigate(`/workshop/pending-jobs/request-details/${request.requestId}`)} className="text-blue-600 hover:text-blue-800 cursor-pointer flex items-center gap-1">
+                                <button onClick={() => navigate(`/workshop/finished-jobs/request-details/${request.requestId}`)} className="text-blue-600 hover:text-blue-800 cursor-pointer flex items-center gap-1">
                                     <Eye size={16} />
                                     View
                                 </button>
@@ -77,4 +77,4 @@ const JobsTable: React.FC<JobsTableProps> = ({ requests }) => {
     )
 }
 
-export default JobsTable
+export default FinishedJobsTable

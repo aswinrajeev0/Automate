@@ -1,17 +1,15 @@
 import { Calendar, Map, Eye } from "lucide-react"
 import type React from "react"
-import type { IAllPendingRequests } from "../../../types/requests"
+import type { IJobs } from "../../../types/requests"
 import truncateText from "../../../utils/truncate"
 import { useNavigate } from "react-router-dom"
 
 interface RequestsCardsProps {
-    requests: IAllPendingRequests[]
+    requests: IJobs[]
 }
 
-const RequestsCards: React.FC<RequestsCardsProps> = ({ requests }) => {
-
+const FinishedJobsCards: React.FC<RequestsCardsProps> = ({ requests }) => {
     const navigate = useNavigate()
-
     return (
         <div className="grid grid-cols-1 gap-4">
             {requests.map((request) => (
@@ -54,9 +52,7 @@ const RequestsCards: React.FC<RequestsCardsProps> = ({ requests }) => {
                     </div>
 
                     <div className="mt-4 pt-3 border-t border-gray-100">
-                        <button
-                            onClick={() => navigate(`/workshop/requests/request-details/${request.requestId}`)}
-                            className="text-blue-600 hover:text-blue-800 cursor-pointer flex items-center gap-1 text-sm">
+                        <button onClick={() => navigate(`/workshop/finished-jobs/request-details/${request.requestId}`)} className="text-blue-600 hover:text-blue-800 cursor-pointer flex items-center gap-1 text-sm">
                             <Eye size={16} />
                             View Details
                         </button>
@@ -67,5 +63,5 @@ const RequestsCards: React.FC<RequestsCardsProps> = ({ requests }) => {
     )
 }
 
-export default RequestsCards
+export default FinishedJobsCards
 

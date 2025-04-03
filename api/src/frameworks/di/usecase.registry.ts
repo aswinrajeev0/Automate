@@ -114,6 +114,10 @@ import { IReviewRepository } from "../../entities/repositoryInterfaces/review/re
 import { ReviewRepository } from "../../interface-adapters/repositories/workshop/review-repository";
 import { IWorkshopReviewsUseCase } from "../../entities/useCaseInterfaces/review/get-workshop-reviews.usecase.interface";
 import { WorkshopReviewsUseCase } from "../../useCases/review/get-workshop-reviews.usecase";
+import { IFinishedJobsUseCase } from "../../entities/useCaseInterfaces/requests/finished-jobs.usecase.interface";
+import { FinishedJobsUseCase } from "../../useCases/requests/finished-jobs.usecase";
+import { ICancelSlotUseCase } from "../../entities/useCaseInterfaces/bookings/cancel-slot.usecase.interface";
+import { CancelSlotUseCase } from "../../useCases/bookings/cancel-slot.usecase";
 
 export class UseCaseRegistry {
     static registerUseCases(): void {
@@ -312,6 +316,14 @@ export class UseCaseRegistry {
 
         container.register<IWorkshopReviewsUseCase>("IWorkshopReviewsUseCase", {
             useClass: WorkshopReviewsUseCase
+        })
+
+        container.register<IFinishedJobsUseCase>("IFinishedJobsUseCase", {
+            useClass: FinishedJobsUseCase
+        })
+
+        container.register<ICancelSlotUseCase>("ICancelSlotUseCase", {
+            useClass: CancelSlotUseCase
         })
 
         //* ====== Register Strategies ====== *//

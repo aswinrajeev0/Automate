@@ -23,8 +23,11 @@ export class BlockStatusMiddleware {
         next: NextFunction
     ) => {
         try {
-            if(req.path.includes("/customer/login") || req.path.includes("/workshop/login")){
+            if (req.path.includes("/customer/login")
+                || req.path.includes("/workshop/login")
+                || req.originalUrl.includes("/public")) {
                 next()
+                return;
             }
             if (!req.user) {
                 res.status(HTTP_STATUS.UNAUTHORIZED).json({
@@ -35,7 +38,7 @@ export class BlockStatusMiddleware {
             }
 
             const { id } = req.user;
-            let status: Boolean = false;
+            let status: boolean = false;
             if (role === "customer") {
                 const user = await this._customerRepo.findById(id);
                 if (!user) {
@@ -45,7 +48,7 @@ export class BlockStatusMiddleware {
                     });
                     return;
                 }
-                status = user.isBlocked;
+                status = user.isBlocked as boolean;
             }
 
             if (role === "workshop") {
@@ -57,7 +60,7 @@ export class BlockStatusMiddleware {
                     });
                     return;
                 }
-                status = user.isBlocked;
+                status = user.isBlocked as boolean;
             }
             if (status) {
                 await this._blacklistTokenUseCase.execute(req.user.access_token);

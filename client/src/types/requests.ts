@@ -29,7 +29,7 @@ export interface IMobileWorkshop {
 
 export interface IAllPendingRequests {
     name: string;
-    createdAt: string;
+    date: Date;
     location: string;
     requestId: string;
     vehicleNo: string;
@@ -43,7 +43,7 @@ export interface IRequest {
     location: string;
     vehicleNo: string;
     mobile: string;
-    date: string;
+    date: Date;
     type: string;
     paymentStatus: string;
     description?: string;
@@ -56,7 +56,7 @@ export interface IRequest {
 
 export interface IJobs {
     name: string;
-    createdAt: string;
+    date: string;
     location: string;
     requestId: string;
     vehicleNo: string;

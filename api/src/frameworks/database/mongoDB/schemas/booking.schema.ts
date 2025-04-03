@@ -7,6 +7,7 @@ export const bookingSchema = new Schema<IBookingModel>({
     workshopId: {type: Types.ObjectId, required: true},
     date: {type: Date, required: true},
     time: {type: String, required: true},
-    status: {type:String, enum: ["pending", "confirmed", "cancelled"], default: "pending"},
-    type: {type: String, required: true}
+    type: {type: String, required: true},
+    endTime: {type: String, required: true },
+    duration: {type: Number, required: true}
 })

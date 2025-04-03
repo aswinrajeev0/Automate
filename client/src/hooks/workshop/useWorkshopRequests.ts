@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from "@tanstack/react-query"
-import { allPendingRequests, requestDetails, acceptRequest, rejectRequest, pendngJobs, updateRequestStatus } from "../../services/workshop/workshopRequestsService"
+import { allPendingRequests, requestDetails, acceptRequest, rejectRequest, pendingJobs, updateRequestStatus, finishedJobs } from "../../services/workshop/workshopRequestsService"
 import { queryClient } from "../../lib/queryClient"
 
 export const useAllPendingRequests = (currentPage: number, limit: number, searchTerm: string) => {
@@ -60,7 +60,7 @@ export const useRejectRequest = () => {
 export const usePendingJobs = (currentPage: number, limit: number, searchTerm: string) => {
     return useQuery({
         queryKey: ["all-pending-jobs", currentPage, limit, searchTerm],
-        queryFn: () => pendngJobs(currentPage, limit, searchTerm)
+        queryFn: () => pendingJobs(currentPage, limit, searchTerm)
     })
 }
 
@@ -82,5 +82,12 @@ export const useUpdateRequestStatus = () => {
 
             queryClient.invalidateQueries({ queryKey: ["all-pending-jobs"] });
         }
+    })
+}
+
+export const useFinishedJobs = (currentPage: number, limit: number, searchTerm: string) => {
+    return useQuery({
+        queryKey: ["finished-jobs", currentPage, limit, searchTerm],
+        queryFn: () => finishedJobs(currentPage, limit, searchTerm)
     })
 }

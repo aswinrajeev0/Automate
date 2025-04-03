@@ -1,4 +1,5 @@
-import { Router } from "express";
+import { Request, Response, Router } from "express";
+import { healthController } from "../di/resolver";
 
 export abstract class BaseRoute {
     public router: Router;
@@ -9,4 +10,16 @@ export abstract class BaseRoute {
     }
 
     protected abstract initializeRoute(): void;
+}
+
+export class HealthRoute extends BaseRoute {
+    constructor() {
+        super()
+    }
+
+    protected initializeRoute(): void {
+        this.router.get('/health', (req: Request, res: Response) => {
+            healthController.healthCheck(req, res);
+        })
+    }
 }

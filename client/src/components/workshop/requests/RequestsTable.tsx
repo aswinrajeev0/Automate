@@ -46,7 +46,7 @@ const RequestsTable: React.FC<RequestsTableProps> = ({ requests }) => {
                             <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
                                 <div className="flex items-center gap-2">
                                     <Calendar size={16} className="text-gray-400" />
-                                    {new Date(`${request.createdAt}`).toLocaleDateString()}
+                                    {new Date(request.date).toLocaleDateString()}
                                 </div>
                             </td>
                             <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900">{request.requestId}</td>

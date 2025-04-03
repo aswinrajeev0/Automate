@@ -78,7 +78,7 @@ const WorkshopDisplaySection: React.FC<WorkshopDisplaySectionProps> = ({
                                 {workshop.averageRating !== undefined && workshop.averageRating !== null && (
                                     <div className="absolute bottom-2 right-2 bg-yellow-500 text-white px-2 py-1 rounded-lg text-sm font-medium flex items-center">
                                         <Star size={14} className="mr-1 fill-white" />
-                                        {workshop.averageRating.toFixed(1)}
+                                        {workshop.averageRating.toFixed(1) || 0}
                                     </div>
                                 )}
                             </div>
