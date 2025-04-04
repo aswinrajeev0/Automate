@@ -6,6 +6,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../../store/store";
 import { useParams, useSearchParams } from "react-router-dom";
 import { BookSlot, useBookSlot } from "../../../hooks/customer/useSlotBooking";
+import PaymentModal from "../payment/PaymentModal";
 
 const SERVICE_DURATIONS = {
   basic: 1,
@@ -66,6 +67,7 @@ const CalenderSection: React.FC<CalenderSectionProps> = ({ setBookingSubmitted, 
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [availableDates, setAvailableDates] = useState<Date[]>([]);
   const [overlappingServiceInfo, setOverlappingServiceInfo] = useState<string | null>(null);
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false)
 
   const { workshopId } = useParams();
   const [searchParams] = useSearchParams();
@@ -73,20 +75,20 @@ const CalenderSection: React.FC<CalenderSectionProps> = ({ setBookingSubmitted, 
 
   const { customer } = useSelector((state: RootState) => state.customer);
   const bookSlot = useBookSlot(workshopId as string, type);
-  
+
   const serviceDuration = SERVICE_DURATIONS[type as keyof typeof SERVICE_DURATIONS] || 1;
 
   useEffect(() => {
     const startDate = new Date();
     const endDate = addMonths(startDate, 1);
-    
+
     const rule = new RRule({
       freq: RRule.DAILY,
       dtstart: startDate,
       until: endDate,
       byweekday: [RRule.MO, RRule.TU, RRule.WE, RRule.TH, RRule.FR, RRule.SA] // Exclude Sundays
     });
-    
+
     const dates = rule.all();
     setAvailableDates(dates);
   }, []);
@@ -110,29 +112,41 @@ const CalenderSection: React.FC<CalenderSectionProps> = ({ setBookingSubmitted, 
     setOverlappingServiceInfo(null);
   };
 
-  const handleSubmit = async () => {
+  const handleBookingClick = () => {
+    setIsPaymentModalOpen(true)
+  }
+
+  const bookingDetails = {
+    date: selectedDate,
+    time: selectedTime,
+    type,
+    duration: serviceDuration,
+    price: type === "basic" ? 1500 : type === "interim" ? 5000 : 7000
+  }
+
+  const handleSubmit = async (finalAmount: number, gstAmount: number) => {
     if (selectedDate && selectedTime) {
       const selectedHour = parseInt(selectedTime.split(':')[0]);
       const selectedMinute = parseInt(selectedTime.split(':')[1] || '0');
-      
+
       const bookingDate = new Date(selectedDate);
       bookingDate.setHours(selectedHour, selectedMinute, 0, 0);
-      
+
       const endTime = addHours(bookingDate, serviceDuration);
       const endTimeString = format(endTime, 'HH:mm');
-      
+
       const { isBooked, isPartiallyBooked, conflictingService } = checkSlotAvailability(
-        selectedDate, 
+        selectedDate,
         { value: selectedTime, label: "", endTime: endTimeString }
       );
-      
+
       if (isBooked || isPartiallyBooked) {
         setOverlappingServiceInfo(
           `This slot overlaps with an existing ${conflictingService || ""} service. Please select another time.`
         );
         return;
       }
-      
+
       const newBooking: BookSlot = {
         date: bookingDate,
         time: selectedTime,
@@ -140,7 +154,10 @@ const CalenderSection: React.FC<CalenderSectionProps> = ({ setBookingSubmitted, 
         customerId: customer?.id,
         workshopId,
         type,
-        duration: serviceDuration
+        duration: serviceDuration,
+        price: type === "basic" ? 1500 : type === "interim" ? 5000 : 7000,
+        amount: finalAmount,
+        gst: gstAmount
       };
 
       await bookSlot.mutateAsync(newBooking);
@@ -154,51 +171,51 @@ const CalenderSection: React.FC<CalenderSectionProps> = ({ setBookingSubmitted, 
     }
   };
 
-  const checkSlotAvailability = (date: Date, timeSlot: TimeSlot): { 
-    isBooked: boolean; 
+  const checkSlotAvailability = (date: Date, timeSlot: TimeSlot): {
+    isBooked: boolean;
     isPartiallyBooked: boolean;
     conflictingService?: string;
   } => {
     if (!date) return { isBooked: false, isPartiallyBooked: false };
-    
+
     const [hours, minutes] = timeSlot.value.split(':').map(Number);
     const slotStart = new Date(date);
     slotStart.setHours(hours, minutes, 0, 0);
-    
+
     const slotEnd = addHours(slotStart, serviceDuration);
-    
+
     for (const bookedSlot of bookedSlots) {
       const bookedDate = new Date(bookedSlot.date);
       const [bookedHours, bookedMinutes] = bookedSlot.time.split(':').map(Number);
       bookedDate.setHours(bookedHours, bookedMinutes, 0, 0);
-      
+
       const bookedSlotDuration = bookedSlot.duration || 1;
       const bookedEnd = addHours(bookedDate, bookedSlotDuration);
-      
-      const newSlotStartsDuringExisting = isWithinInterval(slotStart, { 
-        start: bookedDate, 
+
+      const newSlotStartsDuringExisting = isWithinInterval(slotStart, {
+        start: bookedDate,
         end: new Date(bookedEnd.getTime() - 1)
       });
-      
+
       const newSlotEndsDuringExisting = isWithinInterval(
         new Date(slotEnd.getTime() - 1),
         { start: bookedDate, end: bookedEnd }
       );
-      
+
       const newSlotContainsExisting = slotStart <= bookedDate && slotEnd >= bookedEnd;
-      
+
       const existingContainsNewSlot = bookedDate <= slotStart && bookedEnd >= slotEnd;
-      
-      if (newSlotStartsDuringExisting || newSlotEndsDuringExisting || 
-          newSlotContainsExisting || existingContainsNewSlot) {
-        return { 
-          isBooked: true, 
+
+      if (newSlotStartsDuringExisting || newSlotEndsDuringExisting ||
+        newSlotContainsExisting || existingContainsNewSlot) {
+        return {
+          isBooked: true,
           isPartiallyBooked: false,
           conflictingService: bookedSlot.type
         };
       }
     }
-    
+
     return { isBooked: false, isPartiallyBooked: false };
   };
 
@@ -208,13 +225,13 @@ const CalenderSection: React.FC<CalenderSectionProps> = ({ setBookingSubmitted, 
     const daysInMonth = eachDayOfInterval({ start: firstDayOfMonth, end: lastDayOfMonth });
     const startingDayIndex = getDay(firstDayOfMonth);
     const prefixDays = Array(startingDayIndex).fill(null);
-    
+
     return [...prefixDays, ...daysInMonth];
   };
 
   const getAvailableTimesForSelectedDate = () => {
     if (!selectedDate) return { morning: [], afternoon: [] };
-    
+
     const morningAvailable = baseTimeSlots.morning.map(slot => {
       const { isBooked, isPartiallyBooked, conflictingService } = checkSlotAvailability(selectedDate, slot);
       return {
@@ -224,7 +241,7 @@ const CalenderSection: React.FC<CalenderSectionProps> = ({ setBookingSubmitted, 
         conflictingService
       };
     });
-    
+
     const afternoonAvailable = baseTimeSlots.afternoon.map(slot => {
       const { isBooked, isPartiallyBooked, conflictingService } = checkSlotAvailability(selectedDate, slot);
       return {
@@ -234,17 +251,17 @@ const CalenderSection: React.FC<CalenderSectionProps> = ({ setBookingSubmitted, 
         conflictingService
       };
     });
-    
+
     const filteredMorning = morningAvailable.filter(slot => {
       const [hours, minutes] = slot.value.split(':').map(Number);
       return hours + serviceDuration <= 12;
     });
-    
+
     const filteredAfternoon = afternoonAvailable.filter(slot => {
       const [hours, minutes] = slot.value.split(':').map(Number);
       return hours + serviceDuration <= 18;
     });
-    
+
     return { morning: filteredMorning, afternoon: filteredAfternoon };
   };
 
@@ -252,23 +269,23 @@ const CalenderSection: React.FC<CalenderSectionProps> = ({ setBookingSubmitted, 
   const availableTimes = getAvailableTimesForSelectedDate();
   const today = new Date();
   const isPastDate = (date: Date) => isBefore(date, addDays(today, -1));
-  
+
   const hasAvailability = (date: Date) => {
     if (!date) return false;
-    
-    const isAvailableDay = availableDates.some(availableDate => 
+
+    const isAvailableDay = availableDates.some(availableDate =>
       isSameDay(availableDate, date)
     );
-    
+
     if (!isAvailableDay) return false;
-    
+
     const checkTimes = ["08:00", "10:00", "14:00", "16:00"];
-    
+
     for (const time of checkTimes) {
       const { isBooked } = checkSlotAvailability(date, { label: "", value: time });
       if (!isBooked) return true;
     }
-    
+
     return false;
   };
 
@@ -390,7 +407,7 @@ const CalenderSection: React.FC<CalenderSectionProps> = ({ setBookingSubmitted, 
                   >
                     <div>{slot.label}</div>
                     <div className="text-xs mt-1">
-                      {slot.isBooked 
+                      {slot.isBooked
                         ? `${slot.conflictingService ? `Booked (${slot.conflictingService})` : 'Unavailable'}`
                         : `${serviceDuration} hour${serviceDuration > 1 ? 's' : ''}`}
                     </div>
@@ -420,7 +437,7 @@ const CalenderSection: React.FC<CalenderSectionProps> = ({ setBookingSubmitted, 
                   >
                     <div>{slot.label}</div>
                     <div className="text-xs mt-1">
-                      {slot.isBooked 
+                      {slot.isBooked
                         ? `${slot.conflictingService ? `Booked (${slot.conflictingService})` : 'Unavailable'}`
                         : `${serviceDuration} hour${serviceDuration > 1 ? 's' : ''}`}
                     </div>
@@ -437,13 +454,19 @@ const CalenderSection: React.FC<CalenderSectionProps> = ({ setBookingSubmitted, 
                   : 'bg-gray-400 cursor-not-allowed'}
               `}
               disabled={!selectedDate || !selectedTime}
-              onClick={handleSubmit}
+              onClick={() => handleBookingClick()}
             >
               Book {type} Service ({serviceDuration} hour{serviceDuration > 1 ? 's' : ''})
             </button>
           </>
         )}
       </div>
+      <PaymentModal
+        isPaymentModalOpen={isPaymentModalOpen}
+        handleSubmit={handleSubmit}
+        setIsPaymentModalOpen={setIsPaymentModalOpen}
+        bookingDetails={bookingDetails}
+      />
     </>
   );
 };

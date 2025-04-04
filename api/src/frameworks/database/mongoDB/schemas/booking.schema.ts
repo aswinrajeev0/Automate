@@ -9,5 +9,8 @@ export const bookingSchema = new Schema<IBookingModel>({
     time: {type: String, required: true},
     type: {type: String, required: true},
     endTime: {type: String, required: true },
-    duration: {type: Number, required: true}
+    duration: {type: Number, required: true},
+    price: {type: Number, required: true},
+    amount: {type: Number, required: true},
+    gst: {type: Number}
 })

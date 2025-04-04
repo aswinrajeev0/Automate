@@ -9,7 +9,10 @@ export interface BookSlot {
     date: Date,
     type: string,
     endTime: string,
-    duration: number
+    duration: number,
+    price: number,
+    amount: number,
+    gst?: number
 }
 
 export const useBookedSlots = (workshopId: string, type: string) => {

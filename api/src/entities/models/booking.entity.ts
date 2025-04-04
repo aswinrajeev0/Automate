@@ -7,5 +7,8 @@ export interface IBookingEntity {
     time: string,
     type: string,
     endTime: string,
-    duration: number
+    duration: number,
+    price: number,
+    amount: number,
+    gst?: number
 }

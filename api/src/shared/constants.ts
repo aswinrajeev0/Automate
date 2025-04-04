@@ -41,7 +41,8 @@ export enum ERROR_MESSAGES {
    PASSWORD_NOT_MATCH = "New password and confirm password is not matching",
    ID_NOT_FOUND = "ID not found",
    DATA_MISSING = "Some data are missing",
-   NOT_FOUND = "Data not found"
+   NOT_FOUND = "Data not found",
+   INVALID_SIGNATURE = "Invalid signature"
 }
 
 
@@ -59,7 +60,9 @@ export enum SUCCESS_MESSAGES {
    VERIFICATION_SUCCESS = "Verification completed successfully",
    DATA_RETRIEVED = "Data retrieved successfully",
    ACTION_SUCCESS = "Action performed successfully",
-   BOOKING_CANCELED = "Booking cancelled"
+   BOOKING_CANCELED = "Booking cancelled",
+   RAZORPAY_ORDER_CREATED = "Razorpay order created",
+   PAYMENT_VERIFIED = "Payment verified"
 }
 
 export enum WALLET_TRANSACTION_TYPES {

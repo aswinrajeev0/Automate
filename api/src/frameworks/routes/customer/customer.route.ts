@@ -5,6 +5,7 @@ import {
     bookingController,
     customerController,
     otpController,
+    paymentController,
     requestController,
     reviewController,
     workshopController
@@ -99,6 +100,14 @@ export class CustomerRoute extends BaseRoute {
 
         this.router.delete("/cancel-slot/:bookingId", authenticate("customer"), (req: Request, res: Response, next: NextFunction) => {
             bookingController.cancelslot(req, res, next)
+        })
+
+        this.router.post("/create-order", authenticate("customer"), (req: Request, res: Response, next: NextFunction) => {
+            paymentController.createOrder(req, res, next)
+        })
+
+        this.router.post("/verify-payment", authenticate("customer"), (req: Request, res: Response, next: NextFunction) => {
+            paymentController.verifyPayment(req, res, next)
         })
     }
 }

@@ -118,6 +118,8 @@ import { IFinishedJobsUseCase } from "../../entities/useCaseInterfaces/requests/
 import { FinishedJobsUseCase } from "../../useCases/requests/finished-jobs.usecase";
 import { ICancelSlotUseCase } from "../../entities/useCaseInterfaces/bookings/cancel-slot.usecase.interface";
 import { CancelSlotUseCase } from "../../useCases/bookings/cancel-slot.usecase";
+import { IRazorpayService } from "../../entities/serviceInterfaces.ts/razorpay-service.interface";
+import { RazorpayService } from "../../interface-adapters/services/razorpay.service";
 
 export class UseCaseRegistry {
     static registerUseCases(): void {
@@ -355,6 +357,10 @@ export class UseCaseRegistry {
 
         container.register<ITokenService>("ITokenService", {
             useClass: JWTService
+        })
+
+        container.register<IRazorpayService>("IRazorpayService", {
+            useClass: RazorpayService
         })
     }
 }

@@ -34,5 +34,9 @@ export const config = {
     cloudinary: {
         SECRET_KEY: process.env.CLOUDINARY_API_SECRET,
         UPLOAD_PRESET: process.env.UPLOAD_PRESET
+    },
+    razorpay: {
+        KEY_ID: process.env.RAZORPAY_KEY_ID,
+        KEY_SECRET: process.env.RAZORPAY_KEY_SECRET
     }
 }
