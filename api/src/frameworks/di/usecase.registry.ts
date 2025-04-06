@@ -120,6 +120,8 @@ import { ICancelSlotUseCase } from "../../entities/useCaseInterfaces/bookings/ca
 import { CancelSlotUseCase } from "../../useCases/bookings/cancel-slot.usecase";
 import { IRazorpayService } from "../../entities/serviceInterfaces.ts/razorpay-service.interface";
 import { RazorpayService } from "../../interface-adapters/services/razorpay.service";
+import { IWalletUseCase } from "../../entities/useCaseInterfaces/wallet/wallet.usecase.interface";
+import { WalletUseCase } from "../../useCases/wallet/wallet.usecase";
 
 export class UseCaseRegistry {
     static registerUseCases(): void {
@@ -326,6 +328,10 @@ export class UseCaseRegistry {
 
         container.register<ICancelSlotUseCase>("ICancelSlotUseCase", {
             useClass: CancelSlotUseCase
+        })
+
+        container.register<IWalletUseCase>("IWalletUseCase", {
+            useClass: WalletUseCase
         })
 
         //* ====== Register Strategies ====== *//

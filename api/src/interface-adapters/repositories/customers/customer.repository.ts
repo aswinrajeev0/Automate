@@ -1,11 +1,11 @@
 import { injectable } from "tsyringe";
-import { CustomerModel } from "../../../frameworks/database/mongoDB/models/customer.model";
+import { CustomerModel, ICustomerModel } from "../../../frameworks/database/mongoDB/models/customer.model";
 import { ICustomerEntity } from "../../../entities/models/customer.entity";
 import { ICustomerRepository } from "../../../entities/repositoryInterfaces/customer/customer-repository.interface";
 
 @injectable()
 export class CustomerRepository implements ICustomerRepository {
-    async save(data: Partial<ICustomerEntity>): Promise<ICustomerEntity> {
+    async save(data: Partial<ICustomerEntity>): Promise<ICustomerModel> {
         const customer = await CustomerModel.create(data);
         return customer;
     };

@@ -13,17 +13,19 @@ interface PaymentModalProps {
         type: string;
         duration: number;
         price: number
-    }
+    };
+    setIsConfirmationModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
+    setIsFailedModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const PaymentModal: React.FC<PaymentModalProps> = ({
     isPaymentModalOpen,
     handleSubmit,
     setIsPaymentModalOpen,
-    bookingDetails
+    bookingDetails,
+    setIsConfirmationModalOpen
 }) => {
     const [paymentMethod, setPaymentMethod] = useState('paypal');
-    const [isOpen, setIsOpen] = useState(false)
     const createOrder = useCreateOrder()
     const verifyPayment = useVerifyPayment()
 
@@ -33,55 +35,69 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
     const gstAmount = (bookingDetails.price * gstRate) / 100;
     const finalAmount = bookingDetails.price + gstAmount;
 
-    const handlePayment = () => {
-        if (paymentMethod === 'razorpay') {
-            razorpayHandle()
+    const handlePayment = async () => {
+        switch (paymentMethod) {
+            case 'razorpay':
+                return razorpayHandle();
+            case 'paypal':
+                // add your PayPal logic here later
+                alert('PayPal integration coming soon!');
+                break;
+            case 'wallet':
+                // Assume wallet has instant deduction or dummy flow for now
+                await handleSubmit(finalAmount, gstAmount);
+                setIsPaymentModalOpen(false);
+                setIsConfirmationModalOpen(true);
+                break;
+            default:
+                break;
         }
-
     };
 
     const razorpayHandle = async () => {
-        const response = await createOrder.mutateAsync({ amount: finalAmount, currency: "INR" });
-        const order = response.order;
-        if (!order.id) throw new Error('Order creation failed');
+        try {
+            const response = await createOrder.mutateAsync({ amount: finalAmount, currency: "INR" });
+            const order = response.order;
+            if (!order.id) throw new Error('Order creation failed');
 
-        const options = {
-            key: import.meta.env.VITE_RAZORPAY_KEY_ID,
-            amount: finalAmount * 100,
-            currency: 'INR',
-            name: 'Automate',
-            description: `${bookingDetails.type} Service`,
-            image: '/logo.png',
-            order_id: order.id,
-            handler: async (response: any) => {
-                console.log(response)
-                const verifyRes = await verifyPayment.mutateAsync({
-                    order_id: order.id,
-                    payment_id: response.razorpay_payment_id,
-                    razorpay_signature: response.razorpay_signature
-                })
+            const options = {
+                key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+                amount: finalAmount * 100,
+                currency: 'INR',
+                name: 'Automate',
+                description: `${bookingDetails.type} Service`,
+                image: '/logo.png',
+                order_id: order.id,
+                handler: async (response: any) => {
+                    const verifyRes = await verifyPayment.mutateAsync({
+                        order_id: order.id,
+                        payment_id: response.razorpay_payment_id,
+                        razorpay_signature: response.razorpay_signature
+                    })
 
-                if (verifyRes.success) {
-                    await handleSubmit(finalAmount, gstAmount);
-                    setIsPaymentModalOpen(false);
-                    setIsOpen(true)
-                    alert('Payment successful!');
-                } else {
-                    alert('Payment verification failed');
-                }
-            },
-            prefill: {
-                name: customer?.name,
-                email: customer?.email,
-                contact: customer?.phone
-            },
-            theme: {
-                color: '#ffda73'
-            },
-        };
+                    if (verifyRes.success) {
+                        await handleSubmit(finalAmount, gstAmount);
+                        setIsPaymentModalOpen(false);
+                        setIsConfirmationModalOpen(true)
+                    } else {
+                        // alert('Payment verification failed');
+                    }
+                },
+                prefill: {
+                    name: customer?.name,
+                    email: customer?.email,
+                    contact: customer?.phone
+                },
+                theme: {
+                    color: '#ffda73'
+                },
+            };
 
-        const paymentObject = new (window as any).Razorpay(options);
-        paymentObject.open();
+            const paymentObject = new (window as any).Razorpay(options);
+            paymentObject.open();
+        } catch (error) {
+            console.error(error)
+        }
     }
 
     useEffect(() => {

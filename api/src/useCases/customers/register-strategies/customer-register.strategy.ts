@@ -6,19 +6,22 @@ import { IBcrypt } from "../../../frameworks/security/bcrypt.interface";
 import { generateUniqueId } from "../../../frameworks/security/uniqueuid.bcrypt";
 import { CustomerDTO } from "../../../shared/dtos/auth.dto";
 import { ICustomerEntity } from "../../../entities/models/customer.entity";
+import { IWalletRepository } from "../../../entities/repositoryInterfaces/wallet/wallet.repository.interface";
+import { ICustomerModel } from "../../../frameworks/database/mongoDB/models/customer.model";
 
 export interface ICustomerRegisterStrategy {
-    register(user: CustomerDTO): Promise<ICustomerEntity | void>;
+    register(user: CustomerDTO): Promise<ICustomerModel | void>;
 }
 
 @injectable()
 export class CustomerRegisterStrategy implements ICustomerRegisterStrategy {
     constructor(
         @inject("ICustomerRepository") private customerRepository: ICustomerRepository,
-        @inject("IPasswordBcrypt") private passwordBcrypt: IBcrypt
+        @inject("IPasswordBcrypt") private passwordBcrypt: IBcrypt,
+        @inject("IWalletRepository") private _walletRepo: IWalletRepository
     ) { }
 
-    async register(user: CustomerDTO): Promise<ICustomerEntity | void> {
+    async register(user: CustomerDTO): Promise<ICustomerModel | void> {
         const existingCustomer = await this.customerRepository.findByEmail(user.email);
         if (existingCustomer) {
             throw new CustomError(
@@ -34,12 +37,25 @@ export class CustomerRegisterStrategy implements ICustomerRegisterStrategy {
         }
 
         const customerId = generateUniqueId();
-        return await this.customerRepository.save({
+
+        const newCustomer = await this.customerRepository.save({
             name,
             email,
             phone: phoneNumber,
             password: hashedPassword ?? "",
             customerId
         })
+
+        console.log(newCustomer)
+
+        await this._walletRepo.save({
+            walletId: generateUniqueId("wlt"),
+            customerId: newCustomer._id.toString(),
+            balance: 0,
+            createdAt: new Date(),
+            updatedAt: new Date()
+        })
+
+        return newCustomer
     }
 }

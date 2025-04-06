@@ -7,6 +7,8 @@ import { RootState } from "../../../store/store";
 import { useParams, useSearchParams } from "react-router-dom";
 import { BookSlot, useBookSlot } from "../../../hooks/customer/useSlotBooking";
 import PaymentModal from "../payment/PaymentModal";
+import ConfirmationModal from "../carLift/ConfirmationModal";
+import FailedModal from "../carLift/FailedModal";
 
 const SERVICE_DURATIONS = {
   basic: 1,
@@ -68,6 +70,8 @@ const CalenderSection: React.FC<CalenderSectionProps> = ({ setBookingSubmitted, 
   const [availableDates, setAvailableDates] = useState<Date[]>([]);
   const [overlappingServiceInfo, setOverlappingServiceInfo] = useState<string | null>(null);
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false)
+  const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false)
+  const [isFailedModalOpen, setIsFailedModalOpen] = useState(false)
 
   const { workshopId } = useParams();
   const [searchParams] = useSearchParams();
@@ -466,6 +470,19 @@ const CalenderSection: React.FC<CalenderSectionProps> = ({ setBookingSubmitted, 
         handleSubmit={handleSubmit}
         setIsPaymentModalOpen={setIsPaymentModalOpen}
         bookingDetails={bookingDetails}
+        setIsConfirmationModalOpen={setIsConfirmationModalOpen}
+        setIsFailedModalOpen={setIsFailedModalOpen}
+      />
+
+      <ConfirmationModal
+        isOpen={isConfirmationModalOpen}
+        onClose={() => setIsConfirmationModalOpen(false)}
+        serviceName=''
+      />
+
+      <FailedModal 
+        isOpen={isFailedModalOpen}
+        onClose={() => setIsFailedModalOpen(false)}
       />
     </>
   );

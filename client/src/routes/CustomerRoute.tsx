@@ -14,6 +14,7 @@ import CarLiftServiceForm from "../pages/customer/CarLiftRequestPage";
 import MobileWorkshop from "../pages/customer/MobileWorkshop";
 import CustomerProtected from "../utils/protected/UserProtected";
 import WorkshopsPage from "../pages/customer/AllWorkshops";
+import WalletPage from "../pages/customer/WalletPage";
 
 export const CustomerRoutes = () => {
     return (
@@ -32,6 +33,7 @@ export const CustomerRoutes = () => {
             <Route path="/request-service/slot-booking/:workshopId" element={<CustomerProtected><SlotBookingPage /></CustomerProtected>} />
             <Route path="/request-service/car-lift/:workshopId" element={<CustomerProtected><CarLiftServiceForm /></CustomerProtected>} />
             <Route path="/request-service/mobile-workshop/:workshopId" element={<CustomerProtected><MobileWorkshop /></CustomerProtected>} />
+            <Route path="/wallet" element={<CustomerProtected><WalletPage /></CustomerProtected>} />
         </Routes>
     )
 }

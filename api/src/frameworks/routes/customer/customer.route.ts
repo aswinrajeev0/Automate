@@ -8,6 +8,7 @@ import {
     paymentController,
     requestController,
     reviewController,
+    walletController,
     workshopController
 } from "../../di/resolver";
 import { authenticate, decodeToken } from "../../../interface-adapters/middlewares/auth.midleware";
@@ -108,6 +109,14 @@ export class CustomerRoute extends BaseRoute {
 
         this.router.post("/verify-payment", authenticate("customer"), (req: Request, res: Response, next: NextFunction) => {
             paymentController.verifyPayment(req, res, next)
+        })
+
+        this.router.get("/wallet", authenticate("customer"), (req: Request, res: Response, next: NextFunction) => {
+            walletController.getWallet(req, res, next);
+        })
+
+        this.router.post("/add-money", authenticate("customer"), (req: Request, res: Response, next: NextFunction) => {
+            walletController.addMoney(req, res, next);
         })
     }
 }
