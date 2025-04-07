@@ -13,25 +13,25 @@ export class WalletUseCase implements IWalletUseCase {
     constructor(
         @inject("IWalletRepository") private _walletRepo: IWalletRepository,
         @inject("ITransactionRepository") private _transactionRepo: ITransactionRepository
-    ){}
+    ) { }
 
-    async getWallet(customerId: string): Promise<{ wallet: IWalletModel; transactions: ITransactionModel[]; }> {
-        const wallet = await this._walletRepo.findOne({customerId});
-        if(!wallet){
+    async getWallet(customerId: string, skip: number, limit: number): Promise<{ wallet: IWalletModel; transactions: ITransactionModel[]; }> {
+        const wallet = await this._walletRepo.findOne({ customerId });
+        if (!wallet) {
             throw new CustomError(
                 ERROR_MESSAGES.NOT_FOUND,
                 HTTP_STATUS.NOT_FOUND
             )
         }
 
-        const transactions = await this._transactionRepo.find({wallet: wallet._id.toString()})
+        const transactions = await this._transactionRepo.find({ wallet: wallet._id.toString() }, skip, limit)
 
-        return {wallet, transactions}
+        return { wallet, transactions }
     }
 
     async addMoney(customerId: string, amount: number): Promise<ITransactionModel> {
         const wallet = await this._walletRepo.addMoney(customerId, amount)
-        if(!wallet) {
+        if (!wallet) {
             throw new CustomError(
                 ERROR_MESSAGES.NOT_FOUND,
                 HTTP_STATUS.NOT_FOUND
@@ -44,6 +44,37 @@ export class WalletUseCase implements IWalletUseCase {
             amount,
             description: "Deposit",
             type: "credit",
+            wallet: wallet._id.toString(),
+            transactionId
+        })
+
+        return transaction;
+    }
+
+    async walletPurchase(customerId: string, amount: number): Promise<ITransactionModel> {
+        const wallet = await this._walletRepo.findOne({customerId})
+        if (!wallet) {
+            throw new CustomError(
+                ERROR_MESSAGES.NOT_FOUND,
+                HTTP_STATUS.NOT_FOUND
+            )
+        }
+
+        if(wallet.balance < amount) {
+            throw new CustomError(
+                ERROR_MESSAGES.INSUFFICIENT_BALANCE,
+                HTTP_STATUS.PAYMENT_REQUIRED
+            )
+        }
+        
+        await this._walletRepo.deductMoney(customerId, amount)
+
+        const transactionId = generateUniqueId("txn")
+
+        const transaction = await this._transactionRepo.save({
+            amount,
+            description: "Purchase",
+            type: "debit",
             wallet: wallet._id.toString(),
             transactionId
         })

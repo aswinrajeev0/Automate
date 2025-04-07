@@ -5,4 +5,5 @@ export interface IWalletRepository {
     save(data: Partial<IWalletEntity>): Promise<IWalletModel>
     findOne(filter: Partial<IWalletEntity>): Promise<IWalletModel | null>;
     addMoney(customerId: string, amount: number): Promise<IWalletModel | null>;
+    deductMoney(customerId: string, amount: number): Promise<IWalletModel | null>;
 }

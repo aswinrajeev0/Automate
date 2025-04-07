@@ -10,11 +10,13 @@ export const requestSchema = new Schema<IRequestModel>({
     carBrand: { type: String, required: true },
     location: { type: String, required: true },
     image: { type: String },
-    workshopId: { type: Types.ObjectId, required: true },
-    customerId: { type: Types.ObjectId, required: true },
+    workshopId: { type: Types.ObjectId, ref: "Workshop", required: true },
+    customerId: { type: Types.ObjectId, ref: "Customer", required: true },
     type: {type: String, enum: ["car-lift", "mobile-workshop"]},
     status: {type: String, enum: ["submitted", "pending", "finished", "accepted", "rejected"], default: "submitted"},
     paymentStatus: {type: String, enum: ["pending", "completed"], default: "pending"},
+    amount: {type: Number},
+    gst: {type: Number},
     description: {type: String},
     notes: {type: String}
 },{

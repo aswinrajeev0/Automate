@@ -110,8 +110,6 @@ import { IPendingJobsUseCase } from "../../entities/useCaseInterfaces/requests/p
 import { PendingJobsUseCase } from "../../useCases/requests/pending-jobs.usecase";
 import { IUpdateRequestStatusUseCase } from "../../entities/useCaseInterfaces/requests/update-request-status.usecase.interface";
 import { UpdateRequestStatusUseCase } from "../../useCases/requests/update-request-status.usecase";
-import { IReviewRepository } from "../../entities/repositoryInterfaces/review/review-repository.interface";
-import { ReviewRepository } from "../../interface-adapters/repositories/workshop/review-repository";
 import { IWorkshopReviewsUseCase } from "../../entities/useCaseInterfaces/review/get-workshop-reviews.usecase.interface";
 import { WorkshopReviewsUseCase } from "../../useCases/review/get-workshop-reviews.usecase";
 import { IFinishedJobsUseCase } from "../../entities/useCaseInterfaces/requests/finished-jobs.usecase.interface";
@@ -122,6 +120,8 @@ import { IRazorpayService } from "../../entities/serviceInterfaces.ts/razorpay-s
 import { RazorpayService } from "../../interface-adapters/services/razorpay.service";
 import { IWalletUseCase } from "../../entities/useCaseInterfaces/wallet/wallet.usecase.interface";
 import { WalletUseCase } from "../../useCases/wallet/wallet.usecase";
+import { IGetAllUserRequestsUseCase } from "../../entities/useCaseInterfaces/requests/get-all-user-requests.usecase.interface";
+import { GetAllUserRequestsUseCase } from "../../useCases/requests/get-all-user-request";
 
 export class UseCaseRegistry {
     static registerUseCases(): void {
@@ -332,6 +332,10 @@ export class UseCaseRegistry {
 
         container.register<IWalletUseCase>("IWalletUseCase", {
             useClass: WalletUseCase
+        })
+
+        container.register<IGetAllUserRequestsUseCase>("IGetAllUserRequestsUseCase", {
+            useClass: GetAllUserRequestsUseCase
         })
 
         //* ====== Register Strategies ====== *//

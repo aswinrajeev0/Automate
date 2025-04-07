@@ -62,3 +62,15 @@ export interface IJobs {
     vehicleNo: string;
     type: string;
 }
+
+export interface IUserRequestResponse {
+    status: string;
+    name: string;
+    requestId: string;
+    date: Date;
+    type: string;
+    workshop: {
+        name: string
+    }
+    amount: number;
+}

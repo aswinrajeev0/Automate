@@ -16,6 +16,7 @@ import { useCarLiftRequest } from '../../hooks/customer/useServiceRequests';
 import { useParams } from 'react-router-dom';
 import ConfirmationModal from '../../components/customer/carLift/ConfirmationModal';
 import FailedModal from '../../components/customer/carLift/FailedModal';
+import PaymentModal from '../../components/customer/payment/PaymentModal';
 
 // Define types
 interface FormData {
@@ -41,16 +42,28 @@ const CarLiftServiceForm: React.FC = () => {
     const [showCarTypes, setShowCarTypes] = useState<boolean>(false);
     const [showLocationModal, setShowLocationModal] = useState<boolean>(false);
     const [selectedLocationOption, setSelectedLocationOption] = useState<LocationOption>('current');
-    const [imagePreview, setImagePreview] = useState<string | null>(null)
+    const [imagePreview, setImagePreview] = useState<string | null>(null);
     const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
     const [showFailure, setShowFailure] = useState<boolean>(false);
     const [errorMessage, setErrorMessage] = useState<string>("");
-    const { workshopId } = useParams()
-    const carLiftRequest = useCarLiftRequest()
+    const [isPaymentModalOpen, setIsPaymentModalOpen] = useState<boolean>(false);
+    const [formData, setFormData] = useState<any>(null);
+    const { workshopId } = useParams();
+    const carLiftRequest = useCarLiftRequest();
+
+    const basePriceForCarLift = 999;
 
     const carTypes: string[] = [
         'Sedan', 'SUV', 'Hatchback', 'Pickup', 'Minivan', 'Convertible', 'Coupe'
     ];
+
+    const bookingDetails = {
+        date: new Date(),
+        time: new Date().toLocaleTimeString(),
+        type: "Car Lift",
+        duration: 1,
+        price: basePriceForCarLift
+    };
 
     const validationSchema = Yup.object({
         name: Yup.string().required("Name is required"),
@@ -61,7 +74,7 @@ const CarLiftServiceForm: React.FC = () => {
         carType: Yup.string().required("Car type is required"),
         brand: Yup.string().required("Car brand is required"),
         location: Yup.string().required("Location is required"),
-    })
+    });
 
     const formik = useFormik<FormData>({
         initialValues: {
@@ -75,66 +88,83 @@ const CarLiftServiceForm: React.FC = () => {
         },
         validationSchema,
         onSubmit: async (values) => {
-            setSubmitting(true)
-
-            const imageUrl = await uploadImage(values.image)
-            console.log("ImageUrl", imageUrl)
-
-            const data = {
-                name: values.name,
-                image: imageUrl || "",
-                workshopId: workshopId as string,
-                mobile: values.mobile,
-                vehicleNo: values.vehicleNumber,
-                carType: values.carType,
-                carBrand: values.brand,
-                location: values.location,
-                type: "car-lift"
-            }
-
+            setSubmitting(true);
+            
             try {
-                const response = await carLiftRequest.mutateAsync(data)
-                if (response.status === 201) {
-                    setShowConfirmation(true)
-                } else {
-                    setErrorMessage(response.data.message || "Something went wrong")
-                    setShowFailure(true)
-                }
-            } catch (error: any) {
-                setErrorMessage(error?.response?.data || "Something went wrong")
-                setShowFailure(true)
+                const imageUrl = await uploadImage(values.image);
+                
+                const data = {
+                    name: values.name,
+                    image: imageUrl || "",
+                    workshopId: workshopId as string,
+                    mobile: values.mobile,
+                    vehicleNo: values.vehicleNumber,
+                    carType: values.carType,
+                    carBrand: values.brand,
+                    location: values.location,
+                    type: "car-lift",
+                };
+                
+                setFormData(data);
+                
+                setIsPaymentModalOpen(true);
+            } catch (error) {
+                console.error("Error preparing form submission:", error);
+                setErrorMessage("Failed to process your request. Please try again.");
+                setShowFailure(true);
             } finally {
-                setSubmitting(false)
+                setSubmitting(false);
             }
         },
-    })
+    });
+
+    const handleSubmitAfterPayment = async (finalAmount: number, gstAmount: number) => {
+        try {
+            const dataWithPayment = {
+                ...formData,
+                amount: finalAmount,
+                gst: gstAmount
+            };
+            
+            const response = await carLiftRequest.mutateAsync(dataWithPayment);
+            if (response.status === 201) {
+                setShowConfirmation(true);
+            } else {
+                setErrorMessage(response.data.message || "Something went wrong");
+                setShowFailure(true);
+            }
+        } catch (error: any) {
+            setErrorMessage(error?.response?.data?.message || "Something went wrong");
+            setShowFailure(true);
+        }
+    };
 
     const handleFileChange = (e: ChangeEvent<HTMLInputElement>): void => {
         if (e.target.files && e.target.files[0]) {
-            const file = e.target.files[0]
-            formik.setFieldValue("image", file)
+            const file = e.target.files[0];
+            formik.setFieldValue("image", file);
 
             // Create a preview URL for the image
-            const reader = new FileReader()
+            const reader = new FileReader();
             reader.onload = () => {
-                setImagePreview(reader.result as string)
-            }
-            reader.readAsDataURL(file)
+                setImagePreview(reader.result as string);
+            };
+            reader.readAsDataURL(file);
         }
-    }
+    };
 
     useEffect(() => {
         return () => {
             if (imagePreview) {
-                URL.revokeObjectURL(imagePreview)
+                URL.revokeObjectURL(imagePreview);
             }
-        }
-    }, [])
+        };
+    }, []);
 
     const handleLocationSelect = (address: string): void => {
-        formik.setFieldValue("location", address)
-        setShowLocationModal(false)
-    }
+        formik.setFieldValue("location", address);
+        setShowLocationModal(false);
+    };
 
     const handleLocationOptionChange = (option: LocationOption): void => {
         setSelectedLocationOption(option);
@@ -145,15 +175,15 @@ const CarLiftServiceForm: React.FC = () => {
             <Header />
             <div className="max-w-4xl mx-auto px-4 py-8">
                 <Card className="shadow-lg">
-                    <CardContent className="p-6 sm:p-8">
+                    <CardContent className="p-4 sm:p-6 md:p-8">
                         <>
-                            <h1 className="text-3xl font-bold text-center mb-8 text-gray-800">Request Car Lift Service</h1>
+                            <h1 className="text-2xl sm:text-3xl font-bold text-center mb-6 sm:mb-8 text-gray-800">Request Car Lift Service</h1>
 
                             <form onSubmit={formik.handleSubmit} className="space-y-6">
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     {/* Name and Mobile */}
                                     <div className="space-y-2">
-                                        <Label htmlFor="name" className="text-lg font-medium text-blue-700">
+                                        <Label htmlFor="name" className="text-md sm:text-lg font-medium text-blue-700">
                                             Name
                                         </Label>
                                         <Input
@@ -171,7 +201,7 @@ const CarLiftServiceForm: React.FC = () => {
                                     </div>
 
                                     <div className="space-y-2">
-                                        <Label htmlFor="mobile" className="text-lg font-medium text-blue-700">
+                                        <Label htmlFor="mobile" className="text-md sm:text-lg font-medium text-blue-700">
                                             Mobile Number
                                         </Label>
                                         <Input
@@ -191,7 +221,7 @@ const CarLiftServiceForm: React.FC = () => {
 
                                     {/* Vehicle Number and Car Type */}
                                     <div className="space-y-2">
-                                        <Label htmlFor="vehicleNumber" className="text-lg font-medium text-blue-700">
+                                        <Label htmlFor="vehicleNumber" className="text-md sm:text-lg font-medium text-blue-700">
                                             Vehicle Number
                                         </Label>
                                         <Input
@@ -209,12 +239,13 @@ const CarLiftServiceForm: React.FC = () => {
                                     </div>
 
                                     <div className="space-y-2 relative">
-                                        <Label htmlFor="carType" className="text-lg font-medium text-blue-700">
+                                        <Label htmlFor="carType" className="text-md sm:text-lg font-medium text-blue-700">
                                             Car Type
                                         </Label>
                                         <div
-                                            className={`w-full p-3 border rounded-lg flex justify-between items-center cursor-pointer bg-white ${formik.touched.carType && formik.errors.carType ? "border-red-500" : "border-gray-300"
-                                                }`}
+                                            className={`w-full p-3 border rounded-lg flex justify-between items-center cursor-pointer bg-white ${
+                                                formik.touched.carType && formik.errors.carType ? "border-red-500" : "border-gray-300"
+                                            }`}
                                             onClick={() => setShowCarTypes(!showCarTypes)}
                                         >
                                             <span className={formik.values.carType ? "text-gray-900" : "text-gray-400"}>
@@ -233,8 +264,8 @@ const CarLiftServiceForm: React.FC = () => {
                                                         key={type}
                                                         className="p-3 hover:bg-blue-50 cursor-pointer"
                                                         onClick={() => {
-                                                            formik.setFieldValue("carType", type)
-                                                            setShowCarTypes(false)
+                                                            formik.setFieldValue("carType", type);
+                                                            setShowCarTypes(false);
                                                         }}
                                                     >
                                                         {type}
@@ -246,7 +277,7 @@ const CarLiftServiceForm: React.FC = () => {
 
                                     {/* Brand and Location */}
                                     <div className="space-y-2">
-                                        <Label htmlFor="brand" className="text-lg font-medium text-blue-700">
+                                        <Label htmlFor="brand" className="text-md sm:text-lg font-medium text-blue-700">
                                             Car Brand
                                         </Label>
                                         <Input
@@ -264,12 +295,13 @@ const CarLiftServiceForm: React.FC = () => {
                                     </div>
 
                                     <div className="space-y-2">
-                                        <Label htmlFor="location" className="text-lg font-medium text-blue-700">
+                                        <Label htmlFor="location" className="text-md sm:text-lg font-medium text-blue-700">
                                             Location
                                         </Label>
                                         <div
-                                            className={`w-full p-3 border rounded-lg flex items-center bg-white cursor-pointer ${formik.touched.location && formik.errors.location ? "border-red-500" : "border-gray-300"
-                                                }`}
+                                            className={`w-full p-3 border rounded-lg flex items-center bg-white cursor-pointer ${
+                                                formik.touched.location && formik.errors.location ? "border-red-500" : "border-gray-300"
+                                            }`}
                                             onClick={() => setShowLocationModal(true)}
                                         >
                                             <MapPin size={20} className="text-red-500 mr-2 flex-shrink-0" />
@@ -284,8 +316,8 @@ const CarLiftServiceForm: React.FC = () => {
 
                                 {/* Upload Image */}
                                 <div className="mt-6">
-                                    <p className="block text-lg font-medium text-blue-700 mb-2">Upload Image of Your Car</p>
-                                    <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
+                                    <p className="block text-md sm:text-lg font-medium text-blue-700 mb-2">Upload Image of Your Car</p>
+                                    <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 sm:p-6 md:p-8 text-center">
                                         {imagePreview ? (
                                             <div className="flex flex-col items-center">
                                                 <div className="relative mb-4 w-full max-w-xs">
@@ -297,8 +329,8 @@ const CarLiftServiceForm: React.FC = () => {
                                                     <button
                                                         type="button"
                                                         onClick={() => {
-                                                            setImagePreview(null)
-                                                            formik.setFieldValue("image", null)
+                                                            setImagePreview(null);
+                                                            formik.setFieldValue("image", null);
                                                         }}
                                                         className="absolute top-2 right-2 bg-white rounded-full p-1 shadow-md hover:bg-gray-100"
                                                     >
@@ -315,12 +347,12 @@ const CarLiftServiceForm: React.FC = () => {
                                             </div>
                                         ) : (
                                             <div className="flex flex-col items-center justify-center">
-                                                <Camera size={48} className="text-gray-400 mb-3" />
-                                                <p className="text-gray-600 mb-2">Drag and drop an image here or click to browse</p>
-                                                <p className="text-gray-400 text-sm">JPG, PNG or JPEG (max. 5MB)</p>
+                                                <Camera size={40} className="text-gray-400 mb-3" />
+                                                <p className="text-gray-600 mb-2 text-sm sm:text-base">Drag and drop an image here or click to browse</p>
+                                                <p className="text-gray-400 text-xs sm:text-sm">JPG, PNG or JPEG (max. 5MB)</p>
                                                 <label
                                                     htmlFor="car-image"
-                                                    className="mt-4 px-6 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition cursor-pointer"
+                                                    className="mt-4 px-4 sm:px-6 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition cursor-pointer text-sm sm:text-base"
                                                 >
                                                     Browse Files
                                                 </label>
@@ -336,14 +368,27 @@ const CarLiftServiceForm: React.FC = () => {
                                     </div>
                                 </div>
 
+                                {/* Price Information */}
+                                <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                                    <h3 className="font-semibold text-gray-800 mb-2">Service Price</h3>
+                                    <div className="flex justify-between text-sm sm:text-base">
+                                        <span>Car Lift Service:</span>
+                                        <span>₹{basePriceForCarLift.toLocaleString()}</span>
+                                    </div>
+                                    <div className="text-xs text-gray-500 mt-1">
+                                        * Final price may vary based on distance and vehicle type
+                                    </div>
+                                </div>
+
                                 {/* Submit Button */}
                                 <Button
                                     type="submit"
                                     disabled={submitting}
-                                    className={`w-full py-4 px-6 text-lg font-semibold ${submitting ? "bg-yellow-400" : "bg-yellow-500 hover:bg-yellow-600"
-                                        }`}
+                                    className={`w-full py-3 sm:py-4 px-4 sm:px-6 text-md sm:text-lg font-semibold ${
+                                        submitting ? "bg-yellow-400" : "bg-yellow-500 hover:bg-yellow-600"
+                                    }`}
                                 >
-                                    {submitting ? "Processing..." : "Request Car Lift Service"}
+                                    {submitting ? "Processing..." : "Proceed to Payment"}
                                 </Button>
                             </form>
                         </>
@@ -356,7 +401,7 @@ const CarLiftServiceForm: React.FC = () => {
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
                     <div className="bg-white rounded-lg w-full max-w-2xl max-h-screen overflow-auto">
                         <div className="flex justify-between items-center p-4 border-b">
-                            <h3 className="text-xl font-bold">Select Location</h3>
+                            <h3 className="text-lg sm:text-xl font-bold">Select Location</h3>
                             <button onClick={() => setShowLocationModal(false)} className="p-1 rounded-full hover:bg-gray-100">
                                 <X size={24} />
                             </button>
@@ -364,21 +409,21 @@ const CarLiftServiceForm: React.FC = () => {
 
                         <div className="p-4">
                             {/* Location Selection Tabs */}
-                            <div className="flex border-b mb-4">
+                            <div className="flex border-b mb-4 overflow-x-auto">
                                 <button
-                                    className={`px-4 py-2 font-medium ${selectedLocationOption === "current" ? "text-blue-600 border-b-2 border-blue-600" : "text-gray-500"}`}
+                                    className={`px-3 sm:px-4 py-2 font-medium whitespace-nowrap ${selectedLocationOption === "current" ? "text-blue-600 border-b-2 border-blue-600" : "text-gray-500"}`}
                                     onClick={() => handleLocationOptionChange("current")}
                                 >
                                     Current Location
                                 </button>
                                 <button
-                                    className={`px-4 py-2 font-medium ${selectedLocationOption === "saved" ? "text-blue-600 border-b-2 border-blue-600" : "text-gray-500"}`}
+                                    className={`px-3 sm:px-4 py-2 font-medium whitespace-nowrap ${selectedLocationOption === "saved" ? "text-blue-600 border-b-2 border-blue-600" : "text-gray-500"}`}
                                     onClick={() => handleLocationOptionChange("saved")}
                                 >
                                     Saved Addresses
                                 </button>
                                 <button
-                                    className={`px-4 py-2 font-medium ${selectedLocationOption === "map" ? "text-blue-600 border-b-2 border-blue-600" : "text-gray-500"}`}
+                                    className={`px-3 sm:px-4 py-2 font-medium whitespace-nowrap ${selectedLocationOption === "map" ? "text-blue-600 border-b-2 border-blue-600" : "text-gray-500"}`}
                                     onClick={() => handleLocationOptionChange("map")}
                                 >
                                     Select on Map
@@ -399,22 +444,34 @@ const CarLiftServiceForm: React.FC = () => {
                     </div>
                 </div>
             )}
-            <Footer />
+
+            {/* Payment Modal */}
+            <PaymentModal
+                isPaymentModalOpen={isPaymentModalOpen}
+                handleSubmit={handleSubmitAfterPayment}
+                setIsPaymentModalOpen={setIsPaymentModalOpen}
+                bookingDetails={bookingDetails}
+                setIsConfirmationModalOpen={setShowConfirmation}
+                setIsFailedModalOpen={setShowFailure}
+            />
+
+            {/* Confirmation and Failed Modals */}
             <ConfirmationModal
                 isOpen={showConfirmation}
                 onClose={() => {
                     setShowConfirmation(false);
-                    formik.resetForm()
-                    setImagePreview(null)
+                    formik.resetForm();
+                    setImagePreview(null);
                 }}
                 serviceName='car lift'
             />
             <FailedModal
                 isOpen={showFailure}
                 onClose={() => setShowFailure(false)}
-                // onRetry={handleRetry}
                 errorMessage={errorMessage}
             />
+            
+            <Footer />
         </>
     );
 };

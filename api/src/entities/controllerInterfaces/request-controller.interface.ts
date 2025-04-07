@@ -10,4 +10,5 @@ export interface IRequestController {
     pendingJobs(req: Request, res: Response, next: NextFunction): Promise<void>;
     updateRequestStatus(req: Request, res: Response, next: NextFunction): Promise<void>;
     finishedJobs(req: Request, res: Response, next: NextFunction): Promise<void>;
+    getAllUserRequests(req: Request, res: Response, next: NextFunction): Promise<void>;
 }

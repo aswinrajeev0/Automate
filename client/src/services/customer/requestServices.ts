@@ -18,3 +18,17 @@ export const mobileWorkshopRequest = async (data: IMobileWorkshop) => {
         throw error.response.data
     }
 }
+
+export const getAllRequests = async (page: number, limit: number) => {
+    try {
+        const response = await customerApi.get("/get-all-requests",{
+            params: {
+                page,
+                limit
+            }
+        });
+        return response.data
+    } catch (error: any) {
+        throw error.response.data
+    }
+}

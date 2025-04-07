@@ -2,6 +2,7 @@ import { ITransactionModel } from "../../../frameworks/database/mongoDB/models/t
 import { IWalletModel } from "../../../frameworks/database/mongoDB/models/wallet.model";
 
 export interface IWalletUseCase {
-    getWallet(customerId: string): Promise<{wallet: IWalletModel, transactions: ITransactionModel[]}>;
+    getWallet(customerId: string, skip: number, limit: number): Promise<{wallet: IWalletModel, transactions: ITransactionModel[]}>;
     addMoney(customerId: string, amount: number): Promise<ITransactionModel>;
+    walletPurchase(customerId: string, amount: number): Promise<ITransactionModel>;
 }

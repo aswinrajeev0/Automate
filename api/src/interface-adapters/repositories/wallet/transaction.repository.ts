@@ -10,8 +10,8 @@ export class TransactionRepository implements ITransactionRepository {
         return transaction
     }
 
-    async find(filter: Partial<ITransactionEntity>): Promise<ITransactionModel[]> {
-        const transactions = await TransactionModel.find(filter)
+    async find(filter: Partial<ITransactionEntity>, skip: number, limit: number): Promise<ITransactionModel[]> {
+        const transactions = await TransactionModel.find(filter).skip(skip).limit(limit).sort({createdAt: -1})
         return transactions
     }
 }

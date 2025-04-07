@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useCreateOrder, useVerifyPayment } from '../../../hooks/payment/useRazorPay';
 import { useSelector } from 'react-redux';
+import { PayPalButtons } from "@paypal/react-paypal-js";
 import { RootState } from '../../../store/store';
+import { useToaster } from '../../../hooks/ui/useToaster';
+import { useWalletPurchase } from '../../../hooks/customer/useWallet';
 
 interface PaymentModalProps {
     isPaymentModalOpen: boolean;
@@ -27,7 +30,10 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
 }) => {
     const [paymentMethod, setPaymentMethod] = useState('paypal');
     const createOrder = useCreateOrder()
+    const { successToast, errorToast } = useToaster()
+
     const verifyPayment = useVerifyPayment()
+    const walletPurchase = useWalletPurchase()
 
     const { customer } = useSelector((state: RootState) => state.customer)
 
@@ -44,10 +50,22 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
                 alert('PayPal integration coming soon!');
                 break;
             case 'wallet':
-                // Assume wallet has instant deduction or dummy flow for now
-                await handleSubmit(finalAmount, gstAmount);
-                setIsPaymentModalOpen(false);
-                setIsConfirmationModalOpen(true);
+                try {
+                    const response = await walletPurchase.mutateAsync(finalAmount);
+                    if (response.success) {
+                        await handleSubmit(finalAmount, gstAmount);
+                        setIsPaymentModalOpen(false);
+                        setIsConfirmationModalOpen(true);
+                    } else {
+                        setIsPaymentModalOpen(false);
+                        errorToast(response.message || "Something went wrong")
+                    }
+                } catch (error: any) {
+                    console.error(error)
+                    // setIsPaymentModalOpen(false)
+                    errorToast(error.message as string)
+                }
+
                 break;
             default:
                 break;
@@ -78,8 +96,11 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
                     if (verifyRes.success) {
                         await handleSubmit(finalAmount, gstAmount);
                         setIsPaymentModalOpen(false);
-                        setIsConfirmationModalOpen(true)
+                        setIsConfirmationModalOpen(true);
+                        successToast(bookingDetails ? "booking have been confirmed" : "")
                     } else {
+                        setIsPaymentModalOpen(false);
+                        errorToast("Error in requesting service")
                         // alert('Payment verification failed');
                     }
                 },
@@ -207,9 +228,46 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
                 </div>
 
                 {/* Action Button */}
-                <button onClick={handlePayment} className="w-full bg-yellow-400 hover:bg-yellow-500 text-gray-800 font-bold py-3 px-4 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-opacity-50">
-                    Place Service - Pay ₹{finalAmount.toLocaleString()}
-                </button>
+                {paymentMethod === 'paypal' ? (
+                    <PayPalButtons
+                        style={{ layout: 'vertical' }}
+                        createOrder={(data, actions) => {
+                            return actions.order.create({
+                                intent: "CAPTURE",
+                                purchase_units: [
+                                    {
+                                        amount: {
+                                            currency_code: "USD",
+                                            value: finalAmount.toFixed(2),
+                                        },
+                                    },
+                                ],
+                            });
+                        }}
+                        onApprove={async (data, actions) => {
+                            const details = await actions.order?.capture();
+                            if (details?.status === "COMPLETED") {
+                                await handleSubmit(finalAmount, gstAmount);
+                                setIsPaymentModalOpen(false);
+                                setIsConfirmationModalOpen(true);
+                                successToast("Payment successful and booking confirmed!");
+                            } else {
+                                errorToast("Something went wrong with PayPal payment.");
+                            }
+                        }}
+                        onError={(err) => {
+                            console.error("PayPal Error:", err);
+                            errorToast("PayPal payment failed.");
+                        }}
+                    />
+                ) : (
+                    <button
+                        onClick={handlePayment}
+                        className="w-full bg-yellow-400 hover:bg-yellow-500 text-gray-800 font-bold py-3 px-4 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-opacity-50"
+                    >
+                        Place Service - Pay ₹{finalAmount.toLocaleString()}
+                    </button>
+                )}
             </div>
         </div>
     );

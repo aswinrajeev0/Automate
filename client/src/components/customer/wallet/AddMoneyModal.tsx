@@ -7,12 +7,10 @@ import { useToaster } from '../../../hooks/ui/useToaster';
 interface AddMoneyModalProps {
     isOpen: boolean;
     onClose: () => void;
-    onAddMoney: (amount: number) => void;
 }
 
-const AddMoneyModal: React.FC<AddMoneyModalProps> = ({ isOpen, onClose, onAddMoney }) => {
+const AddMoneyModal: React.FC<AddMoneyModalProps> = ({ isOpen, onClose }) => {
     const [amount, setAmount] = useState('');
-    const [paymentMethod, setPaymentMethod] = useState('card');
     const [isProcessing, setIsProcessing] = useState(false);
     const { successToast, errorToast } = useToaster()
     const createOrder = useCreateOrder()
@@ -76,7 +74,7 @@ const AddMoneyModal: React.FC<AddMoneyModalProps> = ({ isOpen, onClose, onAddMon
         }
 
         setTimeout(() => {
-            onAddMoney(parseFloat(amount));
+            // onAddMoney(parseFloat(amount));
             setIsProcessing(false);
             setAmount('');
             onClose();
@@ -145,7 +143,7 @@ const AddMoneyModal: React.FC<AddMoneyModalProps> = ({ isOpen, onClose, onAddMon
                         </div>
 
                         {/* Payment Methods */}
-                        <div className="mb-6">
+                        {/* <div className="mb-6">
                             <p className="block text-gray-700 mb-3 font-medium">Payment Method</p>
                             <div className="grid grid-cols-3 gap-2">
                                 <button
@@ -184,7 +182,7 @@ const AddMoneyModal: React.FC<AddMoneyModalProps> = ({ isOpen, onClose, onAddMon
                                     <span className="text-sm">UPI</span>
                                 </button>
                             </div>
-                        </div>
+                        </div> */}
 
                         {/* Submit Button */}
                         <button
@@ -201,43 +199,4 @@ const AddMoneyModal: React.FC<AddMoneyModalProps> = ({ isOpen, onClose, onAddMon
     );
 };
 
-// Example implementation in the main component
-const WalletApp = () => {
-    const [balance, setBalance] = useState(2500);
-    const [isModalOpen, setIsModalOpen] = useState(false);
-
-    const handleAddMoney = (amount: number) => {
-        setBalance(prevBalance => prevBalance + amount);
-        // Additional logic like showing success message
-    };
-
-    return (
-        <div>
-            {/* Previous wallet UI code would go here */}
-            <div className="p-4">
-                <div className="bg-white p-4 rounded-lg shadow mb-4">
-                    <div className="flex justify-between items-center">
-                        <div>
-                            <p className="text-gray-500">Available Balance</p>
-                            <h2 className="text-3xl font-bold">₹{balance.toLocaleString()}</h2>
-                        </div>
-                        <button
-                            onClick={() => setIsModalOpen(true)}
-                            className="bg-yellow-400 hover:bg-yellow-500 py-2 px-4 rounded-full flex items-center font-semibold"
-                        >
-                            <span>+ Add Money</span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <AddMoneyModal
-                isOpen={isModalOpen}
-                onClose={() => setIsModalOpen(false)}
-                onAddMoney={handleAddMoney}
-            />
-        </div>
-    );
-};
-
-export default WalletApp;
+export default AddMoneyModal;

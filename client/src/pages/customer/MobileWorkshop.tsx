@@ -16,6 +16,7 @@ import { useParams } from 'react-router-dom';
 import ConfirmationModal from '../../components/customer/carLift/ConfirmationModal';
 import { Textarea } from '../../components/ui/Textarea';
 import FailedModal from '../../components/customer/carLift/FailedModal';
+import PaymentModal from '../../components/customer/payment/PaymentModal';
 
 // Define types
 interface FormData {
@@ -39,8 +40,19 @@ const MobileWorkshop: React.FC = () => {
     const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
     const [showFailure, setShowFailure] = useState<boolean>(false);
     const [errorMessage, setErrorMessage] = useState<string>("");
+    const [isPaymentModalOpen, setIsPaymentModalOpen] = useState<boolean>(false);
+    const [formData, setFormData] = useState<any>(null);
     const { workshopId } = useParams()
     const mobileWorkshopRequest = useMobileWorkshopRequest()
+
+    // Define default service pricing
+    const [bookingDetails, setBookingDetails] = useState({
+        date: new Date(),
+        time: "ASAP",
+        type: "Mobile Workshop",
+        duration: 2,
+        price: 250
+    });
 
     const carTypes: string[] = [
         'Sedan', 'SUV', 'Hatchback', 'Pickup', 'Minivan', 'Convertible', 'Coupe'
@@ -72,8 +84,8 @@ const MobileWorkshop: React.FC = () => {
         },
         validationSchema,
         onSubmit: async (values) => {
-            setSubmitting(true)
-
+            setSubmitting(true);
+            
             const data = {
                 name: values.name,
                 workshopId: workshopId as string,
@@ -85,23 +97,41 @@ const MobileWorkshop: React.FC = () => {
                 type: "mobile-workshop",
                 description: values.description,
                 notes: values.notes
-            }
-
-            try {
-                const response = await mobileWorkshopRequest.mutateAsync(data)
-                if (response.status === 201) {
-                    setShowConfirmation(true)
-                }else{
-                    setShowFailure(true)
-                }
-            } catch (error: any) {
-                setErrorMessage(error?.response?.data || "something went wrong")
-                setShowFailure(true)
-            } finally {
-                setSubmitting(false)
-            }
+            };
+            
+            // Store form data for later submission after payment
+            setFormData(data);
+            
+            // Open payment modal instead of submitting directly
+            setIsPaymentModalOpen(true);
+            setSubmitting(false);
         },
-    })
+    });
+
+    // Handle payment completion and submit form data
+    const handlePaymentComplete = async (finalAmount: number, gstAmount: number) => {
+        try {
+            // Add payment details to the request
+            const dataWithPayment = {
+                ...formData,
+                paymentAmount: finalAmount,
+                gstAmount: gstAmount,
+                paymentStatus: 'completed'
+            };
+            
+            const response = await mobileWorkshopRequest.mutateAsync(dataWithPayment);
+            
+            if (response.status === 201) {
+                setShowConfirmation(true);
+            } else {
+                setShowFailure(true);
+                setErrorMessage("Service request failed after payment");
+            }
+        } catch (error: any) {
+            setErrorMessage(error?.response?.data || "Something went wrong after payment");
+            setShowFailure(true);
+        }
+    };
 
     const handleLocationSelect = (address: string): void => {
         formik.setFieldValue("location", address)
@@ -298,7 +328,7 @@ const MobileWorkshop: React.FC = () => {
                                     className={`w-full py-4 px-6 text-lg font-semibold ${submitting ? "bg-yellow-400" : "bg-yellow-500 hover:bg-yellow-600"
                                         }`}
                                 >
-                                    {submitting ? "Processing..." : "Request Car Lift Service"}
+                                    {submitting ? "Processing..." : "Request Mobile Workshop Service"}
                                 </Button>
                             </form>
                         </>
@@ -354,19 +384,29 @@ const MobileWorkshop: React.FC = () => {
                     </div>
                 </div>
             )}
+
+            {/* Payment Modal */}
+            <PaymentModal
+                isPaymentModalOpen={isPaymentModalOpen}
+                setIsPaymentModalOpen={setIsPaymentModalOpen}
+                bookingDetails={bookingDetails}
+                handleSubmit={handlePaymentComplete}
+                setIsConfirmationModalOpen={setShowConfirmation}
+                setIsFailedModalOpen={setShowFailure}
+            />
+
             <Footer />
             <ConfirmationModal
                 isOpen={showConfirmation}
                 onClose={() => {
                     setShowConfirmation(false);
-                    formik.resetForm()
+                    formik.resetForm();
                 }}
                 serviceName='mobile workshop'
             />
             <FailedModal
                 isOpen={showFailure}
                 onClose={() => setShowFailure(false)}
-                // onRetry={handleRetry}
                 errorMessage={errorMessage}
             />
         </>

@@ -5,6 +5,7 @@ export enum HTTP_STATUS {
    CREATED = 201,
    BAD_REQUEST = 400,
    UNAUTHORIZED = 401,
+   PAYMENT_REQUIRED = 402,
    FORBIDDEN = 403,
    NOT_FOUND = 404,
    CONFLICT = 409,
@@ -42,7 +43,8 @@ export enum ERROR_MESSAGES {
    ID_NOT_FOUND = "ID not found",
    DATA_MISSING = "Some data are missing",
    NOT_FOUND = "Data not found",
-   INVALID_SIGNATURE = "Invalid signature"
+   INVALID_SIGNATURE = "Invalid signature",
+   INSUFFICIENT_BALANCE = "Insufficient balance in wallet"
 }
 
 

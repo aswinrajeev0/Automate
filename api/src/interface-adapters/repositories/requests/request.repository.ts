@@ -11,7 +11,7 @@ export class RequestRepository implements IRequestRepository {
     }
 
     async find(condition: Partial<IRequestEntity>, skip: number, limit: number): Promise<{requests: IRequestModel[] | []; total: number}> {
-        const requests = await RequestModel.find(condition).skip(skip).limit(limit);
+        const requests = await RequestModel.find(condition).populate("workshopId", "name").populate("customerId", "name").skip(skip).limit(limit);
         return {requests, total: requests.length};
     }
 

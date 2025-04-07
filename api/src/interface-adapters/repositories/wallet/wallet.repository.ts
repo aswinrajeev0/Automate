@@ -16,7 +16,12 @@ export class WalletRepository implements IWalletRepository {
     }
 
     async addMoney(customerId: string, amount: number): Promise<IWalletModel | null> {
-        const wallet = await WalletModel.findOneAndUpdate({customerId}, {$inc: {balance: amount}}, {new: true})
+        const wallet = await WalletModel.findOneAndUpdate({customerId}, {$inc: {balance: amount}}, {new: true});
+        return wallet;
+    }
+
+    async deductMoney(customerId: string, amount: number): Promise<IWalletModel | null> {
+        const wallet = await WalletModel.findOneAndUpdate({customerId}, {$inc: {balance: -amount}}, {new: true});
         return wallet;
     }
 }

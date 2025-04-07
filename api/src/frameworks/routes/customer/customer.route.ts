@@ -118,5 +118,13 @@ export class CustomerRoute extends BaseRoute {
         this.router.post("/add-money", authenticate("customer"), (req: Request, res: Response, next: NextFunction) => {
             walletController.addMoney(req, res, next);
         })
+
+        this.router.post("/wallet-purchase", authenticate("customer"), (req: Request, res: Response, next: NextFunction) => {
+            walletController.walletPurchase(req, res, next);
+        })
+
+        this.router.get("/get-all-requests", authenticate("customer"), (req: Request, res: Response, next: NextFunction) => {
+            requestController.getAllUserRequests(req, res, next);
+        })
     }
 }

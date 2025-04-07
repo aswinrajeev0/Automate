@@ -1,6 +1,6 @@
-import { useMutation } from "@tanstack/react-query"
+import { useMutation, useQuery } from "@tanstack/react-query"
 import { ICarLiftdata, IMobileWorkshop } from "../../types/requests"
-import { carLiftRequest, mobileWorkshopRequest } from "../../services/customer/requestServices"
+import { carLiftRequest, getAllRequests, mobileWorkshopRequest } from "../../services/customer/requestServices"
 
 export const useCarLiftRequest = () => {
     return useMutation({
@@ -14,5 +14,12 @@ export const useCarLiftRequest = () => {
 export const useMobileWorkshopRequest = () => {
     return useMutation({
         mutationFn: (data: IMobileWorkshop) => mobileWorkshopRequest(data)
+    })
+}
+
+export const useGetAllRequests = (page: number = 1, limit: number = 10) => {
+    return useQuery({
+        queryKey: ["all-requests"],
+        queryFn: () => getAllRequests(page, limit)
     })
 }

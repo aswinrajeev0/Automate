@@ -16,6 +16,10 @@ export class WalletController implements IWalletController {
     async getWallet(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const customerId = req.user?.id;
+            const pageNumber = Number(req.query.page) || 1;
+            const limitNumber = Number(req.query.limit) || 10;
+            const skip = (pageNumber - 1) * limitNumber;
+
             if (!customerId) {
                 res.status(HTTP_STATUS.UNAUTHORIZED).json({
                     success: false,
@@ -24,13 +28,14 @@ export class WalletController implements IWalletController {
                 return;
             }
 
-            const {wallet, transactions} = await this._walletUseCase.getWallet(customerId)
-            
+            const { wallet, transactions } = await this._walletUseCase.getWallet(customerId, skip, limitNumber)
+
             res.status(HTTP_STATUS.OK).json({
                 success: true,
                 message: SUCCESS_MESSAGES.DATA_RETRIEVED,
                 wallet,
-                transactions
+                transactions,
+                totalTransactions: transactions.length
             })
 
         } catch (error) {
@@ -42,7 +47,7 @@ export class WalletController implements IWalletController {
         try {
             const customerId = req.user?.id;
             const amount = req.body.amount;
-            if(!customerId) {
+            if (!customerId) {
                 res.status(HTTP_STATUS.UNAUTHORIZED).json({
                     success: false,
                     message: ERROR_MESSAGES.UNAUTHORIZED_ACCESS
@@ -53,7 +58,32 @@ export class WalletController implements IWalletController {
             const transactions = await this._walletUseCase.addMoney(customerId, amount)
 
             res.status(HTTP_STATUS.CREATED).json({
-                success: true, 
+                success: true,
+                message: SUCCESS_MESSAGES.MONEY_ADDED,
+                transactions
+            })
+
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    async walletPurchase(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const customerId = req.user?.id;
+            const amount = req.body.amount;
+            if (!customerId) {
+                res.status(HTTP_STATUS.UNAUTHORIZED).json({
+                    success: false,
+                    message: ERROR_MESSAGES.UNAUTHORIZED_ACCESS
+                })
+                return;
+            }
+
+            const transactions = await this._walletUseCase.walletPurchase(customerId, amount)
+            
+            res.status(HTTP_STATUS.CREATED).json({
+                success: true,
                 message: SUCCESS_MESSAGES.MONEY_ADDED,
                 transactions
             })

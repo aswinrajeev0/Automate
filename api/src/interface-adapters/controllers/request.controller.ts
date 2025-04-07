@@ -12,6 +12,8 @@ import { IRejectRequestUSeCase } from "../../entities/useCaseInterfaces/requests
 import { IPendingJobsUseCase } from "../../entities/useCaseInterfaces/requests/pending-jobs.usecase.interface";
 import { IUpdateRequestStatusUseCase } from "../../entities/useCaseInterfaces/requests/update-request-status.usecase.interface";
 import { IFinishedJobsUseCase } from "../../entities/useCaseInterfaces/requests/finished-jobs.usecase.interface";
+import { IGetAllUserRequestsUseCase } from "../../entities/useCaseInterfaces/requests/get-all-user-requests.usecase.interface";
+import { IRequestModel } from "../../frameworks/database/mongoDB/models/request.model";
 
 @injectable()
 export class RequestController implements IRequestController {
@@ -24,7 +26,8 @@ export class RequestController implements IRequestController {
         @inject("IRejectRequestUSeCase") private _rejectRequest: IRejectRequestUSeCase,
         @inject("IPendingJobsUseCase") private _pendingJobs: IPendingJobsUseCase,
         @inject("IUpdateRequestStatusUseCase") private _updateRequestStatus: IUpdateRequestStatusUseCase,
-        @inject("IFinishedJobsUseCase") private _finishedJobs: IFinishedJobsUseCase
+        @inject("IFinishedJobsUseCase") private _finishedJobs: IFinishedJobsUseCase,
+        @inject("IGetAllUserRequestsUseCase") private _getAllUserRequessts: IGetAllUserRequestsUseCase
     ) { }
 
     async carLift(req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -275,6 +278,35 @@ export class RequestController implements IRequestController {
                 totaPages: total,
                 currentPage: pageNumber
             })
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    async getAllUserRequests(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const customerId = req.user?.id;
+            if (!customerId) {
+                res.status(HTTP_STATUS.UNAUTHORIZED).json({
+                    success: false,
+                    message: ERROR_MESSAGES.UNAUTHORIZED_ACCESS
+                })
+                return;
+            }
+
+            const page = Number(req.query.page);
+            const limitNumber = Number(req.query.limit);
+            const skip = (page - 1) / limitNumber
+
+            const { requests, total } = await this._getAllUserRequessts.execute(customerId, skip, limitNumber);
+
+            res.status(HTTP_STATUS.OK).json({
+                success: true,
+                message: SUCCESS_MESSAGES.DATA_RETRIEVED,
+                requests,
+                totalRequest: total
+            })
+
         } catch (error) {
             next(error)
         }

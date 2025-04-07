@@ -13,6 +13,8 @@ export interface IRequestEntity {
     workshopId: string;
     customerId: string;
     image?: string;
+    amount: number;
+    gst: number;
     description?: string;
     notes?: string;
     createdAt: Date;

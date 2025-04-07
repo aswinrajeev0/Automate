@@ -19,7 +19,7 @@ export const carBrandSchema = z
     .trim()
     .min(2, { message: "Car brand must be specified" })
 
-export const  locationSchema = z
+export const locationSchema = z
     .string()
     .trim()
     .min(5, { message: "Location must be specified" })
@@ -30,7 +30,17 @@ export const typeSchema = z
 export const descriptionSchema = z
     .string()
     .trim()
-    .min(10, {message: "The description must atleast 10 characters"})
+    .min(10, { message: "The description must atleast 10 characters" })
 
 export const noteSchema = z
     .string()
+
+export const priceSchema = z
+    .number({
+        required_error: "Price is required",
+        invalid_type_error: "Price must be a number"
+    })
+    .positive("Price must be greater than 0")
+    .refine(val => /^\d+(\.\d{1,2})?$/.test(val.toString()), {
+        message: "Price can have up to 2 decimal places"
+    });
