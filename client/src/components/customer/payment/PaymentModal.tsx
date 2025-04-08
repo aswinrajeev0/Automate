@@ -26,7 +26,8 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
     handleSubmit,
     setIsPaymentModalOpen,
     bookingDetails,
-    setIsConfirmationModalOpen
+    setIsConfirmationModalOpen,
+    setIsFailedModalOpen
 }) => {
     const [paymentMethod, setPaymentMethod] = useState('paypal');
     const createOrder = useCreateOrder()
@@ -58,11 +59,13 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
                         setIsConfirmationModalOpen(true);
                     } else {
                         setIsPaymentModalOpen(false);
+                        setIsFailedModalOpen(true)
                         errorToast(response.message || "Something went wrong")
                     }
                 } catch (error: any) {
                     console.error(error)
-                    // setIsPaymentModalOpen(false)
+                    setIsPaymentModalOpen(false)
+                    setIsFailedModalOpen(true)
                     errorToast(error.message as string)
                 }
 
@@ -100,6 +103,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
                         successToast(bookingDetails ? "booking have been confirmed" : "")
                     } else {
                         setIsPaymentModalOpen(false);
+                        setIsFailedModalOpen(true)
                         errorToast("Error in requesting service")
                         // alert('Payment verification failed');
                     }
@@ -112,12 +116,20 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
                 theme: {
                     color: '#ffda73'
                 },
+                modal: {
+                    ondismiss: () => {
+                        setIsFailedModalOpen(true);
+                        errorToast("Payment was not completed. Please try again.");
+                    }
+                }
+
             };
 
             const paymentObject = new (window as any).Razorpay(options);
             paymentObject.open();
         } catch (error) {
             console.error(error)
+            setIsFailedModalOpen(true)
         }
     }
 

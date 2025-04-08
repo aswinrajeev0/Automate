@@ -122,6 +122,12 @@ import { IWalletUseCase } from "../../entities/useCaseInterfaces/wallet/wallet.u
 import { WalletUseCase } from "../../useCases/wallet/wallet.usecase";
 import { IGetAllUserRequestsUseCase } from "../../entities/useCaseInterfaces/requests/get-all-user-requests.usecase.interface";
 import { GetAllUserRequestsUseCase } from "../../useCases/requests/get-all-user-request";
+import { IGetAllWorkshopBookingUseCase } from "../../entities/useCaseInterfaces/bookings/get-all-workshop-bookings.usecase.interface";
+import { GetAllWorkshopBookingUseCase } from "../../useCases/bookings/get-all-workshop-booking.usecase";
+import { ICancelBookingUseCase } from "../../entities/useCaseInterfaces/bookings/cancel-booking.usecase.interface";
+import { CancelBookingUseCase } from "../../useCases/bookings/cancel-booking.usecase";
+import { IChangeBookingStatusUseCase } from "../../entities/useCaseInterfaces/bookings/change-booking-status.usecase.interface";
+import { ChangeBookingStatusUseCase } from "../../useCases/bookings/change-booking-status.usecase";
 
 export class UseCaseRegistry {
     static registerUseCases(): void {
@@ -336,6 +342,18 @@ export class UseCaseRegistry {
 
         container.register<IGetAllUserRequestsUseCase>("IGetAllUserRequestsUseCase", {
             useClass: GetAllUserRequestsUseCase
+        })
+
+        container.register<IGetAllWorkshopBookingUseCase>("IGetAllWorkshopBookingUseCase", {
+            useClass: GetAllWorkshopBookingUseCase
+        })
+
+        container.register<ICancelBookingUseCase>("ICancelBookingUseCase", {
+            useClass: CancelBookingUseCase
+        })
+
+        container.register<IChangeBookingStatusUseCase>("IChangeBookingStatusUseCase", {
+            useClass: ChangeBookingStatusUseCase
         })
 
         //* ====== Register Strategies ====== *//

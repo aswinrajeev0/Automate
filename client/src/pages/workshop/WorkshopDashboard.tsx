@@ -41,6 +41,7 @@ export default function WorkshopDashboard() {
         { id: "requests", title: "Requests", icon: FileText, path: "/workshop/requests" },
         { id: "pending-jobs", title: "Pending Jobs", icon: Clock, path: "/workshop/pending-jobs" },
         { id: "finished-jobs", title: "Finished Jobs", icon: CheckCircle, path: "/workshop/finished-jobs" },
+        { id: "bookings", title: "Bookings", icon: CheckCircle, path: "/workshop/bookings" },
         { id: "chats", title: "Chats", icon: MessageSquare, path: "/workshop/chats" },
         { id: "ratings", title: "Ratings and review", icon: Star, path: "/workshop/ratings" },
         { id: "profile", title: "Edit Profile", icon: UserCircle, path: "/workshop/profile" },

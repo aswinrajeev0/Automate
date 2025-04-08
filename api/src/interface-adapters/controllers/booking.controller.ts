@@ -5,13 +5,19 @@ import { IGetBookedSlotsUseCase } from "../../entities/useCaseInterfaces/booking
 import { ERROR_MESSAGES, HTTP_STATUS, SUCCESS_MESSAGES } from "../../shared/constants";
 import { IBookSlotUseCase } from "../../entities/useCaseInterfaces/bookings/slot-book.usecase.interface";
 import { ICancelSlotUseCase } from "../../entities/useCaseInterfaces/bookings/cancel-slot.usecase.interface";
+import { IGetAllWorkshopBookingUseCase } from "../../entities/useCaseInterfaces/bookings/get-all-workshop-bookings.usecase.interface";
+import { ICancelBookingUseCase } from "../../entities/useCaseInterfaces/bookings/cancel-booking.usecase.interface";
+import { IChangeBookingStatusUseCase } from "../../entities/useCaseInterfaces/bookings/change-booking-status.usecase.interface";
 
 @injectable()
 export class BookingController implements IBookingController {
     constructor(
         @inject("IGetBookedSlotsUseCase") private _getBookedSlots: IGetBookedSlotsUseCase,
         @inject("IBookSlotUseCase") private _bookSlot: IBookSlotUseCase,
-        @inject("ICancelSlotUseCase") private _cancelSlot: ICancelSlotUseCase
+        @inject("ICancelSlotUseCase") private _cancelSlot: ICancelSlotUseCase,
+        @inject("IGetAllWorkshopBookingUseCase") private _getAllWorkshopBooking: IGetAllWorkshopBookingUseCase,
+        @inject("ICancelBookingUseCase") private _cancelBooking: ICancelBookingUseCase,
+        @inject("IChangeBookingStatusUseCase") private _changeBookingStatus: IChangeBookingStatusUseCase
     ) { }
 
     async getBookedSlots(req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -46,9 +52,9 @@ export class BookingController implements IBookingController {
     async cancelslot(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
 
-            const {bookingId} = req.params;
+            const { bookingId } = req.params;
 
-            if(!bookingId) {
+            if (!bookingId) {
                 res.status(HTTP_STATUS.BAD_REQUEST).json({
                     success: false,
                     message: ERROR_MESSAGES.ID_NOT_FOUND
@@ -72,6 +78,86 @@ export class BookingController implements IBookingController {
             res.status(HTTP_STATUS.OK).json({
                 success: true,
                 message: SUCCESS_MESSAGES.BOOKING_CANCELED,
+                booking
+            })
+
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    async getAllWorkshopBookings(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const workshopId = req.user?.id;
+            if (!workshopId) {
+                res.status(HTTP_STATUS.UNAUTHORIZED).json({
+                    success: false,
+                    message: ERROR_MESSAGES.UNAUTHORIZED_ACCESS
+                })
+                return;
+            }
+
+            const page = Number(req.query.page);
+            const limit = Number(req.query.limit);
+            const skip = (page - 1) * limit;
+            const searchString = req.query.searchTerm as string;
+            const status = req.query.statusFilter as string
+
+            const { bookings, total } = await this._getAllWorkshopBooking.execute(workshopId, skip, limit, searchString, status);
+
+            res.status(HTTP_STATUS.OK).json({
+                success: true,
+                message: SUCCESS_MESSAGES.DATA_RETRIEVED,
+                bookings,
+                totalBookings: total
+            })
+
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    async cancelBooking(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const { bookingId } = req.body;
+
+            if (!bookingId) {
+                res.status(HTTP_STATUS.BAD_REQUEST).json({
+                    success: false,
+                    message: ERROR_MESSAGES.ID_NOT_FOUND
+                })
+                return;
+            }
+
+            const booking = await this._cancelBooking.execute(bookingId);
+
+            res.status(HTTP_STATUS.OK).json({
+                success: true,
+                message: SUCCESS_MESSAGES.UPDATE_SUCCESS,
+                booking
+            })
+
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    async changeStatus(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const {status, bookingId} = req.body;
+            if (!bookingId) {
+                res.status(HTTP_STATUS.BAD_REQUEST).json({
+                    success: false,
+                    message: ERROR_MESSAGES.ID_NOT_FOUND
+                })
+                return;
+            }
+
+            const booking = await this._changeBookingStatus.execute(bookingId, status)
+
+            res.status(HTTP_STATUS.OK).json({
+                success: true,
+                message: SUCCESS_MESSAGES.UPDATE_SUCCESS,
                 booking
             })
 

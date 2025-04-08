@@ -10,5 +10,6 @@ export interface IBookingEntity {
     duration: number,
     price: number,
     amount: number,
-    gst?: number
+    gst?: number,
+    status: "pending" | "confirmed" | "in-progress" | "completed" | "cancelled";
 }

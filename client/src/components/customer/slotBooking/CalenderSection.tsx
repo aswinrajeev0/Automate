@@ -236,11 +236,25 @@ const CalenderSection: React.FC<CalenderSectionProps> = ({ setBookingSubmitted, 
   const getAvailableTimesForSelectedDate = () => {
     if (!selectedDate) return { morning: [], afternoon: [] };
 
+    const isToday = new Date().toDateString() === new Date(selectedDate).toDateString();
+    const now = new Date();
+
+    const disablePastSlots = (slot: TimeSlot) => {
+      if (!isToday) return false;
+
+      const [slotHour, slotMinute] = slot.value.split(':').map(Number);
+      const slotDateTime = new Date(selectedDate);
+      slotDateTime.setHours(slotHour, slotMinute, 0, 0);
+
+      return slotDateTime < now;
+    };
+
     const morningAvailable = baseTimeSlots.morning.map(slot => {
       const { isBooked, isPartiallyBooked, conflictingService } = checkSlotAvailability(selectedDate, slot);
+      const isPast = disablePastSlots(slot);
       return {
         ...slot,
-        isBooked,
+        isBooked: isBooked || isPast,
         isPartiallyBooked,
         conflictingService
       };
@@ -248,9 +262,10 @@ const CalenderSection: React.FC<CalenderSectionProps> = ({ setBookingSubmitted, 
 
     const afternoonAvailable = baseTimeSlots.afternoon.map(slot => {
       const { isBooked, isPartiallyBooked, conflictingService } = checkSlotAvailability(selectedDate, slot);
+      const isPast = disablePastSlots(slot);
       return {
         ...slot,
-        isBooked,
+        isBooked: isBooked || isPast,
         isPartiallyBooked,
         conflictingService
       };
@@ -268,6 +283,7 @@ const CalenderSection: React.FC<CalenderSectionProps> = ({ setBookingSubmitted, 
 
     return { morning: filteredMorning, afternoon: filteredAfternoon };
   };
+
 
   const days = generateDaysArray();
   const availableTimes = getAvailableTimesForSelectedDate();
@@ -480,7 +496,7 @@ const CalenderSection: React.FC<CalenderSectionProps> = ({ setBookingSubmitted, 
         serviceName=''
       />
 
-      <FailedModal 
+      <FailedModal
         isOpen={isFailedModalOpen}
         onClose={() => setIsFailedModalOpen(false)}
       />

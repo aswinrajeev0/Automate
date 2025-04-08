@@ -5,6 +5,7 @@ import { AdminRoutes } from "./routes/AdminRoute";
 import { WorkshopRoutes } from "./routes/WorkshopRoute";
 import NotFound from "./pages/NotFound";
 import ServiceRequestDashboard from "./pages/customer/RequestsPage";
+import WorkshopBookings from "./pages/workshop/Bookings";
 function App() {
 
   return (
@@ -14,7 +15,7 @@ function App() {
         <Route path="/*" element={<CustomerRoutes />} />
         <Route path="/admin/*" element={<AdminRoutes />} />
         <Route path="/workshop/*" element={<WorkshopRoutes />} />
-        <Route path="/test" element={<ServiceRequestDashboard />} />
+        <Route path="/test" element={<WorkshopBookings />} />
 
         <Route path="*" element={<NotFound />} />
       </Routes>

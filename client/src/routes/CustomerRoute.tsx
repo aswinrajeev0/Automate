@@ -15,6 +15,7 @@ import MobileWorkshop from "../pages/customer/MobileWorkshop";
 import CustomerProtected from "../utils/protected/UserProtected";
 import WorkshopsPage from "../pages/customer/AllWorkshops";
 import WalletPage from "../pages/customer/WalletPage";
+import ServiceRequestDashboard from "../pages/customer/RequestsPage";
 
 export const CustomerRoutes = () => {
     return (
@@ -34,6 +35,7 @@ export const CustomerRoutes = () => {
             <Route path="/request-service/car-lift/:workshopId" element={<CustomerProtected><CarLiftServiceForm /></CustomerProtected>} />
             <Route path="/request-service/mobile-workshop/:workshopId" element={<CustomerProtected><MobileWorkshop /></CustomerProtected>} />
             <Route path="/wallet" element={<CustomerProtected><WalletPage /></CustomerProtected>} />
+            <Route path="/requests" element={<CustomerProtected><ServiceRequestDashboard /></CustomerProtected>} />
         </Routes>
     )
 }

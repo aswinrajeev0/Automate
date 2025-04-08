@@ -24,4 +24,10 @@ export class WalletRepository implements IWalletRepository {
         const wallet = await WalletModel.findOneAndUpdate({customerId}, {$inc: {balance: -amount}}, {new: true});
         return wallet;
     }
+
+    async refundUpdate(customerId: string, amount: number): Promise<IWalletModel | null> {
+        const wallet = await WalletModel.findOneAndUpdate({customerId}, {$inc: {balance: amount}}, {new: true});
+        return wallet;
+    }
+    
 }

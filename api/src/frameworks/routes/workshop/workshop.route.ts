@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { BaseRoute } from "../base.route";
-import { blockStatusMiddleware, otpController, requestController, reviewController, workshopController } from "../../di/resolver";
+import { blockStatusMiddleware, bookingController, otpController, requestController, reviewController, workshopController } from "../../di/resolver";
 import { authenticate, decodeToken } from "../../../interface-adapters/middlewares/auth.midleware";
 
 export class WorkshopRoute extends BaseRoute {
@@ -91,6 +91,18 @@ export class WorkshopRoute extends BaseRoute {
 
         this.router.get("/finished-jobs", (req, res, next) => {
             requestController.finishedJobs(req, res, next)
+        })
+
+        this.router.get("/all-workshop-bookings", (req, res, next) => {
+            bookingController.getAllWorkshopBookings(req, res, next)
+        })
+
+        this.router.patch("/cancel-booking", (req, res, next) => {
+            bookingController.cancelBooking(req, res, next)
+        })
+
+        this.router.patch("/change-booking-status", (req, res, next) => {
+            bookingController.changeStatus(req, res, next)
         })
     }
 }
