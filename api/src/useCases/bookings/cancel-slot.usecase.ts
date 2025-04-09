@@ -3,7 +3,7 @@ import { ICancelSlotUseCase } from "../../entities/useCaseInterfaces/bookings/ca
 import { IBookingRepository } from "../../entities/repositoryInterfaces/booking/booking-repository.interface";
 import { CustomError } from "../../entities/utils/custom.error";
 import { ERROR_MESSAGES, HTTP_STATUS } from "../../shared/constants";
-import { IBookingModel } from "../../frameworks/database/mongoDB/models/booking.model";
+import { IBookingModel, IPopulatedId } from "../../frameworks/database/mongoDB/models/booking.model";
 import { IWalletRepository } from "../../entities/repositoryInterfaces/wallet/wallet.repository.interface";
 import { ITransactionRepository } from "../../entities/repositoryInterfaces/wallet/transaction.repository.interface";
 import { generateUniqueId } from "../../frameworks/security/uniqueuid.bcrypt";
@@ -20,7 +20,7 @@ export class CancelSlotUseCase implements ICancelSlotUseCase {
         const filter = {
             bookingId
         }
-        const booking = await this._bookingRepo.findOneAndDelete(filter);
+        const booking = await this._bookingRepo.findOneAndUpdate(filter,{status: "cancelled"});
         if (!booking) {
             throw new CustomError(
                 ERROR_MESSAGES.REQUEST_NOT_FOUND,
@@ -28,7 +28,9 @@ export class CancelSlotUseCase implements ICancelSlotUseCase {
             )
         }
 
-        const customerId = booking.customerId.toString();
+        const populatedCustomerId = booking.customerId;
+
+        const customerId = (populatedCustomerId as IPopulatedId)._id.toString()
 
         const wallet = await this._walletRepo.refundUpdate(customerId, booking.amount);
         await this._transactionRepo.save({

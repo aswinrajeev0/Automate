@@ -6,4 +6,6 @@ export interface IBookingController {
     getAllWorkshopBookings(req: Request, res: Response, next: NextFunction): Promise<void>;
     cancelBooking(req: Request, res: Response, next: NextFunction): Promise<void>;
     changeStatus(req: Request, res: Response, next: NextFunction): Promise<void>;
+    isSlotAvailable(req: Request, res: Response, next: NextFunction): Promise<void>;
+    getAllCustomerBookings(req: Request, res: Response, next: NextFunction): Promise<void>;
 }

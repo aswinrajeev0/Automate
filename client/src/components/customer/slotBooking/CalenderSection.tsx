@@ -5,10 +5,11 @@ import { BookedSlot } from "./BookedSlots";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../store/store";
 import { useParams, useSearchParams } from "react-router-dom";
-import { BookSlot, useBookSlot } from "../../../hooks/customer/useSlotBooking";
+import { BookSlot, useBookSlot, useIsSlotAvailable } from "../../../hooks/customer/useSlotBooking";
 import PaymentModal from "../payment/PaymentModal";
 import ConfirmationModal from "../carLift/ConfirmationModal";
 import FailedModal from "../carLift/FailedModal";
+import { useToaster } from "../../../hooks/ui/useToaster";
 
 const SERVICE_DURATIONS = {
   basic: 1,
@@ -25,12 +26,10 @@ interface TimeSlot {
   conflictingService?: string;
 }
 
-// Generates all available time slots
 const generateTimeSlots = () => {
   const morningSlots: TimeSlot[] = [];
   const afternoonSlots: TimeSlot[] = [];
 
-  // Generate morning slots (8am-12pm)
   for (let hour = 8; hour <= 12; hour++) {
     const hourStr = hour.toString().padStart(2, '0');
     const label = hour === 12 ? '12:00 PM' : `${hour}:00 AM`;
@@ -41,7 +40,6 @@ const generateTimeSlots = () => {
     });
   }
 
-  // Generate afternoon slots (2pm-6pm)
   for (let hour = 14; hour <= 18; hour++) {
     const hourStr = hour.toString().padStart(2, '0');
     const displayHour = hour > 12 ? hour - 12 : hour;
@@ -72,6 +70,7 @@ const CalenderSection: React.FC<CalenderSectionProps> = ({ setBookingSubmitted, 
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false)
   const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false)
   const [isFailedModalOpen, setIsFailedModalOpen] = useState(false)
+  const { successToast, errorToast } = useToaster()
 
   const { workshopId } = useParams();
   const [searchParams] = useSearchParams();
@@ -81,6 +80,27 @@ const CalenderSection: React.FC<CalenderSectionProps> = ({ setBookingSubmitted, 
   const bookSlot = useBookSlot(workshopId as string, type);
 
   const serviceDuration = SERVICE_DURATIONS[type as keyof typeof SERVICE_DURATIONS] || 1;
+
+  const { data: slotAvailability, isLoading: isCheckingAvailability, refetch } = useIsSlotAvailable(
+    {
+      date: selectedDate || new Date(),
+      time: selectedTime || "",
+      endTime: selectedTime
+        ? format(
+          addHours(
+            new Date(selectedDate || new Date()).setHours(
+              parseInt(selectedTime.split(':')[0]),
+              parseInt(selectedTime.split(':')[1] || '0'),
+              0,
+              0
+            ),
+            serviceDuration
+          ),
+          'HH:mm'
+        )
+        : "",
+    },
+  );
 
   useEffect(() => {
     const startDate = new Date();
@@ -116,9 +136,34 @@ const CalenderSection: React.FC<CalenderSectionProps> = ({ setBookingSubmitted, 
     setOverlappingServiceInfo(null);
   };
 
-  const handleBookingClick = () => {
-    setIsPaymentModalOpen(true)
-  }
+  const handleBookingClick = async () => {
+    if (!selectedDate || !selectedTime) return;
+
+    const { data: latestAvailability } = await refetch();
+    if (!latestAvailability?.isSlotAvailable) {
+      errorToast("Slot became unavailable");
+      setOverlappingServiceInfo(
+        `This slot became unavailable: ${"Already booked"}`
+      );
+      setIsPaymentModalOpen(false);
+      return;
+    }
+
+    if (isCheckingAvailability) {
+      errorToast("Checking slot availability, please wait...");
+      return;
+    }
+
+    if (!slotAvailability?.isSlotAvailable) {
+      errorToast("Slot is unavailable");
+      setOverlappingServiceInfo(
+        `This slot is unavailable: "Already booked"`
+      );
+      return;
+    }
+
+    setIsPaymentModalOpen(true);
+  };
 
   const bookingDetails = {
     date: selectedDate,

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, Outlet, useNavigate } from "react-router-dom";
-import { LayoutDashboard, Users, Wrench, FileText, AlertTriangle, LogOut, DollarSign } from "lucide-react";
+import { LayoutDashboard, Users, Wrench, FileText, AlertTriangle, LogOut, DollarSign, CheckCheckIcon } from "lucide-react";
 import {
   SidebarProvider
 } from "../../components/ui/Sidebar";
@@ -41,6 +41,7 @@ export default function AdminDashboard() {
     { id: "customers", title: "Customers", icon: Users, path: "/admin/customers" },
     { id: "workshops", title: "Workshops", icon: Wrench, path: "/admin/workshops" },
     { id: "requests", title: "Requests", icon: FileText, path: "/admin/requests" },
+    { id: "requests", title: "Bookings", icon: CheckCheckIcon, path: "/admin/bookings" },
     { id: "revenue", title: "Revenue Report", icon: DollarSign, path: "/admin/revenue-report" },
     { id: "approvals", title: "Pending Approvals", icon: AlertTriangle, path: "/admin/approvals" },
   ];

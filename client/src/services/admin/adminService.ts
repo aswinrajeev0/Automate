@@ -92,3 +92,11 @@ export const updateWorkshopApprovalStatus = async ({
 //     });
 //     return response.data;
 // }
+
+const allRequests = async () => {
+    try {
+        
+    } catch (error: any) {
+        
+    }
+}

@@ -8,7 +8,6 @@ import RequestCard from '../../components/customer/requests/RequestCard';
 import { Pagination1 } from '../../components/admin/Pagination1';
 
 const ServiceRequestDashboard = () => {
-
     const [currentPage, setCurrentPage] = useState(1);
     const [filter, setFilter] = useState('');
 
@@ -17,7 +16,21 @@ const ServiceRequestDashboard = () => {
     const {data, isLoading, isError} = useGetAllRequests(currentPage, limit);
 
     const requests = (data?.requests || []) as IUserRequestResponse[];
-    const totalPages = Math.ceil(data?.totalRequests/limit) || 1
+    const totalPages = Math.ceil(data?.totalRequests/limit) || 1;
+    
+    // Filter requests based on search input
+    const filteredRequests = requests.filter(request => {
+        if (!filter) return true;
+        
+        const searchLower = filter.toLowerCase();
+        return (
+            request.type?.toLowerCase().includes(searchLower) ||
+            request.workshop?.name?.toLowerCase().includes(searchLower) ||
+            request.status?.toLowerCase().includes(searchLower) 
+            // request.vehicleNo?.toLowerCase().includes(searchLower) ||
+            // request.carBrand?.toLowerCase().includes(searchLower)
+        );
+    });
 
     return (
         <>
@@ -34,43 +47,52 @@ const ServiceRequestDashboard = () => {
                             </div>
                             <input
                                 type="text"
-                                placeholder="Search by type, workshop or status..."
+                                placeholder="Search by type, workshop, status, vehicle number..."
                                 className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
                                 value={filter}
                                 onChange={(e) => setFilter(e.target.value)}
                             />
                         </div>
-
-                        {/* <div className="flex gap-2">
-                            <button className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg bg-white hover:bg-gray-50">
-                                <Calendar className="h-5 w-5 text-gray-500" />
-                                <span>Date</span>
-                            </button>
-                            <button className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg bg-white hover:bg-gray-50">
-                                <Filter className="h-5 w-5 text-gray-500" />
-                                <span>Filter</span>
-                            </button>
-                            <button className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg bg-white hover:bg-gray-50">
-                                <ArrowUpDown className="h-5 w-5 text-gray-500" />
-                                <span>Sort</span>
-                            </button>
-                        </div> */}
                     </div>
 
+                    {/* Loading and error states */}
+                    {isLoading && (
+                        <div className="text-center py-8">
+                            <p className="text-gray-500">Loading service requests...</p>
+                        </div>
+                    )}
+
+                    {isError && (
+                        <div className="text-center py-8">
+                            <p className="text-red-500">There was an error loading your service requests. Please try again later.</p>
+                        </div>
+                    )}
+
+                    {/* No results message */}
+                    {!isLoading && !isError && filteredRequests.length === 0 && (
+                        <div className="text-center py-8 bg-white rounded-lg shadow-sm border border-gray-100">
+                            <p className="text-gray-500">No service requests found{filter ? " matching your search" : ""}.</p>
+                        </div>
+                    )}
+
                     {/* Request cards */}
-                    <div className="space-y-4">
-                        {requests.map((request) => (
-                            <RequestCard request={request} />
+                    <div className="space-y-6">
+                        {filteredRequests.map((request) => (
+                            <RequestCard key={request.requestId} request={request} />
                         ))}
                     </div>
 
-                    {/* Pagination */}
-                    <Pagination1
-                        currentPage={currentPage}
-                        onPageNext={() => setCurrentPage(currentPage+1)}
-                        onPagePrev={() => setCurrentPage(currentPage-1)}
-                        totalPages={totalPages}
-                    />
+                    {/* Pagination - only show if we have results */}
+                    {filteredRequests.length > 0 && (
+                        <div className="mt-6">
+                            <Pagination1
+                                currentPage={currentPage}
+                                onPageNext={() => setCurrentPage(currentPage+1)}
+                                onPagePrev={() => setCurrentPage(currentPage-1)}
+                                totalPages={totalPages}
+                            />
+                        </div>
+                    )}
                 </div>
             </div>
             <Footer />

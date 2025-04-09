@@ -3,7 +3,7 @@ import { addMoney, getWallet, walletPurchase } from "../../services/customer/wal
 
 export const useGetWallet = (limit: number, currentPage: number) => {
     return useQuery({
-        queryKey: ["wallet"],
+        queryKey: ["wallet", limit, currentPage],
         queryFn: () => getWallet(limit, currentPage)
     })
 }

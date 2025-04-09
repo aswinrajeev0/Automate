@@ -2,7 +2,7 @@
 import { useNavigate } from "react-router-dom"
 import { useSelector, useDispatch } from "react-redux"
 import type { RootState } from "../../store/store"
-import { User, Wallet, MessageSquare, ClipboardList, LogOut } from "lucide-react"
+import { User, Wallet, MessageSquare, ClipboardList, LogOut, CheckCheck } from "lucide-react"
 import { customerLogout } from "../../store/slices/customerSlice"
 import { useToaster } from "../../hooks/ui/useToaster"
 import { useCustomerLogout } from "../../hooks/customer/useCustomerAuth"
@@ -91,6 +91,10 @@ export const Header = () => {
                 <DropdownMenuItem onClick={() => navigate("/requests")} className="cursor-pointer">
                   <ClipboardList className="mr-2 h-4 w-4" />
                   <span>Requests</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => navigate("/bookings")} className="cursor-pointer">
+                  <CheckCheck className="mr-2 h-4 w-4" />
+                  <span>Bookings</span>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-red-500 hover:text-red-600">

@@ -44,7 +44,8 @@ export enum ERROR_MESSAGES {
    DATA_MISSING = "Some data are missing",
    NOT_FOUND = "Data not found",
    INVALID_SIGNATURE = "Invalid signature",
-   INSUFFICIENT_BALANCE = "Insufficient balance in wallet"
+   INSUFFICIENT_BALANCE = "Insufficient balance in wallet",
+   SLOT_ALREADY_BOOKED = "Slot is not availabe"
 }
 
 

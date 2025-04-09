@@ -15,7 +15,7 @@ export class WalletUseCase implements IWalletUseCase {
         @inject("ITransactionRepository") private _transactionRepo: ITransactionRepository
     ) { }
 
-    async getWallet(customerId: string, skip: number, limit: number): Promise<{ wallet: IWalletModel; transactions: ITransactionModel[]; }> {
+    async getWallet(customerId: string, skip: number, limit: number): Promise<{ wallet: IWalletModel; transactions: ITransactionModel[]; totalTransactions: number }> {
         const wallet = await this._walletRepo.findOne({ customerId });
         if (!wallet) {
             throw new CustomError(
@@ -24,9 +24,9 @@ export class WalletUseCase implements IWalletUseCase {
             )
         }
 
-        const transactions = await this._transactionRepo.find({ wallet: wallet._id.toString() }, skip, limit)
+        const {transactions, totalTransactions} = await this._transactionRepo.find({ wallet: wallet._id.toString() }, skip, limit)
 
-        return { wallet, transactions }
+        return { wallet, transactions, totalTransactions }
     }
 
     async addMoney(customerId: string, amount: number): Promise<ITransactionModel> {

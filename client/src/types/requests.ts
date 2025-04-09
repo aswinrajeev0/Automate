@@ -73,4 +73,13 @@ export interface IUserRequestResponse {
         name: string
     }
     amount: number;
+    carBrand: string,
+    carType: string,
+    gst: number,
+    location: string,
+    vehicleNo: string,
+    description: string,
+    image: string;
+    notes: string;
+    mobile: string;
 }

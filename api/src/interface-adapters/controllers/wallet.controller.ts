@@ -28,14 +28,14 @@ export class WalletController implements IWalletController {
                 return;
             }
 
-            const { wallet, transactions } = await this._walletUseCase.getWallet(customerId, skip, limitNumber)
+            const { wallet, transactions, totalTransactions } = await this._walletUseCase.getWallet(customerId, skip, limitNumber)
 
             res.status(HTTP_STATUS.OK).json({
                 success: true,
                 message: SUCCESS_MESSAGES.DATA_RETRIEVED,
                 wallet,
                 transactions,
-                totalTransactions: transactions.length
+                totalTransactions: totalTransactions
             })
 
         } catch (error) {

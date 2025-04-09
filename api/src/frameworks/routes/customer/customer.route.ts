@@ -99,7 +99,7 @@ export class CustomerRoute extends BaseRoute {
             requestController.mobileWorkshop(req, res, next)
         })
 
-        this.router.delete("/cancel-slot/:bookingId", authenticate("customer"), (req: Request, res: Response, next: NextFunction) => {
+        this.router.patch("/cancel-slot/:bookingId", authenticate("customer"), (req: Request, res: Response, next: NextFunction) => {
             bookingController.cancelslot(req, res, next)
         })
 
@@ -125,6 +125,14 @@ export class CustomerRoute extends BaseRoute {
 
         this.router.get("/get-all-requests", authenticate("customer"), (req: Request, res: Response, next: NextFunction) => {
             requestController.getAllUserRequests(req, res, next);
+        })
+
+        this.router.get("/is-slot-available", authenticate("customer"), (req: Request, res: Response, next: NextFunction) => {
+            bookingController.isSlotAvailable(req, res, next)
+        })
+
+        this.router.get("/all-user-bookings", authenticate("customer"), (req: Request, res: Response, next: NextFunction) => {
+            bookingController.getAllCustomerBookings(req, res, next)
         })
     }
 }

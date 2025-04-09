@@ -11,7 +11,7 @@ import { Pagination1 } from '../../components/admin/Pagination1';
 const WalletPage = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [isAddMoneyModalOpen, setIsAddMoneyModalOpen] = useState(false);
-    const limit = 10
+    const limit = 5
     const { data } = useGetWallet(limit, currentPage)
     const wallet = data?.wallet as IWallet
     const transactions = (data?.transactions || []) as ITransaction[]

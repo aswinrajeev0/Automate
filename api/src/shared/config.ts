@@ -26,7 +26,11 @@ export const config = {
         RESET_EXPIRES_IN: process.env.JWT_RESET_EXPIRES_IN || "5m",
     },
     redis: {
-        REDIS_URL: process.env.REDIS_URL || ""
+        REDIS_URL: process.env.REDIS_URL || "",
+        REDIS_PORT: (process.env.REDIS_PORT || 6379) as number,
+        REDIS_HOST: process.env.REDIS_HOST,
+        REDIS_USERNAME: process.env.REDIS_USERNAME,
+        REDIS_PASSWORD: process.env.REDIS_PASSWORD
     },
     OtpExpiry: process.env.OTP_EXPIRY_IN_MINUTES || "2",
     loggerStatus: process.env.LOGGER_STATUS || "dev",

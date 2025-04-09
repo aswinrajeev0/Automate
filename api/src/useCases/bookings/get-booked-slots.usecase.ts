@@ -28,7 +28,7 @@ export class GetBookedSlotsUseCase implements IGetBookedSlotsUseCase {
             )
         }
         const now = new Date();
-        const slots = await this._bookingRepo.findUpcomingBookings({ workshopId, type, date: { $gte: now } })
+        const slots = await this._bookingRepo.findUpcomingBookings({ workshopId, type, date: { $gte: now },  })
 
         if (!slots) {
             throw new CustomError(

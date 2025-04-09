@@ -7,6 +7,7 @@ import Customers from "../components/admin/customers/Customers";
 import Workshops from "../components/admin/workshops/Workshops";
 // import ApprovalContent from "../components/ui/admin/ApprovalContent";
 import WorkshopApproval from "../components/admin/workshops/WorkshopApproval";
+import RequestsAdminPage from "../pages/admin/RequestsPage";
 
 export const AdminRoutes = () => {
     return (
@@ -19,7 +20,8 @@ export const AdminRoutes = () => {
                 <Route path="customers" element={<AdminProtected><Customers /></AdminProtected>} />
                 <Route path="workshops" element={<AdminProtected><Workshops /></AdminProtected>} />
                 <Route path="approvals" element={<AdminProtected><WorkshopApproval /></AdminProtected>} />
-                <Route path="requests" />
+                <Route path="requests" element={<AdminProtected><RequestsAdminPage /></AdminProtected>} />
+                <Route path="bookings" />
                 <Route path="revenue-report" />
             </Route>
 

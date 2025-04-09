@@ -11,7 +11,7 @@ export interface IPopulatedId {
 export interface IBookingModel extends Omit<IBookingEntity, "id" | "customerId" | "workshopId">, Document {
     _id: ObjectId | IPopulatedId;
     customerId: ObjectId | IPopulatedId;
-    workshopId: ObjectId;
+    workshopId: ObjectId | IPopulatedId;
 }
 
 export const BookingModel = model<IBookingModel>("Booking", bookingSchema)

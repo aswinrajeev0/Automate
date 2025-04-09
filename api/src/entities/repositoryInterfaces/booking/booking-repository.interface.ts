@@ -7,5 +7,7 @@ export interface IBookingRepository {
     findOneAndDelete(filter: Partial<IBookingEntity>): Promise<IBookingModel | null>;
     findUpcomingBookings(filter: any): Promise<IBookingModel[]>
     findAllWorkshopBookings(filter: Partial<IBookingEntity>, skip: number, limit: number): Promise<{bookings: IBookingModel[]; total: number}>;
-    findOneAndUpdate(filter: Partial<IBookingEntity>,update: Partial<IBookingEntity>): Promise<IBookingModel | null>
+    findOneAndUpdate(filter: Partial<IBookingEntity>,update: Partial<IBookingEntity>): Promise<IBookingModel | null>;
+    findOne(filter: Partial<IBookingEntity>): Promise<IBookingModel | null>;
+    findAllCustomerBookings(customerId: string, skip: number, limit: number): Promise<{bookings: IBookingModel[]; total: number}>;
 }

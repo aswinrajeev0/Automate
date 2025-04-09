@@ -8,6 +8,10 @@ import { ICancelSlotUseCase } from "../../entities/useCaseInterfaces/bookings/ca
 import { IGetAllWorkshopBookingUseCase } from "../../entities/useCaseInterfaces/bookings/get-all-workshop-bookings.usecase.interface";
 import { ICancelBookingUseCase } from "../../entities/useCaseInterfaces/bookings/cancel-booking.usecase.interface";
 import { IChangeBookingStatusUseCase } from "../../entities/useCaseInterfaces/bookings/change-booking-status.usecase.interface";
+import { IIsSlotAvailableUseCase } from "../../entities/useCaseInterfaces/bookings/is-slot-available.usecase";
+import { string } from "zod";
+import { tryCatch } from "bullmq";
+import { IGetAllCustomerBookingsUseCase } from "../../entities/useCaseInterfaces/bookings/get-all-customer-bookings.usecase.intrface";
 
 @injectable()
 export class BookingController implements IBookingController {
@@ -17,7 +21,9 @@ export class BookingController implements IBookingController {
         @inject("ICancelSlotUseCase") private _cancelSlot: ICancelSlotUseCase,
         @inject("IGetAllWorkshopBookingUseCase") private _getAllWorkshopBooking: IGetAllWorkshopBookingUseCase,
         @inject("ICancelBookingUseCase") private _cancelBooking: ICancelBookingUseCase,
-        @inject("IChangeBookingStatusUseCase") private _changeBookingStatus: IChangeBookingStatusUseCase
+        @inject("IChangeBookingStatusUseCase") private _changeBookingStatus: IChangeBookingStatusUseCase,
+        @inject("IIsSlotAvailableUseCase") private _isSlotAvailable: IIsSlotAvailableUseCase,
+        @inject("IGetAllCustomerBookingsUseCase") private _getAllCustomerBookings: IGetAllCustomerBookingsUseCase,
     ) { }
 
     async getBookedSlots(req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -144,7 +150,7 @@ export class BookingController implements IBookingController {
 
     async changeStatus(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const {status, bookingId} = req.body;
+            const { status, bookingId } = req.body;
             if (!bookingId) {
                 res.status(HTTP_STATUS.BAD_REQUEST).json({
                     success: false,
@@ -165,4 +171,55 @@ export class BookingController implements IBookingController {
             next(error)
         }
     }
+
+    async isSlotAvailable(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const { date, time, endTime } = req.query
+            const data = {
+                date: new Date(date as string),
+                time: time as string,
+                endTime: endTime as string
+            }
+            const isSlotAvailable = await this._isSlotAvailable.execute(data)
+
+            res.status(HTTP_STATUS.OK).json({
+                isSlotAvailable
+            })
+
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    async getAllCustomerBookings(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const customerId = req.user?.id;
+            if (!customerId) {
+                res.status(HTTP_STATUS.UNAUTHORIZED).json({
+                    success: false,
+                    message: ERROR_MESSAGES.UNAUTHORIZED_ACCESS
+                })
+                return
+            }
+
+            const { page, limit } = req.query;
+
+            const pageNumber = Number(page);
+            const limitNumber = Number(limit);
+            const skip = (pageNumber - 1) * limitNumber
+
+            const { bookings, total } = await this._getAllCustomerBookings.execute(customerId, skip, limitNumber);
+
+            res.status(HTTP_STATUS.OK).json({
+                success: true,
+                message: SUCCESS_MESSAGES.DATA_RETRIEVED,
+                bookings,
+                totalBookings: total
+            })
+
+        } catch (error) {
+            next(error)
+        }
+    }
+
 }

@@ -20,7 +20,16 @@ export class GetAllUserRequestsUseCase implements IGetAllUserRequestsUseCase {
                 date: request.createdAt,
                 amount: request.amount,
                 status: request.status as string,
-                workshop: {name: (request.workshopId as any).name}
+                workshop: {name: (request.workshopId as any).name},
+                carBrand: request.carBrand,
+                carType: request.carType,
+                gst: request.gst,
+                location: request.location,
+                vehicleNo: request.vehicleNo,
+                description: request.description,
+                image: request.image,
+                notes: request.notes,
+                mobile: request.mobile
             })), total
         }
     }

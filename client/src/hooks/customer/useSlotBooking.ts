@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { bookedSlots, bookSlot, cancelSlot } from "../../services/customer/slotService"
+import { allUserBookings, bookedSlots, bookSlot, cancelSlot, isSlotAvailable } from "../../services/customer/slotService"
 
 export interface BookSlot {
     bookingId?: string
@@ -38,7 +38,7 @@ export const useBookSlot = (workshopId: string, type: string) => {
                     }
                 );
             }
-            return {previousSlots}
+            return { previousSlots }
         },
         onError: (error) => {
             console.error('Booking failed:', error);
@@ -46,7 +46,7 @@ export const useBookSlot = (workshopId: string, type: string) => {
     })
 }
 
-export const useCancelSlot = (workshopId: string, type: string) => {
+export const useCancelSlot = (workshopId?: string, type?: string) => {
     const queryClient = useQueryClient();
     return useMutation({
         mutationFn: (bookingId: string) => cancelSlot(bookingId),
@@ -65,7 +65,10 @@ export const useCancelSlot = (workshopId: string, type: string) => {
 
             return { previousSlots };
         },
-        onError: (error, bookingId, context) => {
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["use-bookings"] });
+        },
+        onError: (_, bookingId, context) => {
             if (context?.previousSlots) {
                 queryClient.setQueryData(
                     ["booked-slots", workshopId, type],
@@ -73,5 +76,19 @@ export const useCancelSlot = (workshopId: string, type: string) => {
                 );
             }
         }
+    })
+}
+
+export const useIsSlotAvailable = (data: { date: Date; time: string, endTime: string }) => {
+    return useQuery({
+        queryKey: ["isSlotAvailable"],
+        queryFn: () => isSlotAvailable(data)
+    })
+}
+
+export const useAllUserBookings = (page: number = 1, limit: number = 10) => {
+    return useQuery({
+        queryKey: ["use-bookings"],
+        queryFn: () => allUserBookings(page, limit)
     })
 }
