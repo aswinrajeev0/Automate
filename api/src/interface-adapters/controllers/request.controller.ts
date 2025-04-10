@@ -14,6 +14,7 @@ import { IUpdateRequestStatusUseCase } from "../../entities/useCaseInterfaces/re
 import { IFinishedJobsUseCase } from "../../entities/useCaseInterfaces/requests/finished-jobs.usecase.interface";
 import { IGetAllUserRequestsUseCase } from "../../entities/useCaseInterfaces/requests/get-all-user-requests.usecase.interface";
 import { IRequestModel } from "../../frameworks/database/mongoDB/models/request.model";
+import { IAdminRequestUsecase } from "../../entities/useCaseInterfaces/requests/all-admin-requests.usecase.interface";
 
 @injectable()
 export class RequestController implements IRequestController {
@@ -27,7 +28,8 @@ export class RequestController implements IRequestController {
         @inject("IPendingJobsUseCase") private _pendingJobs: IPendingJobsUseCase,
         @inject("IUpdateRequestStatusUseCase") private _updateRequestStatus: IUpdateRequestStatusUseCase,
         @inject("IFinishedJobsUseCase") private _finishedJobs: IFinishedJobsUseCase,
-        @inject("IGetAllUserRequestsUseCase") private _getAllUserRequessts: IGetAllUserRequestsUseCase
+        @inject("IGetAllUserRequestsUseCase") private _getAllUserRequests: IGetAllUserRequestsUseCase,
+        @inject("IAdminRequestUsecase") private _adminRequests: IAdminRequestUsecase,
     ) { }
 
     async carLift(req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -298,13 +300,35 @@ export class RequestController implements IRequestController {
             const limitNumber = Number(req.query.limit);
             const skip = (page - 1) / limitNumber
 
-            const { requests, total } = await this._getAllUserRequessts.execute(customerId, skip, limitNumber);
+            const { requests, total } = await this._getAllUserRequests.execute(customerId, skip, limitNumber);
 
             res.status(HTTP_STATUS.OK).json({
                 success: true,
                 message: SUCCESS_MESSAGES.DATA_RETRIEVED,
                 requests,
                 totalRequest: total
+            })
+
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    async allAdminRequests(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const { page, limit, searchTerm } = req.query;
+            const pageNumber = Number(page)
+            const limitNumber = Number(limit)
+            const search = searchTerm?.toString() || ""
+            const skip = (pageNumber - 1) * limitNumber;
+
+            const { requests, total } = await this._adminRequests.allRequests(skip, limitNumber, search)
+
+            res.status(HTTP_STATUS.OK).json({
+                success: true,
+                message: SUCCESS_MESSAGES.DATA_RETRIEVED,
+                requests,
+                totalRequests: total
             })
 
         } catch (error) {

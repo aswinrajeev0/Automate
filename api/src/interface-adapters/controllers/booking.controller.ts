@@ -12,6 +12,7 @@ import { IIsSlotAvailableUseCase } from "../../entities/useCaseInterfaces/bookin
 import { string } from "zod";
 import { tryCatch } from "bullmq";
 import { IGetAllCustomerBookingsUseCase } from "../../entities/useCaseInterfaces/bookings/get-all-customer-bookings.usecase.intrface";
+import { IAllAdminBookingsUseCase } from "../../entities/useCaseInterfaces/bookings/all-admin-bookings.usecase.interface";
 
 @injectable()
 export class BookingController implements IBookingController {
@@ -24,6 +25,7 @@ export class BookingController implements IBookingController {
         @inject("IChangeBookingStatusUseCase") private _changeBookingStatus: IChangeBookingStatusUseCase,
         @inject("IIsSlotAvailableUseCase") private _isSlotAvailable: IIsSlotAvailableUseCase,
         @inject("IGetAllCustomerBookingsUseCase") private _getAllCustomerBookings: IGetAllCustomerBookingsUseCase,
+        @inject("IAllAdminBookingsUseCase") private _adminBookings: IAllAdminBookingsUseCase
     ) { }
 
     async getBookedSlots(req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -215,6 +217,27 @@ export class BookingController implements IBookingController {
                 message: SUCCESS_MESSAGES.DATA_RETRIEVED,
                 bookings,
                 totalBookings: total
+            })
+
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    async allAdminBookings(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const {page, limit, filter} = req.query;
+            const pageNumber = Number(page)
+            const limitNumber = Number(limit)
+            const skip = (pageNumber - 1) * limitNumber;
+
+            const {bookings, totalBookings} = await this._adminBookings.execute(skip, limitNumber, filter as string)
+
+            res.status(HTTP_STATUS.OK).json({
+                success: true,
+                message: SUCCESS_MESSAGES.DATA_RETRIEVED,
+                bookings,
+                totalBookings
             })
 
         } catch (error) {

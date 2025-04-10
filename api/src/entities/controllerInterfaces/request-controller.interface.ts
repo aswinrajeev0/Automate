@@ -11,4 +11,5 @@ export interface IRequestController {
     updateRequestStatus(req: Request, res: Response, next: NextFunction): Promise<void>;
     finishedJobs(req: Request, res: Response, next: NextFunction): Promise<void>;
     getAllUserRequests(req: Request, res: Response, next: NextFunction): Promise<void>;
+    allAdminRequests(req: Request, res: Response, next: NextFunction): Promise<void>;
 }

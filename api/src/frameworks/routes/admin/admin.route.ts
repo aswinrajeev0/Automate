@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { BaseRoute } from "../base.route";
-import { adminController, customerController, workshopController } from "../../di/resolver";
+import { adminController, bookingController, customerController, requestController, workshopController } from "../../di/resolver";
 import { authenticate, decodeToken } from "../../../interface-adapters/middlewares/auth.midleware";
 
 
@@ -41,6 +41,14 @@ export class AdminRoute extends BaseRoute {
 
         this.router.post("/refresh-token", decodeToken("admin"), (req: Request, res: Response, next: NextFunction) => {
             adminController.handleRefreshToken(req, res, next)
+        })
+
+        this.router.get("/all-requests", authenticate("admin"), (req: Request, res: Response, next: NextFunction) => {
+            requestController.allAdminRequests(req, res, next);
+        })
+
+        this.router.get("/all-bookings", authenticate("admin"), (req: Request, res: Response, next: NextFunction) => {
+            bookingController.allAdminBookings(req, res, next);
         })
     }
 }

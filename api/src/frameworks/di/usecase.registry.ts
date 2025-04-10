@@ -132,6 +132,10 @@ import { IIsSlotAvailableUseCase } from "../../entities/useCaseInterfaces/bookin
 import { IsSlotAvailableUseCase } from "../../useCases/bookings/is-slot-available.usecase";
 import { IGetAllCustomerBookingsUseCase } from "../../entities/useCaseInterfaces/bookings/get-all-customer-bookings.usecase.intrface";
 import { GetAllCustomerBookingsUseCase } from "../../useCases/bookings/get-all-customer-bookings.usecase";
+import { IAdminRequestUsecase } from "../../entities/useCaseInterfaces/requests/all-admin-requests.usecase.interface";
+import { AdminRequestsUseCase } from "../../useCases/requests/all-admin-requests.usecase";
+import { IAllAdminBookingsUseCase } from "../../entities/useCaseInterfaces/bookings/all-admin-bookings.usecase.interface";
+import { AllAdminBookingsUseCase } from "../../useCases/bookings/all-admin-bookings.usecase";
 
 export class UseCaseRegistry {
     static registerUseCases(): void {
@@ -366,6 +370,14 @@ export class UseCaseRegistry {
 
         container.register<IGetAllCustomerBookingsUseCase>("IGetAllCustomerBookingsUseCase", {
             useClass: GetAllCustomerBookingsUseCase
+        })
+
+        container.register<IAdminRequestUsecase>("IAdminRequestUsecase", {
+            useClass: AdminRequestsUseCase
+        })
+
+        container.register<IAllAdminBookingsUseCase>("IAllAdminBookingsUseCase", {
+            useClass: AllAdminBookingsUseCase
         })
 
         //* ====== Register Strategies ====== *//

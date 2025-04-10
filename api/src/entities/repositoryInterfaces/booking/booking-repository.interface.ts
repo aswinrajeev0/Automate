@@ -10,4 +10,5 @@ export interface IBookingRepository {
     findOneAndUpdate(filter: Partial<IBookingEntity>,update: Partial<IBookingEntity>): Promise<IBookingModel | null>;
     findOne(filter: Partial<IBookingEntity>): Promise<IBookingModel | null>;
     findAllCustomerBookings(customerId: string, skip: number, limit: number): Promise<{bookings: IBookingModel[]; total: number}>;
+    findAllAdminBookings(filter: Partial<IBookingEntity>, skip: number, limit: number): Promise<{bookings: IBookingModel[]; totalBookings: number}>;
 }

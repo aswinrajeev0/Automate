@@ -8,4 +8,5 @@ export interface IBookingController {
     changeStatus(req: Request, res: Response, next: NextFunction): Promise<void>;
     isSlotAvailable(req: Request, res: Response, next: NextFunction): Promise<void>;
     getAllCustomerBookings(req: Request, res: Response, next: NextFunction): Promise<void>;
+    allAdminBookings(req: Request, res: Response, next: NextFunction): Promise<void>;
 }

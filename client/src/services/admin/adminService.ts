@@ -93,10 +93,33 @@ export const updateWorkshopApprovalStatus = async ({
 //     return response.data;
 // }
 
-const allRequests = async () => {
+export const allRequests = async (page: number, limit: number, searchTerm: string) => {
     try {
-        
+        const response = await adminApi.get("/all-requests", {
+            params: {
+                page,
+                limit,
+                searchTerm
+            }
+        });
+        return response.data;
     } catch (error: any) {
-        
+        throw error.response.data;
+    }
+}
+
+export const allBookings = async (page: number, limit: number, filter: string) => {
+    try {
+        const response = await adminApi.get("all-bookings",{
+            params: {
+                page,
+                limit,
+                filter
+            }
+        })
+
+        return response.data;
+    } catch (error: any) {
+        throw error.response.data
     }
 }

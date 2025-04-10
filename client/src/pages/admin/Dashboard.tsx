@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, Outlet, useNavigate } from "react-router-dom";
-import { LayoutDashboard, Users, Wrench, FileText, AlertTriangle, LogOut, DollarSign, CheckCheckIcon } from "lucide-react";
+import { LayoutDashboard, Users, Wrench, FileText, AlertTriangle, DollarSign, CheckCheckIcon } from "lucide-react";
 import {
   SidebarProvider
 } from "../../components/ui/Sidebar";
@@ -41,27 +41,27 @@ export default function AdminDashboard() {
     { id: "customers", title: "Customers", icon: Users, path: "/admin/customers" },
     { id: "workshops", title: "Workshops", icon: Wrench, path: "/admin/workshops" },
     { id: "requests", title: "Requests", icon: FileText, path: "/admin/requests" },
-    { id: "requests", title: "Bookings", icon: CheckCheckIcon, path: "/admin/bookings" },
+    { id: "bookings", title: "Bookings", icon: CheckCheckIcon, path: "/admin/bookings" },
     { id: "revenue", title: "Revenue Report", icon: DollarSign, path: "/admin/revenue-report" },
     { id: "approvals", title: "Pending Approvals", icon: AlertTriangle, path: "/admin/approvals" },
   ];
 
   return (
     <SidebarProvider>
-      <div className="flex min-h-screen w-full bg-background relative">
-        {/* Mobile & Desktop Sidebar */}
+      <div className="flex min-h-screen w-full bg-background">
+        {/* Sidebar - Position fixed for desktop, and absolute for mobile */}
         <aside 
           className={`
-            fixed top-0 left-0 h-full bg-[#9b87f5] z-50
+            ${!isMobile ? "sticky top-0 h-screen" : "fixed top-0 left-0 h-screen"} 
+            bg-[#9b87f5] z-50
             transition-all duration-300 ease-in-out
+            overflow-hidden
             ${isMobile 
               ? isSideBarOpen ? "translate-x-0 w-64" : "-translate-x-full w-64" 
               : isSideBarOpen ? "w-64" : "w-16"
             }
-            ${!isMobile ? "static" : ""}
           `}
         >
-          {/* Header */}
           <div className="border-b border-white/10">
             <div className="flex items-center gap-2 px-4 py-4">
               <div className="bg-black rounded-full p-1">
@@ -86,9 +86,9 @@ export default function AdminDashboard() {
             </div>
           </div>
 
-          {/* Content */}
-          <div className="px-2 py-4">
-            <nav>
+          {/* Navigation Menu - Fixed height and no scroll */}
+          <div className="h-[calc(100%-64px)]">
+            <nav className="px-2 py-4">
               <ul className="space-y-1">
                 {menuItems.map((item) => (
                   <li key={item.id}>
@@ -105,20 +105,9 @@ export default function AdminDashboard() {
               </ul>
             </nav>
           </div>
-
-          {/* Footer */}
-          <div className="border-t border-white/10 p-4 absolute bottom-0 w-full">
-            <button 
-              onClick={handleLogout} 
-              className="py-3 w-full px-3 text-black hover:bg-white/10 flex items-center gap-2 rounded-md"
-            >
-              <LogOut className="h-5 w-5" />
-              {(isSideBarOpen || isMobile) && <span className="text-base">Logout</span>}
-            </button>
-          </div>
         </aside>
 
-        {/* Overlay for mobile when sidebar is open */}
+        {/* Overlay for mobile sidebar */}
         {isMobile && isSideBarOpen && (
           <div 
             className="fixed inset-0 bg-black/50 z-40"
@@ -126,12 +115,8 @@ export default function AdminDashboard() {
           />
         )}
 
-        {/* Main Content */}
-        <div
-          className={`flex-1 flex flex-col transition-all duration-300 ${
-            isSideBarOpen && !isMobile ? "ml-0" : isMobile ? "ml-0" : "ml-0"
-          }`}
-        >
+        {/* Main content area */}
+        <div className="flex-1 flex flex-col">
           <AdminHeader
             isSidebarOpen={isSideBarOpen}
             setIsSidebarOpen={setIsSidebarOpen}

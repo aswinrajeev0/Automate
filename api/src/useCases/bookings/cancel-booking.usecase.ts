@@ -26,7 +26,7 @@ export class CancelBookingUseCase implements ICancelBookingUseCase {
             )
         }
 
-        const customerId = booking.customerId.toString();
+        const customerId = (booking.customerId as IPopulatedId)._id.toString();
 
         const wallet = await this._walletRepo.refundUpdate(customerId, booking.amount);
         await this._transactionRepo.save({

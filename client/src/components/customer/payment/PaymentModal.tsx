@@ -29,7 +29,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
     setIsConfirmationModalOpen,
     setIsFailedModalOpen
 }) => {
-    const [paymentMethod, setPaymentMethod] = useState('paypal');
+    const [paymentMethod, setPaymentMethod] = useState('razorpay');
     const createOrder = useCreateOrder()
     const { successToast, errorToast } = useToaster()
 
@@ -189,7 +189,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
                     <h3 className="text-lg font-medium mb-3 text-gray-800">Payment Method</h3>
 
                     {/* PayPal */}
-                    <div className="mb-3">
+                    {/* <div className="mb-3">
                         <label className="flex items-center p-3 border rounded-lg hover:bg-gray-50 cursor-pointer transition">
                             <input
                                 type="radio"
@@ -202,7 +202,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
                             <span className="ml-3 flex-grow">PayPal</span>
                             <img src="/api/placeholder/100/30" alt="PayPal logo" className="h-8" />
                         </label>
-                    </div>
+                    </div> */}
 
                     {/* RazorPay */}
                     <div className="mb-3">
