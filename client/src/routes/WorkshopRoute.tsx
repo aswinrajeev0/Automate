@@ -15,6 +15,7 @@ import WorkshopProfilePage from "../pages/workshop/WorkshopProfile";
 import FinishedJobspage from "../pages/workshop/FinishedJobs";
 import FinishedJobDetailsPage from "../components/workshop/finishedJobs/FinishedJobDetails";
 import WorkshopBookings from "../pages/workshop/Bookings";
+import WorkshopSlotManagement from "../pages/workshop/SlotManagement";
 
 export const WorkshopRoutes = () => {
     return (
@@ -24,6 +25,7 @@ export const WorkshopRoutes = () => {
                 <Route path="requests" element={<RequestsPage />} />
                 <Route path="pending-jobs" element={<PendingJobspage />} />
                 <Route path="finished-jobs" element={<FinishedJobspage />} />
+                <Route path="slots" element={<WorkshopSlotManagement />} />
                 <Route path="bookings" element={<WorkshopBookings />} />
                 <Route path="chats" />
                 <Route path="ratings" element={<WorkshopReviews />} />

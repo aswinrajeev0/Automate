@@ -18,6 +18,8 @@ import { IWalletRepository } from "../../entities/repositoryInterfaces/wallet/wa
 import { WalletRepository } from "../../interface-adapters/repositories/wallet/wallet.repository";
 import { ITransactionRepository } from "../../entities/repositoryInterfaces/wallet/transaction.repository.interface";
 import { TransactionRepository } from "../../interface-adapters/repositories/wallet/transaction.repository";
+import { ISlotRepository } from "../../entities/repositoryInterfaces/slots/slot.repository.interface";
+import { SlotRepository } from "../../interface-adapters/repositories/slots/slot.repository";
 
 export class RepositoryRegistry {
     static registerRepositories(): void {
@@ -55,6 +57,10 @@ export class RepositoryRegistry {
 
         container.register<ITransactionRepository>("ITransactionRepository", {
             useClass: TransactionRepository
+        })
+
+        container.register<ISlotRepository>("ISlotRepository", {
+            useClass: SlotRepository
         })
     }
 }

@@ -69,6 +69,8 @@ export class WorkshopRepository implements IWorkshopRepository {
             "workshopDetails.approvalStatus": "approved",
         };
 
+        // const total = await WorkshopModel.countDocuments({})
+
         if (searchTerm) {
             searchFilter.$or = [
                 { "workshopDetails.name": { $regex: searchTerm, $options: "i" } },

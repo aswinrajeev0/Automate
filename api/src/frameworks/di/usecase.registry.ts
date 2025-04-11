@@ -136,6 +136,14 @@ import { IAdminRequestUsecase } from "../../entities/useCaseInterfaces/requests/
 import { AdminRequestsUseCase } from "../../useCases/requests/all-admin-requests.usecase";
 import { IAllAdminBookingsUseCase } from "../../entities/useCaseInterfaces/bookings/all-admin-bookings.usecase.interface";
 import { AllAdminBookingsUseCase } from "../../useCases/bookings/all-admin-bookings.usecase";
+import { IAllWorkshopSlotsUseCase } from "../../entities/useCaseInterfaces/slots/all-workshop-slots.usecase.interface";
+import { AllWorkshopSlotsUseCase } from "../../useCases/slots/all-workshop-slots.usecase";
+import { ICreateSlotsUseCase } from "../../entities/useCaseInterfaces/slots/create-slots.usecase.interface";
+import { CreateSlotsUseCase } from "../../useCases/slots/create-slots.usecase";
+import { IDeleteSlotUseCase } from "../../entities/useCaseInterfaces/slots/delete-slot.usecase.interface";
+import { DeleteSlotUseCase } from "../../useCases/slots/delete-slot.usecase";
+import { IToggleAvailabilityUseCase } from "../../entities/useCaseInterfaces/slots/toggle-availability.usecase.interface";
+import { ToggleAvailabilityUseCase } from "../../useCases/slots/toggle-availability.usecase";
 
 export class UseCaseRegistry {
     static registerUseCases(): void {
@@ -378,6 +386,22 @@ export class UseCaseRegistry {
 
         container.register<IAllAdminBookingsUseCase>("IAllAdminBookingsUseCase", {
             useClass: AllAdminBookingsUseCase
+        })
+
+        container.register<IAllWorkshopSlotsUseCase>("IAllWorkshopSlotsUseCase", {
+            useClass: AllWorkshopSlotsUseCase
+        })
+
+        container.register<ICreateSlotsUseCase>("ICreateSlotsUseCase", {
+            useClass: CreateSlotsUseCase
+        })
+
+        container.register<IDeleteSlotUseCase>("IDeleteSlotUseCase", {
+            useClass: DeleteSlotUseCase
+        })
+
+        container.register<IToggleAvailabilityUseCase>("IToggleAvailabilityUseCase", {
+            useClass: ToggleAvailabilityUseCase
         })
 
         //* ====== Register Strategies ====== *//

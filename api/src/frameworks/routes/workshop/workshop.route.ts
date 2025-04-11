@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { BaseRoute } from "../base.route";
-import { blockStatusMiddleware, bookingController, otpController, requestController, reviewController, workshopController } from "../../di/resolver";
+import { blockStatusMiddleware, bookingController, otpController, requestController, reviewController, slotController, workshopController } from "../../di/resolver";
 import { authenticate, decodeToken } from "../../../interface-adapters/middlewares/auth.midleware";
 
 export class WorkshopRoute extends BaseRoute {
@@ -103,6 +103,22 @@ export class WorkshopRoute extends BaseRoute {
 
         this.router.patch("/change-booking-status", (req, res, next) => {
             bookingController.changeStatus(req, res, next)
+        })
+
+        this.router.get("/all-slots", (req, res, next) => {
+            slotController.getSlots(req, res, next);
+        })
+
+        this.router.post("/create-slots", (req, res, next) => {
+            slotController.createSlots(req, res, next)
+        })
+
+        this.router.delete("/delete-slot", (req, res, next) => {
+            slotController.deleteSlot(req, res, next);
+        })
+
+        this.router.patch("/toggle-slot-availabilty", (req, res, next) => {
+            slotController.toggleAvailableSlots(req, res, next);
         })
     }
 }
