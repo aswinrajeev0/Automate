@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { allUserBookings, bookedSlots, bookSlot, cancelSlot, isSlotAvailable } from "../../services/customer/slotService"
+import { allUserBookings, availableDates, bookedSlots, bookSlot, cancelSlot, checkSlotAvailability, fetchAvailableSlots, isSlotAvailable } from "../../services/customer/slotService"
+import { format } from "date-fns"
 
 export interface BookSlot {
     bookingId?: string
@@ -12,7 +13,15 @@ export interface BookSlot {
     duration: number,
     price: number,
     amount: number,
-    gst?: number
+    gst?: number,
+    slotId?: string
+}
+
+export const useFetchAvailableSlots = (workshopId: string, selectedDate: Date, type: string) => {
+    return useQuery({
+        queryKey: ["workshopSlots", workshopId, selectedDate ? format(selectedDate, "yyyy-MM-dd") : null, type],
+        queryFn: () => fetchAvailableSlots(workshopId, format(selectedDate, "yyyy-MM-dd"), type),
+    })
 }
 
 export const useBookedSlots = (workshopId: string, type: string) => {
@@ -68,7 +77,7 @@ export const useCancelSlot = (workshopId?: string, type?: string) => {
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["use-bookings"] });
         },
-        onError: (_, bookingId, context) => {
+        onError: (_, _bookingId, context) => {
             if (context?.previousSlots) {
                 queryClient.setQueryData(
                     ["booked-slots", workshopId, type],
@@ -90,5 +99,22 @@ export const useAllUserBookings = (page: number = 1, limit: number = 10) => {
     return useQuery({
         queryKey: ["use-bookings"],
         queryFn: () => allUserBookings(page, limit)
+    })
+}
+
+export const useAvailableDates = (workshopId: string, currentDate: Date, type: string) => {
+    const currentDateString = format(currentDate, "yyyy-MM");
+    const year = currentDateString.split("-")[0];
+    const month = currentDateString.split("-")[1];
+    return useQuery({
+        queryKey: ["availableDates", workshopId, format(currentDate, "yyyy-MM"), type],
+        queryFn: () => availableDates(workshopId, month, year, type)
+    })
+}
+
+export const useCheckSlotAvailability = (slotId: string) => {
+    return useQuery({
+        queryKey: ["is-slot-available"],
+        queryFn: () => checkSlotAvailability(slotId)
     })
 }

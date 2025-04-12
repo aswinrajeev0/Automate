@@ -6,4 +6,5 @@ export interface ISlotRepository {
     createSlots(data: Partial<IWorkshopSlotEntity>[]): Promise<void>;
     deleteSlot(slotId: string): Promise<IWorkshopSlotModel | null>;
     findByIdAndUpdate(slotId: string, update: Partial<IWorkshopSlotEntity>): Promise<IWorkshopSlotModel | null>;
+    find(filter: any): Promise<IWorkshopSlotModel[]>
 }

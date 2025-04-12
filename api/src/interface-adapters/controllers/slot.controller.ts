@@ -8,6 +8,8 @@ import { CreateSlotsDTO } from "../../shared/dtos/slots.dto";
 import { ICreateSlotsUseCase } from "../../entities/useCaseInterfaces/slots/create-slots.usecase.interface";
 import { IDeleteSlotUseCase } from "../../entities/useCaseInterfaces/slots/delete-slot.usecase.interface";
 import { IToggleAvailabilityUseCase } from "../../entities/useCaseInterfaces/slots/toggle-availability.usecase.interface";
+import { IFetchAvailableSlotsUseCase } from "../../entities/useCaseInterfaces/slots/fetch-available-slots.usecase.interface";
+import { IFetchAvailableDatesUseCase } from "../../entities/useCaseInterfaces/slots/fetch-available-dates.usecase.interface";
 
 @injectable()
 export class SlotController implements ISlotController {
@@ -15,7 +17,9 @@ export class SlotController implements ISlotController {
         @inject("IAllWorkshopSlotsUseCase") private _allWorkshopSlots: IAllWorkshopSlotsUseCase,
         @inject("ICreateSlotsUseCase") private _createSlots: ICreateSlotsUseCase,
         @inject("IDeleteSlotUseCase") private _deleteSlot: IDeleteSlotUseCase,
-        @inject("IToggleAvailabilityUseCase") private _toggleAvailability: IToggleAvailabilityUseCase
+        @inject("IToggleAvailabilityUseCase") private _toggleAvailability: IToggleAvailabilityUseCase,
+        @inject("IFetchAvailableSlotsUseCase") private _availableSlots: IFetchAvailableSlotsUseCase,
+        @inject("IFetchAvailableDatesUseCase") private _availableDates: IFetchAvailableDatesUseCase
     ){}
 
     async getSlots(req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -122,4 +126,49 @@ export class SlotController implements ISlotController {
             next(error)
         }
     }
+
+    async fetchAvailableSlots(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const workshopId = req.query.workshopId as string;
+            const selectedDate = req.query.selectedDate as string;
+            const type = req.query.type as "basic" | "interim" | "full";
+
+            const slots = await this._availableSlots.execute(workshopId, selectedDate, type)
+
+            res.status(HTTP_STATUS.OK).json({
+                success: true,
+                message: SUCCESS_MESSAGES.DATA_RETRIEVED,
+                slots
+            })
+
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    async fetchAvailableDates(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const {workshopId, year, month, serviceType} = req.query
+            const availableDates = await this._availableDates.execute(workshopId as string, Number(month), Number(year), serviceType as string);
+
+            res.status(HTTP_STATUS.OK).json({
+                success: true,
+                message: SUCCESS_MESSAGES.DATA_RETRIEVED,
+                availableDates
+            })
+
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    async checkAvailableSlots(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const slotId = req.query.slotId as string;
+            const isSlotAvailable = await this.
+        } catch (error) {
+            next(error)
+        }
+    }
+    
 }

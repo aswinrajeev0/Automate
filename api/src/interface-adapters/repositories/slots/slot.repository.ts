@@ -25,4 +25,9 @@ export class SlotRepository implements ISlotRepository {
         const slot = await WorkshopSlotModel.findByIdAndUpdate(slotId, update);
         return slot ? slot : null;
     }
+
+    async find(filter: Partial<IWorkshopSlotEntity>): Promise<IWorkshopSlotModel[]> {
+        const slots = await WorkshopSlotModel.find(filter);
+        return slots;
+    }
 }

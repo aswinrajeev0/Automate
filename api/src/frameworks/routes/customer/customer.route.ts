@@ -8,6 +8,7 @@ import {
     paymentController,
     requestController,
     reviewController,
+    slotController,
     walletController,
     workshopController
 } from "../../di/resolver";
@@ -133,6 +134,18 @@ export class CustomerRoute extends BaseRoute {
 
         this.router.get("/all-user-bookings", authenticate("customer"), (req: Request, res: Response, next: NextFunction) => {
             bookingController.getAllCustomerBookings(req, res, next)
+        })
+
+        this.router.get("/fetch-available-slots", authenticate("customer"), (req: Request, res:Response, next: NextFunction) => {
+            slotController.fetchAvailableSlots(req, res, next);
+        })
+
+        this.router.get("/available-dates", authenticate("customer"), (req: Request, res: Response, next: NextFunction) => {
+            slotController.fetchAvailableDates(req, res, next);
+        })
+
+        this.router.get("/check-slot-availability", authenticate("customer"), (req: Request, res: Response, next: NextFunction) => {
+            slotController.checkAvailableSlots(req, res, next)
         })
     }
 }

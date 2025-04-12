@@ -12,4 +12,5 @@ export interface IBookingEntity {
     amount: number,
     gst?: number,
     status: "pending" | "confirmed" | "in-progress" | "completed" | "cancelled";
+    slotId: string
 }

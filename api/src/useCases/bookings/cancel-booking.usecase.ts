@@ -8,13 +8,15 @@ import { ERROR_MESSAGES, HTTP_STATUS } from "../../shared/constants";
 import { IWalletRepository } from "../../entities/repositoryInterfaces/wallet/wallet.repository.interface";
 import { ITransactionRepository } from "../../entities/repositoryInterfaces/wallet/transaction.repository.interface";
 import { generateUniqueId } from "../../frameworks/security/uniqueuid.bcrypt";
+import { ISlotRepository } from "../../entities/repositoryInterfaces/slots/slot.repository.interface";
 
 @injectable()
 export class CancelBookingUseCase implements ICancelBookingUseCase {
     constructor(
         @inject("IBookingRepository") private _bookingRepo: IBookingRepository,
         @inject("IWalletRepository") private _walletRepo: IWalletRepository,
-        @inject("ITransactionRepository") private _transactionRepo: ITransactionRepository
+        @inject("ITransactionRepository") private _transactionRepo: ITransactionRepository,
+        @inject("ISlotRepository") private _slotRepo: ISlotRepository
     ) { }
 
     async execute(bookingId: string): Promise<BookingDto> {
@@ -25,6 +27,10 @@ export class CancelBookingUseCase implements ICancelBookingUseCase {
                 HTTP_STATUS.NOT_FOUND
             )
         }
+
+        console.log(booking)
+
+        await this._slotRepo.findByIdAndUpdate(booking.slotId, {isAvailable: true})
 
         const customerId = (booking.customerId as IPopulatedId)._id.toString();
 

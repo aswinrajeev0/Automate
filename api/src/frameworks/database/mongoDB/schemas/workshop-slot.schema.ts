@@ -9,5 +9,6 @@ export const workshopSlotSchema = new Schema<IWorkshopSlotModel>({
     serviceType: {type: String, enum: ["basic", "interim", "full"], required: true},
     maxBookings: {type: Number,default: 1},
     currentBookings: {type: Number, default: 0},
+    isBooked: {type: Boolean, default: false},
     isAvailable: {type: Boolean}
 })

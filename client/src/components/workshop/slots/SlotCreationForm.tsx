@@ -79,7 +79,8 @@ const SlotCreationForm: React.FC<SlotCreationFormProps> = ({loading, setLoading,
             endTime: slot.endTime,
             serviceType: formData.serviceType,
             maxBookings: formData.maxBookings,
-            isAvailable: true
+            isAvailable: true,
+            isBooked: false
         }));
 
         setLoading(true);

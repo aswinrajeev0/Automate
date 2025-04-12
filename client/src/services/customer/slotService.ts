@@ -1,6 +1,21 @@
 import { customerApi } from "../../api/customer.axios";
 import { BookSlot } from "../../hooks/customer/useSlotBooking";
 
+export const fetchAvailableSlots = async (workshopId: string, selectedDate: string, type: string) => {
+    try {
+        const response = await customerApi.get("/fetch-available-slots",{
+            params: {
+                workshopId,
+                selectedDate,
+                type
+            }
+        })
+        return response.data;
+    } catch (error: any) {
+        throw error.response.data
+    }
+}
+
 export const bookedSlots = async (workshopId: string, type: string) => {
     try {
         const response = await customerApi.get(`/booked-slots/${workshopId}`,{
@@ -51,6 +66,34 @@ export const allUserBookings = async (page: number, limit: number) => {
                 limit
             }
         });
+        return response.data
+    } catch (error: any) {
+        throw error.response.data
+    }
+}
+export const availableDates = async (workshopId: string, month: string, year: string, type: string) => {
+    try {
+        const response = await customerApi.get("/available-dates",{
+            params: {
+                workshopId,
+                month,
+                year,
+                serviceType: type
+            }
+        })
+        return response.data;
+    } catch (error: any) {
+        throw error.response.data;
+    }
+}
+
+export const checkSlotAvailability = async (slotId: string) => {
+    try {
+        const response = await customerApi.get("/check-slot-availability",{
+            params: {
+                slotId
+            }
+        })
         return response.data
     } catch (error: any) {
         throw error.response.data

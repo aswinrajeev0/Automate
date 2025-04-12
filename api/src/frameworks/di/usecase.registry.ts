@@ -144,6 +144,10 @@ import { IDeleteSlotUseCase } from "../../entities/useCaseInterfaces/slots/delet
 import { DeleteSlotUseCase } from "../../useCases/slots/delete-slot.usecase";
 import { IToggleAvailabilityUseCase } from "../../entities/useCaseInterfaces/slots/toggle-availability.usecase.interface";
 import { ToggleAvailabilityUseCase } from "../../useCases/slots/toggle-availability.usecase";
+import { IFetchAvailableSlotsUseCase } from "../../entities/useCaseInterfaces/slots/fetch-available-slots.usecase.interface";
+import { FetchAvailableSlotsUseCase } from "../../useCases/slots/fetch-available-slots.usecase";
+import { IFetchAvailableDatesUseCase } from "../../entities/useCaseInterfaces/slots/fetch-available-dates.usecase.interface";
+import { FetchAvailableDatesUseCase } from "../../useCases/slots/fetch-available-dates.usecase";
 
 export class UseCaseRegistry {
     static registerUseCases(): void {
@@ -402,6 +406,14 @@ export class UseCaseRegistry {
 
         container.register<IToggleAvailabilityUseCase>("IToggleAvailabilityUseCase", {
             useClass: ToggleAvailabilityUseCase
+        })
+
+        container.register<IFetchAvailableSlotsUseCase>("IFetchAvailableSlotsUseCase", {
+            useClass: FetchAvailableSlotsUseCase
+        })
+
+        container.register<IFetchAvailableDatesUseCase>("IFetchAvailableDatesUseCase", {
+            useClass: FetchAvailableDatesUseCase
         })
 
         //* ====== Register Strategies ====== *//

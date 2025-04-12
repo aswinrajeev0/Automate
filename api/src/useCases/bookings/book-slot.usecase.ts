@@ -6,11 +6,13 @@ import { IBookingRepository } from "../../entities/repositoryInterfaces/booking/
 import { generateUniqueId } from "../../frameworks/security/uniqueuid.bcrypt";
 import { CustomError } from "../../entities/utils/custom.error";
 import { ERROR_MESSAGES, HTTP_STATUS } from "../../shared/constants";
+import { ISlotRepository } from "../../entities/repositoryInterfaces/slots/slot.repository.interface";
 
 @injectable()
 export class BookSlotUseCase implements IBookSlotUseCase {
     constructor(
-        @inject("IBookingRepository") private _bookingRepo: IBookingRepository
+        @inject("IBookingRepository") private _bookingRepo: IBookingRepository,
+        @inject("ISlotRepository") private _slotRepo: ISlotRepository
     ){}
 
     async execute(data: Partial<IBookingEntity>): Promise<IBookingModel> {
@@ -27,6 +29,7 @@ export class BookSlotUseCase implements IBookSlotUseCase {
             )
         }
         const booking = await this._bookingRepo.save(bookingData);
+        await this._slotRepo.findByIdAndUpdate(data.slotId as string, {isAvailable: false})
         return booking
     }
 }

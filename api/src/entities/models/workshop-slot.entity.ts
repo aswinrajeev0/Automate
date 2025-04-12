@@ -7,5 +7,6 @@ export interface IWorkshopSlotEntity {
     serviceType: "basic" | "interim" | "full";
     maxBookings: number;
     currentBookings: number;
+    isBooked: boolean;
     isAvailable: boolean;
 }
