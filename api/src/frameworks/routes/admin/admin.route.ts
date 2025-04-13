@@ -50,5 +50,9 @@ export class AdminRoute extends BaseRoute {
         this.router.get("/all-bookings", authenticate("admin"), (req: Request, res: Response, next: NextFunction) => {
             bookingController.allAdminBookings(req, res, next);
         })
+
+        this.router.get("/customer-growth", authenticate("admin"), (req: Request, res: Response, next: NextFunction) => {
+            customerController.customerGrowthData(req, res, next);
+        })
     }
 }

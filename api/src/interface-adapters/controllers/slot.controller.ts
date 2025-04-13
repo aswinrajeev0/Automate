@@ -10,6 +10,7 @@ import { IDeleteSlotUseCase } from "../../entities/useCaseInterfaces/slots/delet
 import { IToggleAvailabilityUseCase } from "../../entities/useCaseInterfaces/slots/toggle-availability.usecase.interface";
 import { IFetchAvailableSlotsUseCase } from "../../entities/useCaseInterfaces/slots/fetch-available-slots.usecase.interface";
 import { IFetchAvailableDatesUseCase } from "../../entities/useCaseInterfaces/slots/fetch-available-dates.usecase.interface";
+import { ICheckSlotAvailabilityUseCase } from "../../entities/useCaseInterfaces/slots/check-slot-availability.usecase.interface";
 
 @injectable()
 export class SlotController implements ISlotController {
@@ -19,7 +20,8 @@ export class SlotController implements ISlotController {
         @inject("IDeleteSlotUseCase") private _deleteSlot: IDeleteSlotUseCase,
         @inject("IToggleAvailabilityUseCase") private _toggleAvailability: IToggleAvailabilityUseCase,
         @inject("IFetchAvailableSlotsUseCase") private _availableSlots: IFetchAvailableSlotsUseCase,
-        @inject("IFetchAvailableDatesUseCase") private _availableDates: IFetchAvailableDatesUseCase
+        @inject("IFetchAvailableDatesUseCase") private _availableDates: IFetchAvailableDatesUseCase,
+        @inject("ICheckSlotAvailabilityUseCase") private _checkSlotAvailability: ICheckSlotAvailabilityUseCase
     ){}
 
     async getSlots(req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -162,10 +164,23 @@ export class SlotController implements ISlotController {
         }
     }
 
-    async checkAvailableSlots(req: Request, res: Response, next: NextFunction): Promise<void> {
+    async checkSlotAvailability(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const slotId = req.query.slotId as string;
-            const isSlotAvailable = await this.
+            if(!slotId) {
+                res.status(HTTP_STATUS.BAD_REQUEST).json({
+                    success: false,
+                    message: ERROR_MESSAGES.ID_NOT_FOUND
+                })
+                return;
+            }
+            const isSlotAvailable = await this._checkSlotAvailability.execute(slotId)
+
+            res.status(HTTP_STATUS.OK).json({
+                success: true,
+                isSlotAvailable
+            })
+
         } catch (error) {
             next(error)
         }

@@ -148,6 +148,12 @@ import { IFetchAvailableSlotsUseCase } from "../../entities/useCaseInterfaces/sl
 import { FetchAvailableSlotsUseCase } from "../../useCases/slots/fetch-available-slots.usecase";
 import { IFetchAvailableDatesUseCase } from "../../entities/useCaseInterfaces/slots/fetch-available-dates.usecase.interface";
 import { FetchAvailableDatesUseCase } from "../../useCases/slots/fetch-available-dates.usecase";
+import { ICheckSlotAvailabilityUseCase } from "../../entities/useCaseInterfaces/slots/check-slot-availability.usecase.interface";
+import { CheckSlotAvailabilityUseCase } from "../../useCases/slots/check-slot-availability.usecase";
+import { IGetConversationsUseCase } from "../../entities/useCaseInterfaces/chat/get-coversations.usecase.interface";
+import { GetConversationsUseCase } from "../../useCases/chat/get-conversations.usecase";
+import { ICustomerGrowthDataUseCase } from "../../entities/useCaseInterfaces/customer/customer-growth-data.usecase.interface";
+import { CustomerGrowthDataUseCase } from "../../useCases/customers/customer-growth-data.usecase";
 
 export class UseCaseRegistry {
     static registerUseCases(): void {
@@ -414,6 +420,18 @@ export class UseCaseRegistry {
 
         container.register<IFetchAvailableDatesUseCase>("IFetchAvailableDatesUseCase", {
             useClass: FetchAvailableDatesUseCase
+        })
+
+        container.register<ICheckSlotAvailabilityUseCase>("ICheckSlotAvailabilityUseCase", {
+            useClass: CheckSlotAvailabilityUseCase
+        })
+
+        container.register<IGetConversationsUseCase>("IGetConversationsUseCase", {
+            useClass: GetConversationsUseCase
+        })
+
+        container.register<ICustomerGrowthDataUseCase>("ICustomerGrowthDataUseCase", {
+            useClass: CustomerGrowthDataUseCase
         })
 
         //* ====== Register Strategies ====== *//

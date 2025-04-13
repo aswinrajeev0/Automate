@@ -22,6 +22,7 @@ import { IGetCustomerAddressUseCase } from "../../entities/useCaseInterfaces/cus
 import { IEditCustomerAddressUseCase } from "../../entities/useCaseInterfaces/customer/edit-customer-address.usecase.interface";
 import { IChangeCustomerPasswordUseCase } from "../../entities/useCaseInterfaces/customer/change-password.usecase.interface";
 import { passwordSchema } from "../../shared/validations/password.validation";
+import { ICustomerGrowthDataUseCase } from "../../entities/useCaseInterfaces/customer/customer-growth-data.usecase.interface";
 
 @injectable()
 export class CustomerController implements ICustomerController {
@@ -42,6 +43,7 @@ export class CustomerController implements ICustomerController {
         @inject("IGetCustomerAddressUseCase") private _getCustomerAddress: IGetCustomerAddressUseCase,
         @inject("IEditCustomerAddressUseCase") private _editCustomerAddress: IEditCustomerAddressUseCase,
         @inject("IChangeCustomerPasswordUseCase") private _changePasssword: IChangeCustomerPasswordUseCase,
+        @inject("ICustomerGrowthDataUseCase") private _customerGrowthData: ICustomerGrowthDataUseCase,
     ) { }
 
     async signup(req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -361,6 +363,22 @@ export class CustomerController implements ICustomerController {
             res.status(HTTP_STATUS.OK).json({
                 success: true,
                 message: SUCCESS_MESSAGES.PASSWORD_RESET_SUCCESS
+            })
+
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    async customerGrowthData(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const filter = req.query.filter as string;
+            const customerData = await this._customerGrowthData.execute(filter);
+
+            res.status(HTTP_STATUS.OK).json({
+                success: true,
+                message: SUCCESS_MESSAGES.DATA_RETRIEVED,
+                customerData
             })
 
         } catch (error) {

@@ -114,7 +114,8 @@ export const useAvailableDates = (workshopId: string, currentDate: Date, type: s
 
 export const useCheckSlotAvailability = (slotId: string) => {
     return useQuery({
-        queryKey: ["is-slot-available"],
-        queryFn: () => checkSlotAvailability(slotId)
-    })
-}
+        queryKey: ["is-slot-available", slotId],
+        queryFn: () => checkSlotAvailability(slotId),
+        enabled: false,
+    });
+};

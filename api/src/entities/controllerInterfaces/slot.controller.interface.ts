@@ -7,5 +7,5 @@ export interface ISlotController {
     toggleAvailableSlots(req: Request, res: Response, next: NextFunction): Promise<void>;
     fetchAvailableSlots(req: Request, res: Response, next: NextFunction): Promise<void>;
     fetchAvailableDates(req: Request, res: Response, next: NextFunction): Promise<void>;
-    checkAvailableSlots(req: Request, res: Response, next: NextFunction): Promise<void>;
+    checkSlotAvailability(req: Request, res: Response, next: NextFunction): Promise<void>;
 }

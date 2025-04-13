@@ -3,6 +3,7 @@ import { BaseRoute } from "../base.route";
 import {
     blockStatusMiddleware,
     bookingController,
+    chatController,
     customerController,
     otpController,
     paymentController,
@@ -145,7 +146,11 @@ export class CustomerRoute extends BaseRoute {
         })
 
         this.router.get("/check-slot-availability", authenticate("customer"), (req: Request, res: Response, next: NextFunction) => {
-            slotController.checkAvailableSlots(req, res, next)
+            slotController.checkSlotAvailability(req, res, next)
+        })
+
+        this.router.get("/get-conversations", authenticate("customer"), (req, res, next) => {
+            chatController.getConversations(req, res, next)
         })
     }
 }

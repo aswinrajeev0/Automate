@@ -30,4 +30,9 @@ export class SlotRepository implements ISlotRepository {
         const slots = await WorkshopSlotModel.find(filter);
         return slots;
     }
+
+    async findById(slotId: string): Promise<IWorkshopSlotModel | null> {
+        const slot = await WorkshopSlotModel.findById(slotId);
+        return slot
+    }
 }

@@ -14,8 +14,8 @@ import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { BookedSlot } from "./BookedSlots";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../store/store";
-import { data, useParams, useSearchParams } from "react-router-dom";
-import { BookSlot, useAvailableDates, useBookSlot, useFetchAvailableSlots } from "../../../hooks/customer/useSlotBooking";
+import { useParams, useSearchParams } from "react-router-dom";
+import { BookSlot, useAvailableDates, useBookSlot, useCheckSlotAvailability, useFetchAvailableSlots } from "../../../hooks/customer/useSlotBooking";
 import PaymentModal from "../payment/PaymentModal";
 import ConfirmationModal from "../carLift/ConfirmationModal";
 import FailedModal from "../carLift/FailedModal";
@@ -43,77 +43,6 @@ const SERVICE_DURATIONS: Record<string, number> = {
   full: 3,
 };
 
-// MOCK DATA GENERATOR FUNCTIONS
-const generateMockSlots = (date: Date, serviceType: string): WorkshopSlot[] => {
-  const formattedDate = format(date, "yyyy-MM-dd");
-  const serviceDuration = SERVICE_DURATIONS[serviceType as keyof typeof SERVICE_DURATIONS] || 1;
-
-  // Create morning slots (8AM-12PM)
-  const morningSlots: WorkshopSlot[] = [];
-  for (let hour = 8; hour <= 11; hour += 1) {
-    if (hour + serviceDuration > 12) continue;
-
-    const isRandomlyBooked = Math.random() > 0.7;
-    const maxBookings = Math.floor(Math.random() * 2) + 1;
-    const currentBookings = isRandomlyBooked ? maxBookings : Math.floor(Math.random() * maxBookings);
-
-    morningSlots.push({
-      _id: `${formattedDate}-${hour}-${serviceType}`,
-      date: formattedDate,
-      startTime: `${hour.toString().padStart(2, "0")}:00`,
-      endTime: `${(hour + serviceDuration).toString().padStart(2, "0")}:00`,
-      serviceType: serviceType as "basic" | "interim" | "full",
-      maxBookings,
-      currentBookings,
-      isAvailable: currentBookings < maxBookings,
-    });
-  }
-
-  const afternoonSlots: WorkshopSlot[] = [];
-  for (let hour = 14; hour <= 17; hour += 1) {
-    if (hour + serviceDuration > 18) continue;
-
-    const isRandomlyBooked = Math.random() > 0.7;
-    const maxBookings = Math.floor(Math.random() * 2) + 1;
-    const currentBookings = isRandomlyBooked ? maxBookings : Math.floor(Math.random() * maxBookings);
-
-    afternoonSlots.push({
-      _id: `${formattedDate}-${hour}-${serviceType}`,
-      date: formattedDate,
-      startTime: `${hour.toString().padStart(2, "0")}:00`,
-      endTime: `${(hour + serviceDuration).toString().padStart(2, "0")}:00`,
-      serviceType: serviceType as "basic" | "interim" | "full",
-      maxBookings,
-      currentBookings,
-      isAvailable: currentBookings < maxBookings,
-    });
-  }
-
-  return [...morningSlots, ...afternoonSlots];
-};
-
-const generateMockAvailableDates = (month: Date, serviceType: string): Date[] => {
-  const firstDay = startOfMonth(month);
-  const lastDay = endOfMonth(month);
-  const daysInMonth = eachDayOfInterval({ start: firstDay, end: lastDay });
-
-  return daysInMonth.filter((date) => {
-    const isSunday = getDay(date) === 0;
-    const isPast = isBefore(date, new Date());
-    const isRandomlyAvailable = Math.random() > 0.3;
-    return !isSunday && !isPast && isRandomlyAvailable;
-  });
-};
-
-// MOCK API FUNCTIONS
-const mockApi = {
-
-  checkSlotAvailability: async (slotId: string): Promise<{ isAvailable: boolean }> => {
-    await new Promise((resolve) => setTimeout(resolve, 300));
-    return { isAvailable: Math.random() > 0.05 };
-  },
-};
-
 const CalenderSection: React.FC<CalenderSectionProps> = ({ setBookingSubmitted }) => {
   const [currentDate, setCurrentDate] = useState<Date>(new Date());
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
@@ -139,7 +68,8 @@ const CalenderSection: React.FC<CalenderSectionProps> = ({ setBookingSubmitted }
   // Fetch available dates
   const { data: availableDatesData, isLoading: isLoadingDates, refetch: refetchDates } = useAvailableDates(workshopId as string, currentDate, type);
   const availableDates = (availableDatesData?.availableDates || []) as []
-  console.log(availableDates)
+
+  const { data: _isSlotAvailableData, refetch: checkAvailability } = useCheckSlotAvailability(selectedSlot?._id || "");
 
   useEffect(() => {
     if (selectedDate) {
@@ -170,7 +100,9 @@ const CalenderSection: React.FC<CalenderSectionProps> = ({ setBookingSubmitted }
     if (!selectedDate || !selectedSlot) return;
 
     try {
-      const { isAvailable } = await mockApi.checkSlotAvailability(selectedSlot._id);
+      const { data } = await checkAvailability();
+      console.log(data)
+      const isAvailable = data?.isSlotAvailable || false;
       if (!isAvailable) {
         errorToast("Slot became unavailable");
         setOverlappingServiceInfo("This slot is no longer available. Please choose another time.");
@@ -179,6 +111,7 @@ const CalenderSection: React.FC<CalenderSectionProps> = ({ setBookingSubmitted }
       }
       setIsPaymentModalOpen(true);
     } catch (error) {
+      console.error(error)
       errorToast("Error checking slot availability");
     }
   };

@@ -57,4 +57,26 @@ export class CustomerRepository implements ICustomerRepository {
     async findByIdAndDelete(userId: string): Promise<void> {
         await CustomerModel.findByIdAndDelete(userId)
     }
+
+    async findCustomerGrowthData(groupStage: any, filter: string): Promise<{ name: string; customers: number; }[]> {
+        console.log(groupStage, filter)
+        const growthData = await CustomerModel.aggregate([
+            { $group: groupStage },
+            {
+                $sort: {
+                    "_id.year": 1,
+                    ...(filter !== 'yearly' && { "_id.month": 1 }),
+                }
+            }
+        ]);
+
+        const formatted = growthData.map(item => ({
+            name: filter === 'yearly'
+                ? `${item._id.year}`
+                : `${item._id.month}/${item._id.year}`,
+            customers: item.count as number
+        }));
+        
+        return formatted
+    }
 }
