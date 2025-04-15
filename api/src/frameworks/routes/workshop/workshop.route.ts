@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { BaseRoute } from "../base.route";
-import { blockStatusMiddleware, bookingController, otpController, requestController, reviewController, slotController, workshopController } from "../../di/resolver";
+import { blockStatusMiddleware, bookingController, chatController, otpController, requestController, reviewController, slotController, workshopController } from "../../di/resolver";
 import { authenticate, decodeToken } from "../../../interface-adapters/middlewares/auth.midleware";
 
 export class WorkshopRoute extends BaseRoute {
@@ -119,6 +119,18 @@ export class WorkshopRoute extends BaseRoute {
 
         this.router.patch("/toggle-slot-availabilty", (req, res, next) => {
             slotController.toggleAvailableSlots(req, res, next);
+        })
+
+        this.router.get("/get-conversations", (req, res, next) => {
+            chatController.getConversations(req, res, next);
+        })
+
+        this.router.get("/fallback-user", (req, res, next) => {
+            chatController.fallBackUsers(req, res, next);
+        })
+
+        this.router.post("/chat/start", (req, res, next) => {
+            chatController.startChat(req, res, next);
         })
     }
 }

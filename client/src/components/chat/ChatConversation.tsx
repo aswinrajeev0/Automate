@@ -3,6 +3,7 @@ import { Send, Paperclip, Check } from "lucide-react";
 import { cn } from "../../lib/utils";
 import { io, Socket } from "socket.io-client";
 import { IConversationType, IMessageType } from "../../types/chat.type";
+import { format } from "date-fns";
 
 interface ChatConversationProps {
     conversation: IConversationType;
@@ -15,6 +16,7 @@ const ChatConversation = ({
     conversation,
     userType
 }: ChatConversationProps) => {
+    console.log(conversation)
     const [newMessage, setNewMessage] = useState("");
     const [messages, setMessages] = useState(conversation.messages);
 
@@ -24,14 +26,14 @@ const ChatConversation = ({
     };
 
     useEffect(() => {
-        socket.emit("join_room", conversation._id);
+        socket.emit("joinRoom", conversation._id);
 
-        socket.on("receive_message", (message: IMessageType) => {
+        socket.on("receiveMessage", (message: IMessageType) => {
             setMessages((prev) => [...prev, message]);
         });
 
         return () => {
-            socket.off("receive_message");
+            socket.off("receiveMessage");
         };
     }, [conversation._id]);
 
@@ -39,19 +41,17 @@ const ChatConversation = ({
         e.preventDefault();
         if (!newMessage.trim()) return;
 
-        const message: Omit<IMessageType,"_id"> = {
+        const message: Omit<IMessageType, "_id"> = {
             content: newMessage,
             sender: userType,
             timestamp: new Date().toISOString(),
             status: "sent"
         };
 
-        socket.emit("send_message", {
+        socket.emit("sendMessage", {
             roomId: conversation._id,
             message
         });
-
-        setMessages((prev) => [...prev, message]);
         setNewMessage("");
     };
 
@@ -62,7 +62,7 @@ const ChatConversation = ({
         : conversation.customerName;
 
     return (
-        <div className="flex-1 flex flex-col">
+        <div className="flex-1 flex flex-col max-h-140">
             {/* Chat header */}
             <div className="px-6 py-3 border-b border-gray-200 flex items-center">
                 <div className={cn(
@@ -80,51 +80,49 @@ const ChatConversation = ({
             </div>
 
             {/* Messages area */}
-            <div className="flex-1 overflow-y-auto p-6 space-y-4">
-                {conversation.messages.map((message, index) => {
+            <div className="flex-1 overflow-y-auto p-6 space-y-4 overflow-x-scroll">
+                {messages.map((message, index) => {
                     const isCurrentUser =
                         (userType === "customer" && message.sender === "customer") ||
                         (userType === "workshop" && message.sender === "workshop");
 
-                    const dateOptions: Intl.DateTimeFormatOptions = {
-                        hour: '2-digit',
-                        minute: '2-digit'
-                    };
-
                     return (
-                        <div
-                            key={index}
-                            className={cn(
-                                "flex",
-                                isCurrentUser ? "justify-end" : "justify-start"
-                            )}
-                        >
-                            <div className={cn(
-                                "max-w-[70%] rounded-lg px-4 py-2 shadow-sm",
-                                isCurrentUser
-                                    ? "bg-blue-500 text-white rounded-br-none"
-                                    : "bg-gray-100 text-gray-800 rounded-bl-none"
-                            )}>
-                                <p>{message.content}</p>
+                        <>
+                            <div
+                                key={index}
+                                className={cn(
+                                    "flex",
+                                    isCurrentUser ? "justify-end" : "justify-start"
+                                )}
+                            >
                                 <div className={cn(
-                                    "text-xs mt-1 flex items-center justify-end space-x-1",
-                                    isCurrentUser ? "text-blue-100" : "text-gray-500"
+                                    "max-w-[70%] rounded-lg px-4 py-2 shadow-sm",
+                                    isCurrentUser
+                                        ? "bg-blue-500 text-white rounded-br-none"
+                                        : "bg-gray-100 text-gray-800 rounded-bl-none"
                                 )}>
-                                    <span>
-                                        {new Date(message.timestamp).toLocaleTimeString([], dateOptions)}
-                                    </span>
-                                    {isCurrentUser && message.status === "read" && (
-                                        <Check className="h-3 w-3" />
-                                    )}
+                                    <p>{message.content}</p>
+                                    <div className={cn(
+                                        "text-xs mt-1 flex items-center justify-end space-x-1",
+                                        isCurrentUser ? "text-blue-100" : "text-gray-500"
+                                    )}>
+                                        <span>
+                                            {format(message.timestamp, "hh:mm a")}
+                                        </span>
+                                        {isCurrentUser && message.status === "read" && (
+                                            <Check className="h-3 w-3" />
+                                        )}
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        </>
                     );
                 })}
+                <div ref={messagesEndRef} />
             </div>
 
             {/* Message input */}
-            <div className="px-4 py-3 border-t border-gray-200">
+            <div className="px-4 py-3 border-t border-gray-200 h-1">
                 <form onSubmit={handleSendMessage} className="flex items-center space-x-2">
                     <button
                         type="button"

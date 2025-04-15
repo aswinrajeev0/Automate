@@ -16,6 +16,7 @@ import FinishedJobspage from "../pages/workshop/FinishedJobs";
 import FinishedJobDetailsPage from "../components/workshop/finishedJobs/FinishedJobDetails";
 import WorkshopBookings from "../pages/workshop/Bookings";
 import WorkshopSlotManagement from "../pages/workshop/SlotManagement";
+import ChatInterface from "../pages/chat/ChatPage";
 
 export const WorkshopRoutes = () => {
     return (
@@ -27,7 +28,7 @@ export const WorkshopRoutes = () => {
                 <Route path="finished-jobs" element={<FinishedJobspage />} />
                 <Route path="slots" element={<WorkshopSlotManagement />} />
                 <Route path="bookings" element={<WorkshopBookings />} />
-                <Route path="chats" />
+                <Route path="chats" element={<ChatInterface userType="workshop" />} />
                 <Route path="ratings" element={<WorkshopReviews />} />
                 <Route path="profile" element={<WorkshopProfilePage />} />
                 <Route path="requests/request-details/:requestId" element={<RequestDetailsPage />} />

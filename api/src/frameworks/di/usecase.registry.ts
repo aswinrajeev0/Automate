@@ -154,6 +154,10 @@ import { IGetConversationsUseCase } from "../../entities/useCaseInterfaces/chat/
 import { GetConversationsUseCase } from "../../useCases/chat/get-conversations.usecase";
 import { ICustomerGrowthDataUseCase } from "../../entities/useCaseInterfaces/customer/customer-growth-data.usecase.interface";
 import { CustomerGrowthDataUseCase } from "../../useCases/customers/customer-growth-data.usecase";
+import { IFallBackUsersUseCase } from "../../entities/useCaseInterfaces/chat/fallback-users.usecase.interface";
+import { FallBackUsersUseCase } from "../../useCases/chat/fallback-users.usecase";
+import { IStartConversationUseCase } from "../../entities/useCaseInterfaces/chat/start-chat.usecase.interface";
+import { StartConversationUseCase } from "../../useCases/chat/start-coversation.usecase";
 
 export class UseCaseRegistry {
     static registerUseCases(): void {
@@ -432,6 +436,14 @@ export class UseCaseRegistry {
 
         container.register<ICustomerGrowthDataUseCase>("ICustomerGrowthDataUseCase", {
             useClass: CustomerGrowthDataUseCase
+        })
+
+        container.register<IFallBackUsersUseCase>("IFallBackUsersUseCase", {
+            useClass: FallBackUsersUseCase
+        })
+
+        container.register<IStartConversationUseCase>("IStartConversationUseCase", {
+            useClass: StartConversationUseCase
         })
 
         //* ====== Register Strategies ====== *//

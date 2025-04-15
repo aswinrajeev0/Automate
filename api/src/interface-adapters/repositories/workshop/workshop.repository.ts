@@ -122,4 +122,8 @@ export class WorkshopRepository implements IWorkshopRepository {
         return workshops;
     }
 
+    async findByIdsNotIn(ids: string[]): Promise<{ _id: string; name: string; }[]> {
+        return await WorkshopModel.find({ _id: { $nin: ids } }).select("_id name");
+    }
+
 }

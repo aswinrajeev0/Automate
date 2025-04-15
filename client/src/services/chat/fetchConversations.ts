@@ -14,3 +14,36 @@ export const fetchConversations = async (userType: string) => {
         throw error.response.data;
     }
 }
+
+export const fallbackUsers = async (userType: string) => {
+    try {
+        let response;
+        if(userType === "customer") {
+            response = await customerApi.get("/fallback-users")
+        }else{
+            response = await workshopApi.get("/fallback-user")
+        }
+        return response.data
+    } catch (error: any) {
+        throw error.response.data;
+    }
+}
+
+export const startChat = async (userType: string, customerId: string, workshopId: string) => {
+    try {
+        let response;
+        const body = {
+            customerId,
+            workshopId
+        }
+        if(userType === "customer"){
+            response = await customerApi.post("/chat/start", body);
+        }else{
+            response = await workshopApi.post("/chat/start", body);
+        }
+        
+        return response.data;
+    } catch (error: any) {
+        throw error.response.data
+    }
+}

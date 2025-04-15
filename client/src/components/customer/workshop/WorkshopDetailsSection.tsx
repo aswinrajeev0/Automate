@@ -16,13 +16,13 @@ const WorkshopDetailsSection: React.FC<WorkshopDetailsSectionProps> = ({ worksho
     const [expanded, setExpanded] = useState(false);
 
     const navigate = useNavigate()
-    
+
     // Calculate if bio is too long and needs expansion
     const bioIsLong = workshop?.bio && workshop.bio.length > 150;
-    const displayBio = bioIsLong && !expanded 
-        ? `${workshop?.bio?.substring(0, 150)}...` 
+    const displayBio = bioIsLong && !expanded
+        ? `${workshop?.bio?.substring(0, 150)}...`
         : workshop?.bio;
-    
+
     return (
         <div className="bg-white rounded-xl shadow-sm p-6 mb-8">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
@@ -40,7 +40,7 @@ const WorkshopDetailsSection: React.FC<WorkshopDetailsSectionProps> = ({ worksho
                             </Badge>
                         )} */}
                     </div>
-                    
+
                     <div className="grid grid-cols-2 gap-3">
                         <div className="bg-gray-50 p-4 rounded-lg">
                             <div className="flex items-center gap-2 mb-1">
@@ -49,7 +49,7 @@ const WorkshopDetailsSection: React.FC<WorkshopDetailsSectionProps> = ({ worksho
                             </div>
                             <p className="text-sm text-gray-600">{workshop?.hours || "Mon-Fri: 9AM-6PM"}</p>
                         </div>
-                        
+
                         <div className="bg-gray-50 p-4 rounded-lg">
                             <div className="flex items-center gap-2 mb-1">
                                 <MapPin size={16} className="text-gray-500" />
@@ -60,22 +60,22 @@ const WorkshopDetailsSection: React.FC<WorkshopDetailsSectionProps> = ({ worksho
                         </div>
                     </div>
                 </div>
-                
+
                 <div className="flex flex-col">
                     <div className="flex justify-between items-start mb-2">
                         <h1 className="text-3xl font-bold">{workshop?.name}</h1>
                         <div className="flex items-center gap-1">
                             {[...Array(5)].map((_, i) => (
-                                <Star 
-                                    key={i} 
-                                    size={18} 
-                                    className={i < (workshop?.rating || 4) ? "text-yellow-400 fill-yellow-400" : "text-gray-200"} 
+                                <Star
+                                    key={i}
+                                    size={18}
+                                    className={i < (workshop?.rating || 4) ? "text-yellow-400 fill-yellow-400" : "text-gray-200"}
                                 />
-                            ))} 
+                            ))}
                             <span className="ml-1 text-sm text-gray-600">({reviewCount || 0})</span>
                         </div>
                     </div>
-                    
+
                     <div className="flex gap-2 mb-4">
                         {workshop?.specialties?.slice(0, 3).map((specialty, index) => (
                             <Badge key={index} variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
@@ -88,15 +88,15 @@ const WorkshopDetailsSection: React.FC<WorkshopDetailsSectionProps> = ({ worksho
                             </Badge>
                         )}
                     </div>
-                    
+
                     <div className="flex-grow">
                         <div className="prose prose-sm max-w-none mb-2">
                             <p className="text-gray-700">{displayBio}</p>
                         </div>
                         {bioIsLong && (
-                            <Button 
-                                variant="ghost" 
-                                size="sm" 
+                            <Button
+                                variant="ghost"
+                                size="sm"
                                 className="flex items-center gap-1 text-blue-600 p-0 h-auto mb-6"
                                 onClick={() => setExpanded(!expanded)}
                             >
@@ -108,20 +108,20 @@ const WorkshopDetailsSection: React.FC<WorkshopDetailsSectionProps> = ({ worksho
                             </Button>
                         )}
                     </div>
-                    
+
                     <div className="mt-auto">
                         <div className="grid grid-cols-4 gap-3 mb-6">
                             <TooltipProvider>
                                 <Tooltip>
                                     <TooltipTrigger asChild>
-                                        <Button 
-                                            variant="outline" 
+                                        <Button
+                                            variant="outline"
                                             className={`flex items-center justify-center ${isFavorite ? 'bg-red-50' : ''}`}
                                             onClick={() => setIsFavorite(!isFavorite)}
                                         >
-                                            <Heart 
-                                                size={18} 
-                                                className={isFavorite ? "text-red-500 fill-red-500" : "text-gray-500"} 
+                                            <Heart
+                                                size={18}
+                                                className={isFavorite ? "text-red-500 fill-red-500" : "text-gray-500"}
                                             />
                                         </Button>
                                     </TooltipTrigger>
@@ -130,11 +130,13 @@ const WorkshopDetailsSection: React.FC<WorkshopDetailsSectionProps> = ({ worksho
                                     </TooltipContent>
                                 </Tooltip>
                             </TooltipProvider>
-                            
+
                             <TooltipProvider>
                                 <Tooltip>
                                     <TooltipTrigger asChild>
-                                        <Button variant="outline" className="flex items-center justify-center">
+                                        <Button
+                                            onClick={() => navigate(`/chat?workshopId=${workshop.id}`)}
+                                            variant="outline" className="flex items-center justify-center">
                                             <MessageCircle size={18} className="text-gray-500" />
                                         </Button>
                                     </TooltipTrigger>
@@ -143,11 +145,11 @@ const WorkshopDetailsSection: React.FC<WorkshopDetailsSectionProps> = ({ worksho
                                     </TooltipContent>
                                 </Tooltip>
                             </TooltipProvider>
-                            
+
                             <TooltipProvider>
                                 <Tooltip>
                                     <TooltipTrigger asChild>
-                                        <Button variant="outline" className="flex items-center justify-center">
+                                        <Button onClick={() => window.location.href = `tel:${workshop.phone}`} variant="outline" className="flex items-center justify-center">
                                             <Phone size={18} className="text-gray-500" />
                                         </Button>
                                     </TooltipTrigger>
@@ -156,11 +158,13 @@ const WorkshopDetailsSection: React.FC<WorkshopDetailsSectionProps> = ({ worksho
                                     </TooltipContent>
                                 </Tooltip>
                             </TooltipProvider>
-                            
+
                             <TooltipProvider>
                                 <Tooltip>
                                     <TooltipTrigger asChild>
-                                        <Button variant="outline" className="flex items-center justify-center">
+                                        <Button
+                                        onClick={() => navigate(`/request-service/service/${workshop.id}`)}
+                                        variant="outline" className="flex items-center justify-center">
                                             <Calendar size={18} className="text-gray-500" />
                                         </Button>
                                     </TooltipTrigger>
@@ -170,11 +174,11 @@ const WorkshopDetailsSection: React.FC<WorkshopDetailsSectionProps> = ({ worksho
                                 </Tooltip>
                             </TooltipProvider>
                         </div>
-                        
-                        <Button onClick={()=>navigate(`/request-service/${workshop.id}`)} className="w-full bg-yellow-400 hover:bg-yellow-500 text-white h-12 text-lg font-medium">
+
+                        <Button onClick={() => navigate(`/request-service/${workshop.id}`)} className="w-full bg-yellow-400 hover:bg-yellow-500 text-white h-12 text-lg font-medium">
                             Request a service
                         </Button>
-                        
+
                         <div className="flex items-center justify-center gap-2 mt-3">
                             <Info size={14} className="text-gray-400" />
                             <p className="text-xs text-gray-500">Usually responds within 24 hours</p>

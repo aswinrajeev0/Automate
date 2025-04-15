@@ -4,7 +4,7 @@ import { CustomerRoutes } from "./routes/CustomerRoute";
 import { AdminRoutes } from "./routes/AdminRoute";
 import { WorkshopRoutes } from "./routes/WorkshopRoute";
 import NotFound from "./pages/NotFound";
-import ChatApplication from "./pages/test/ChatPage";
+import ChatApplication from "./pages/chat/ChatPage";
 function App() {
 
   return (

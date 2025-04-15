@@ -117,7 +117,6 @@ const SlotList: React.FC<SlotListProps> = ({ convertTimeToMinutes, loading }) =>
                                                     <th className="py-3 px-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">Time</th>
                                                     <th className="py-3 px-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">Duration</th>
                                                     <th className="py-3 px-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">Service Type</th>
-                                                    <th className="py-3 px-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">Bookings</th>
                                                     <th className="py-3 px-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">Status</th>
                                                     <th className="py-3 px-4 text-right text-sm font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                                                 </tr>
@@ -128,7 +127,6 @@ const SlotList: React.FC<SlotListProps> = ({ convertTimeToMinutes, loading }) =>
                                                         <td className="py-3 px-4 text-sm text-gray-900">{slot.startTime} - {slot.endTime}</td>
                                                         <td className="py-3 px-4 text-sm text-gray-900">{formatDuration(slot.startTime, slot.endTime)}</td>
                                                         <td className="py-3 px-4 text-sm text-gray-900 capitalize">{getServiceTypeName(slot.serviceType)}</td>
-                                                        <td className="py-3 px-4 text-sm text-gray-900">{slot.currentBookings} / {slot.maxBookings}</td>
                                                         <td className="py-3 px-4 text-sm">
                                                             <span
                                                                 className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${slot.isAvailable

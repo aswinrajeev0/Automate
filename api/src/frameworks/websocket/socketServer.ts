@@ -23,24 +23,14 @@ export const initializeSocket = (httpServer: HttpServer) => {
         });
 
         socket.on("sendMessage", async (data) => {
-            const { roomId, content, sender } = data;
-            io.to(data.roomId).emit("receiveMessage", {
-                content,
-                sender,
-                timestamp: new Date(),
-                status: "sent"
-            });
+            const { roomId, message } = data;
+            io.to(roomId).emit("receiveMessage", message);
             try {
                 await ConversationModel.findByIdAndUpdate(
                     roomId,
                     {
                         $push: {
-                            messages: {
-                                content,
-                                sender,
-                                timestamp: new Date(),
-                                status: "sent"
-                            }
+                            messages: message
                         },
                         $set: { updatedAt: new Date() }
                     },

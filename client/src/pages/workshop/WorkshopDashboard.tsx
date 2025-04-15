@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, Outlet, useNavigate } from "react-router-dom";
-import { LayoutDashboard, FileText, LogOut, Clock, CheckCircle, MessageSquare, Star, UserCircle } from "lucide-react";
+import { LayoutDashboard, FileText, LogOut, Clock, CheckCircle, MessageSquare, Star, UserCircle, Grid2x2 } from "lucide-react";
 import {
     SidebarProvider
 } from "../../components/ui/Sidebar";
@@ -41,7 +41,7 @@ export default function WorkshopDashboard() {
         { id: "requests", title: "Requests", icon: FileText, path: "/workshop/requests" },
         { id: "pending-jobs", title: "Pending Jobs", icon: Clock, path: "/workshop/pending-jobs" },
         { id: "finished-jobs", title: "Finished Jobs", icon: CheckCircle, path: "/workshop/finished-jobs" },
-        { id: "slots", title: "Slots", icon: CheckCircle, path: "/workshop/slots" },
+        { id: "slots", title: "Slots", icon: Grid2x2 , path: "/workshop/slots" },
         { id: "bookings", title: "Bookings", icon: CheckCircle, path: "/workshop/bookings" },
         { id: "chats", title: "Chats", icon: MessageSquare, path: "/workshop/chats" },
         { id: "ratings", title: "Ratings and review", icon: Star, path: "/workshop/ratings" },

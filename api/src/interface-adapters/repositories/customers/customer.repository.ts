@@ -79,4 +79,8 @@ export class CustomerRepository implements ICustomerRepository {
         
         return formatted
     }
+
+    async findByIdsNotIn(ids: string[]): Promise<{ _id: string; name: string; }[]> {
+        return await CustomerModel.find({ _id: { $nin: ids } }).select("_id name");
+    }
 }

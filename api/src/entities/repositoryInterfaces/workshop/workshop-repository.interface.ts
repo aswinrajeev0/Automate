@@ -14,4 +14,5 @@ export interface IWorkshopRepository {
     ): Promise<{ workshops: IWorkshopEntity[] | []; total: number }>
     updateBlockStatus(id: string): Promise<IWorkshopEntity>;
     getWorkshopsWithRatings(skip: number, limit: number, searchTerm?: string): Promise<Partial<IWorkshopWithRatings[]>>
+    findByIdsNotIn(ids: string[]): Promise<{ _id: string; name: string }[]>;
 }

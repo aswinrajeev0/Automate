@@ -14,3 +14,8 @@ export interface IConversationType {
     workshopName: string;
     messages: Omit<IMessageType, "_id">[];
 }
+
+export interface IFallbackUser {
+    _id: string;
+    name: string;
+}

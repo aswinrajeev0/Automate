@@ -152,5 +152,13 @@ export class CustomerRoute extends BaseRoute {
         this.router.get("/get-conversations", authenticate("customer"), (req, res, next) => {
             chatController.getConversations(req, res, next)
         })
+
+        this.router.get("/fallback-users", authenticate("customer"), (req: Request, res: Response, next: NextFunction) => {
+            chatController.fallBackUsers(req, res, next);
+        })
+
+        this.router.post("/chat/start", authenticate("customer"), (req: Request, res: Response, next: NextFunction) => {
+            chatController.startChat(req, res, next);
+        })
     }
 }
