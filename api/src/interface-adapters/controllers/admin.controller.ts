@@ -8,6 +8,7 @@ import { clearAuthCookies, setAuthCookies, updateCookieWithAccessToken } from ".
 import { IAdminLogoutUseCase } from "../../entities/useCaseInterfaces/admin/admin-logout.usecase.interface";
 import { IRefreshTokenUseCase } from "../../entities/useCaseInterfaces/admin/admin-refresh-token.usecase.interface";
 import { tryCatch } from "bullmq";
+import { IDashboardDataUseCase } from "../../entities/useCaseInterfaces/admin/admin-dashboard-data.usecase.interface";
 
 @injectable()
 export class AdminController implements IAdminController {
@@ -15,7 +16,8 @@ export class AdminController implements IAdminController {
         @inject("IAdminLoginUseCase") private _adminLogin: IAdminLoginUseCase,
         @inject("IGenerateTokenUseCase") private _generateToken: IGenerateTokenUseCase,
         @inject("IAdminLogoutUseCase") private _adminLogoutuseCase: IAdminLogoutUseCase,
-        @inject("IRefreshTokenUseCase") private _refreshToken: IRefreshTokenUseCase
+        @inject("IRefreshTokenUseCase") private _refreshToken: IRefreshTokenUseCase,
+        @inject("IDashboardDataUseCase") private _dashboardData: IDashboardDataUseCase
     ) { }
 
     async login(req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -99,6 +101,42 @@ export class AdminController implements IAdminController {
                 `${req.user?.role}_access_token`,
                 `${req.user?.role}_refresh_token`
             )
+            next(error)
+        }
+    }
+
+    async dashboardData(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const dashboardData = await this._dashboardData.dashboardData();
+            res.status(HTTP_STATUS.OK).json({
+                success: true,
+                message: SUCCESS_MESSAGES.DATA_RETRIEVED,
+                dashboardData
+            })
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    async workshopGrowthData(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const filter = req.query.filter as "monthly" | "yearly";
+            if(!filter){
+                res.status(HTTP_STATUS.BAD_REQUEST).json({
+                    success: false,
+                    message: ERROR_MESSAGES.DATA_MISSING
+                })
+                return;
+            }
+
+            const workshopData = await this._dashboardData.workshopData(filter)
+
+            res.status(HTTP_STATUS.OK).json({
+                success: true,
+                workshopData
+            })
+
+        } catch (error) {
             next(error)
         }
     }

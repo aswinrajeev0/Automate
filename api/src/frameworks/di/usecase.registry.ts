@@ -158,6 +158,14 @@ import { IFallBackUsersUseCase } from "../../entities/useCaseInterfaces/chat/fal
 import { FallBackUsersUseCase } from "../../useCases/chat/fallback-users.usecase";
 import { IStartConversationUseCase } from "../../entities/useCaseInterfaces/chat/start-chat.usecase.interface";
 import { StartConversationUseCase } from "../../useCases/chat/start-coversation.usecase";
+import { IAnalyticsService } from "../../entities/serviceInterfaces.ts/anaytic-service.interface";
+import { AnalyticsService } from "../../interface-adapters/services/analytics.service";
+import { IWorkshopDashboardUseCase } from "../../entities/useCaseInterfaces/workshop/workshop-dashboard.usecase.interface";
+import { WorkshopDashboardUseCase } from "../../useCases/workshop/workshop-dashboard.usecase";
+import { IAdminAnalyticsService } from "../../entities/serviceInterfaces.ts/admin-analytics-service.interface";
+import { AdminAnalyticsService } from "../../interface-adapters/services/admin-analytics.service";
+import { IDashboardDataUseCase } from "../../entities/useCaseInterfaces/admin/admin-dashboard-data.usecase.interface";
+import { DashboardDataUseCase } from "../../useCases/admin/admin-dashboard-data.usecase";
 
 export class UseCaseRegistry {
     static registerUseCases(): void {
@@ -446,6 +454,14 @@ export class UseCaseRegistry {
             useClass: StartConversationUseCase
         })
 
+        container.register<IWorkshopDashboardUseCase>("IWorkshopDashboardUseCase", {
+            useClass: WorkshopDashboardUseCase
+        })
+
+        container.register<IDashboardDataUseCase>("IDashboardDataUseCase", {
+            useClass: DashboardDataUseCase
+        })
+
         //* ====== Register Strategies ====== *//
         container.register("CustomerRegisterStrategy", {
             useClass: CustomerRegisterStrategy,
@@ -479,6 +495,14 @@ export class UseCaseRegistry {
 
         container.register<IRazorpayService>("IRazorpayService", {
             useClass: RazorpayService
+        })
+
+        container.register<IAnalyticsService>("IAnalyticsService", {
+            useClass: AnalyticsService
+        })
+
+        container.register<IAdminAnalyticsService>("IAdminAnalyticsService", {
+            useClass: AdminAnalyticsService
         })
     }
 }

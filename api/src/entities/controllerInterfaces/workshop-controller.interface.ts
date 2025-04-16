@@ -17,4 +17,7 @@ export interface IWorkshopController {
     changePassword(req: Request, res: Response, next: NextFunction): Promise<void>;
     getWorkshopDetails(req: Request, res: Response, next: NextFunction): Promise<void>;
     getAllWorkshopsWithRating(req: Request, res: Response, next: NextFunction): Promise<void>;
+    dashBoardData(req: Request, res: Response, next: NextFunction): Promise<void>;
+    getGrowthChartData(req: Request, res: Response, next: NextFunction): Promise<void>;
+    getEarningsChartData(req: Request, res: Response, next: NextFunction): Promise<void>;
 }

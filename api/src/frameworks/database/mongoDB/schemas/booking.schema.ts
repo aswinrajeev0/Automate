@@ -15,4 +15,6 @@ export const bookingSchema = new Schema<IBookingModel>({
     status: {type: String, enum: ["pending", "confirmed", "in-progress", "completed", "cancelled"], default: "pending"},
     gst: {type: Number},
     slotId: {type: String}  
+},{
+    timestamps: true
 })

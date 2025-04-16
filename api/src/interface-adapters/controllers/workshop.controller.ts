@@ -23,6 +23,7 @@ import { passwordSchema } from "../../shared/validations/password.validation";
 import { IChangeWorkshopPasswordUseCase } from "../../entities/useCaseInterfaces/workshop/change-password.usecase.interface";
 import { IWorkshopDetailsUseCase } from "../../entities/useCaseInterfaces/workshop/workshop-details.usecase.interface";
 import { IGetAllWorkshopsWithRatingUseCase } from "../../entities/useCaseInterfaces/workshop/get-all-workshops-with-rating.usecase.interface";
+import { IWorkshopDashboardUseCase } from "../../entities/useCaseInterfaces/workshop/workshop-dashboard.usecase.interface";
 
 @injectable()
 export class WorkshopController implements IWorkshopController {
@@ -44,7 +45,8 @@ export class WorkshopController implements IWorkshopController {
         @inject("IEditWorkshopAddressUseCase") private _editWorkshopAddress: IEditWorkshopAddressUseCase,
         @inject("IChangeWorkshopPasswordUseCase") private _changePassword: IChangeWorkshopPasswordUseCase,
         @inject("IWorkshopDetailsUseCase") private _workshopDetails: IWorkshopDetailsUseCase,
-        @inject("IGetAllWorkshopsWithRatingUseCase") private _getAllWorkshopWithRating: IGetAllWorkshopsWithRatingUseCase
+        @inject("IGetAllWorkshopsWithRatingUseCase") private _getAllWorkshopWithRating: IGetAllWorkshopsWithRatingUseCase,
+        @inject("IWorkshopDashboardUseCase") private _workshopDashboardUseCase: IWorkshopDashboardUseCase,
     ) { }
 
     async signup(req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -108,7 +110,6 @@ export class WorkshopController implements IWorkshopController {
             next(error)
         }
     }
-
 
     async resetPasswordOtp(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
@@ -393,6 +394,68 @@ export class WorkshopController implements IWorkshopController {
                 currentPage: pageNumber,
             });
             console.log(workshops)
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    async dashBoardData(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const workshopId = req.user?.id as string;
+            const dashboardData = await this._workshopDashboardUseCase.dashboardData(workshopId);
+            res.status(HTTP_STATUS.OK).json({
+                success: true,
+                message: SUCCESS_MESSAGES.DATA_RETRIEVED,
+                dashboardData
+            })
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    async getGrowthChartData(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const workshopId = req.user?.id as string;
+            const timeFrame = req.query.timeFrame as "week" | "month" | "year";
+            if(!timeFrame) {
+                res.status(HTTP_STATUS.BAD_REQUEST).json({
+                    success: false,
+                    message: ERROR_MESSAGES.DATA_MISSING
+                })
+                return;
+            }
+
+            const growthData = await this._workshopDashboardUseCase.getGrowthChartData(workshopId, timeFrame)
+
+            res.status(HTTP_STATUS.OK).json({
+                success: true,
+                message: SUCCESS_MESSAGES.DATA_RETRIEVED,
+                growthData
+            })
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    async getEarningsChartData(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const workshopId = req.user?.id as string;
+            const timeFrame = req.query.timeFrame as "week" | "month" | "year";
+            if(!timeFrame){
+                res.status(HTTP_STATUS.BAD_REQUEST).json({
+                    success: false,
+                    message: ERROR_MESSAGES.DATA_MISSING
+                })
+                return;
+            }
+
+            const earningsData = await this._workshopDashboardUseCase.getEarningsData(workshopId, timeFrame);
+
+            res.status(HTTP_STATUS.OK).json({
+                success: true,
+                message: SUCCESS_MESSAGES.DATA_RETRIEVED,
+                earningsData
+            })
         } catch (error) {
             next(error)
         }

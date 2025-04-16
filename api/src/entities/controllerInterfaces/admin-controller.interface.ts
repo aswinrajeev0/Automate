@@ -4,4 +4,6 @@ export interface IAdminController {
     login(req: Request, res: Response, next: NextFunction): Promise<void>
     logout(req: Request, res: Response, next: NextFunction): Promise<void>
     handleRefreshToken(req: Request, res: Response, next: NextFunction): void;
+    dashboardData(req: Request, res: Response, next: NextFunction): Promise<void>;
+    workshopGrowthData(req: Request, res: Response, next: NextFunction): Promise<void>;
 }

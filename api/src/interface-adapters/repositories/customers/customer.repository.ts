@@ -59,7 +59,6 @@ export class CustomerRepository implements ICustomerRepository {
     }
 
     async findCustomerGrowthData(groupStage: any, filter: string): Promise<{ name: string; customers: number; }[]> {
-        console.log(groupStage, filter)
         const growthData = await CustomerModel.aggregate([
             { $group: groupStage },
             {
