@@ -12,21 +12,23 @@ import debounce from "lodash/debounce"
 import { Pagination1 } from "../../components/admin/Pagination1"
 import WorkshopDisplaySection from "../../components/customer/workshop/WorkshopDisplaySection"
 
-type SortOptionType = "none" | "alphabetic-asc" | "alphabetic-desc" | "rating-high" | "rating-low"
+type SortOptionType = "all" | "alphabetic-asc" | "alphabetic-desc" | "rating-high" | "rating-low"
 
 const WorkshopsPage = () => {
-    const [filteredWorkshops, setFilteredWorkshops] = useState<IWorkshopWithRating[]>([])
     const [searchQuery, setSearchQuery] = useState<string>("")
     const [debouncedSearchQuery, setDebouncedSearchQuery] = useState<string>("")
     const [locationFilter, setLocationFilter] = useState<string>("all")
-    const [sortOption, setSortOption] = useState<SortOptionType>("none")
+    const [sortOption, setSortOption] = useState<SortOptionType>("all")
     const [currentPage, setCurrentPage] = useState<number>(1)
-    const [isLoading, setIsLoading] = useState<boolean>(false)
-    const [isError, setIsError] = useState<boolean>(false)
+    const [isLoading] = useState<boolean>(false)
+    const [isError] = useState<boolean>(false)
 
-    const { data } = useWorkshopsQuery(currentPage, 8, debouncedSearchQuery)
+    const limit = 8;
+
+    const { data } = useWorkshopsQuery(currentPage, limit, debouncedSearchQuery, sortOption)
     const workshops = (data?.workshops as IWorkshopWithRating[]) || []
-    const totalPages = data?.totalpages || 1;
+    const totalWorkshops = data?.totalWorkshops || 1;
+    const totalPages = Math.ceil(totalWorkshops / limit) || 1
 
     // Debounced search implementation
     const debouncedSearch = useCallback(
@@ -42,57 +44,6 @@ const WorkshopsPage = () => {
             debouncedSearch.cancel()
         }
     }, [searchQuery, debouncedSearch])
-
-    // Sort and filter workshops
-    useEffect(() => {
-        setIsLoading(true)
-        setTimeout(() => {
-            try {
-                let results = [...workshops]
-
-                // Apply search filter
-                if (debouncedSearchQuery) {
-                    results = results.filter(
-                        (workshop) =>
-                            workshop.name.toLowerCase().includes(debouncedSearchQuery.toLowerCase()) ||
-                            workshop.city.toLowerCase().includes(debouncedSearchQuery.toLowerCase()),
-                    )
-                }
-
-                // Apply location filter
-                if (locationFilter !== "all") {
-                    results = results.filter((workshop) => workshop.city === locationFilter)
-                }
-
-                // Apply sorting
-                switch (sortOption) {
-                    case "alphabetic-asc":
-                        results.sort((a, b) => a.name.localeCompare(b.name))
-                        break
-                    case "alphabetic-desc":
-                        results.sort((a, b) => b.name.localeCompare(a.name))
-                        break
-                    case "rating-high":
-                        results.sort((a, b) => (b.averageRating || 0) - (a.averageRating || 0))
-                        break
-                    case "rating-low":
-                        results.sort((a, b) => (a.averageRating || 0) - (b.averageRating || 0))
-                        break
-                    default:
-                        // No sorting or default sorting
-                        break
-                }
-
-                setFilteredWorkshops(results)
-                setCurrentPage(1)
-                setIsLoading(false)
-            } catch (error) {
-                console.error("Error filtering workshops:", error)
-                setIsError(true)
-                setIsLoading(false)
-            }
-        }, 300)
-    }, [debouncedSearchQuery, locationFilter, sortOption, workshops])
 
     const locations = [...new Set(workshops.map((workshop) => workshop.city))]
 
@@ -178,7 +129,7 @@ const WorkshopsPage = () => {
                                             <SelectValue placeholder="Sort by" />
                                         </SelectTrigger>
                                         <SelectContent>
-                                            <SelectItem value="none">Sort by</SelectItem>
+                                            <SelectItem value="all">Sort by</SelectItem>
                                             <SelectItem value="alphabetic-asc">Name (A-Z)</SelectItem>
                                             <SelectItem value="alphabetic-desc">Name (Z-A)</SelectItem>
                                             <SelectItem value="rating-high">Highest Rated</SelectItem>
@@ -192,18 +143,17 @@ const WorkshopsPage = () => {
 
                     {/* Results Count */}
                     <WorkshopDisplaySection
-                        filteredWorkshops={filteredWorkshops}
+                        filteredWorkshops={workshops}
                         sortOption={sortOption}
-                        currentPage={currentPage}
                         locationFilter={locationFilter}
                         searchQuery={searchQuery}
                     />
 
                     <Pagination1
                         currentPage={currentPage}
+                        onPageNext={() => setCurrentPage(currentPage + 1)}
+                        onPagePrev={() => setCurrentPage(currentPage - 1)}
                         totalPages={totalPages}
-                        onPageNext={() => currentPage + 1}
-                        onPagePrev={() => currentPage - 1}
                     />
                 </div>
             </div>

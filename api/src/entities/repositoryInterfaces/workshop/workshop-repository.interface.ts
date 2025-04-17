@@ -13,6 +13,7 @@ export interface IWorkshopRepository {
         limit: number,
     ): Promise<{ workshops: IWorkshopEntity[] | []; total: number }>
     updateBlockStatus(id: string): Promise<IWorkshopEntity>;
-    getWorkshopsWithRatings(skip: number, limit: number, searchTerm?: string): Promise<Partial<IWorkshopWithRatings[]>>
+    getWorkshopsWithRatings(skip: number, limit: number, searchTerm: string, sortOption: any): Promise<{workshops: Partial<IWorkshopWithRatings[]>; total: number}>
     findByIdsNotIn(ids: string[]): Promise<{ _id: string; name: string }[]>;
+    findOne(filter: Partial<IWorkshopEntity>): Promise<IWorkshopEntity | null>;
 }

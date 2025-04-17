@@ -48,11 +48,12 @@ export interface IReveiwSubmitData {
 export const useWorkshopsQuery = <T extends WorkshopData>(
     page: number,
     limit: number,
-    searchQuery: string
+    searchQuery: string,
+    sortOption: string
 ) => {
     return useQuery({
-        queryKey: ["workshops"],
-        queryFn: () => getAllWorkshops(page, limit, searchQuery),
+        queryKey: ["workshops", page, limit, searchQuery, sortOption],
+        queryFn: () => getAllWorkshops(page, limit, searchQuery, sortOption),
         placeholderData: (prevData) => prevData ? { ...prevData } : undefined,
     });
 };

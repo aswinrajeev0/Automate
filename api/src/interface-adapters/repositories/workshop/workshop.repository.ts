@@ -64,24 +64,23 @@ export class WorkshopRepository implements IWorkshopRepository {
         return workshop;
     }
 
-    async getWorkshopsWithRatings(skip: number, limit: number, searchTerm?: string): Promise<Partial<IWorkshopWithRatings[]>> {
-        const searchFilter: any = {
-            "workshopDetails.approvalStatus": "approved",
+    async getWorkshopsWithRatings(skip: number, limit: number, searchTerm: string, sortOption: any): Promise<{ workshops: Partial<IWorkshopWithRatings[]>; total: number }> {
+        console.log(searchTerm)
+        const matchStage: any = {
+            approvalStatus: "approved"
         };
 
-        // const total = await WorkshopModel.countDocuments({})
-
         if (searchTerm) {
-            searchFilter.$or = [
-                { "workshopDetails.name": { $regex: searchTerm, $options: "i" } },
-                { "workshopDetails.city": { $regex: searchTerm, $options: "i" } },
-                { "workshopDetails.email": { $regex: searchTerm, $options: "i" } },
+            matchStage.$or = [
+                { name: { $regex: searchTerm, $options: "i" } },
+                { city: { $regex: searchTerm, $options: "i" } },
+                { email: { $regex: searchTerm, $options: "i" } },
             ];
         }
 
         const workshops = await WorkshopModel.aggregate([
             {
-                $match: { approvalStatus: "approved" }
+                $match: matchStage
             },
             {
                 $lookup: {
@@ -115,15 +114,23 @@ export class WorkshopRepository implements IWorkshopRepository {
                     description: "$bio"
                 },
             },
+            { $sort: sortOption },
             { $skip: skip },
             { $limit: limit },
         ]);
 
-        return workshops;
+        const total = await WorkshopModel.countDocuments({ approvalStatus: "approved" })
+
+        return { workshops, total };
     }
 
     async findByIdsNotIn(ids: string[]): Promise<{ _id: string; name: string; }[]> {
         return await WorkshopModel.find({ _id: { $nin: ids } }).select("_id name");
+    }
+
+    async findOne(filter: Partial<IWorkshopEntity>): Promise<IWorkshopEntity | null> {
+        const workshop = await WorkshopModel.findOne(filter);
+        return workshop;
     }
 
 }

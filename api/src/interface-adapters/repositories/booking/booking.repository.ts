@@ -49,6 +49,7 @@ export class BookingRepository implements IBookingRepository {
         const bookings = await BookingModel.find({ customerId })
             .populate("workshopId", "name phone")
             .populate("customerId", "name phone")
+            .sort({createdAt: -1})
             .skip(skip)
             .limit(limit);
         const total = await BookingModel.countDocuments({ customerId });
@@ -59,5 +60,9 @@ export class BookingRepository implements IBookingRepository {
         const bookings = await BookingModel.find(filter).populate("customerId", "name phone").populate("workshopId", "name phone").sort({createdAt: -1}).skip(skip).limit(limit);
         const totalBookings = await BookingModel.countDocuments(filter);
         return {bookings, totalBookings}
+    }
+
+    async totalBookings(filter: Partial<IBookingEntity>): Promise<number> {
+        return await BookingModel.countDocuments(filter);
     }
 }

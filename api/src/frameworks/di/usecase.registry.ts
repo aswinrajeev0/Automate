@@ -166,6 +166,8 @@ import { IAdminAnalyticsService } from "../../entities/serviceInterfaces.ts/admi
 import { AdminAnalyticsService } from "../../interface-adapters/services/admin-analytics.service";
 import { IDashboardDataUseCase } from "../../entities/useCaseInterfaces/admin/admin-dashboard-data.usecase.interface";
 import { DashboardDataUseCase } from "../../useCases/admin/admin-dashboard-data.usecase";
+import { IAdminReportUseCase } from "../../entities/useCaseInterfaces/admin/admin-report.usecase.interface";
+import { AdminReportUseCase } from "../../useCases/admin/admin-report.usecase";
 
 export class UseCaseRegistry {
     static registerUseCases(): void {
@@ -460,6 +462,10 @@ export class UseCaseRegistry {
 
         container.register<IDashboardDataUseCase>("IDashboardDataUseCase", {
             useClass: DashboardDataUseCase
+        })
+
+        container.register<IAdminReportUseCase>("IAdminReportUseCase", {
+            useClass: AdminReportUseCase
         })
 
         //* ====== Register Strategies ====== *//

@@ -21,13 +21,14 @@ export const submitReview = async (data: IReveiwSubmitData) => {
     }
 }
 
-export const getAllWorkshops = async (page: number, limit: number = 8, searchQuery: string = "") => {
+export const getAllWorkshops = async (page: number, limit: number = 8, searchQuery: string = "", sortOption: string) => {
     try {
         const response = await publicApi.get("/all-workshops", {
             params: {
                 page,
                 limit,
-                searchQuery
+                searchQuery,
+                sortOption
             }
         })
         return response.data

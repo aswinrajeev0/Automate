@@ -25,4 +25,8 @@ export class RequestRepository implements IRequestRepository {
         const request = await RequestModel.findOneAndUpdate(filter, update);
         return request ? request : null;
     }
+
+    async totalRequests(filter: Partial<IRequestEntity>): Promise<number> {
+        return await RequestModel.countDocuments(filter);
+    }
 }

@@ -12,16 +12,36 @@ export class GetAllWorkshopsWithRatingUseCase implements IGetAllWorkshopsWithRat
         @inject("IWorkshopRepository") private _workshopRepo: IWorkshopRepository
     ) { }
 
-    async execute(page: number, limit: number, searchTerm?: string): Promise<{workshops: Partial<IWorkshopWithRatings[]>; total: number}> {
+    async execute(page: number, limit: number, searchTerm: string, sort: string): Promise<{ workshops: Partial<IWorkshopWithRatings[]>; total: number }> {
         const skip = (page - 1) * limit;
-        const workshops = await this._workshopRepo.getWorkshopsWithRatings(skip, limit, searchTerm)
-        if(!workshops) {
+
+        let sortOption;
+        if (sort) {
+            switch (sort) {
+                case "alphabetic-asc":
+                    sortOption = {name: 1}
+                    break
+                case "alphabetic-desc":
+                    sortOption = {name: -1}
+                    break
+                case "rating-high":
+                    sortOption = { averageRating: -1 };
+                    break
+                case "rating-low":
+                    sortOption = { averageRating: 1 };
+                    break
+                default:
+                    sortOption = {createdAt: -1}
+                    break
+            }
+        }
+        const { workshops, total } = await this._workshopRepo.getWorkshopsWithRatings(skip, limit, searchTerm, sortOption)
+        if (!workshops) {
             throw new CustomError(
                 ERROR_MESSAGES.WORKSHOP_NOT_FOUND,
                 HTTP_STATUS.NOT_FOUND
             )
         }
-        const total = workshops.length;
-        return {workshops, total}
+        return { workshops, total }
     }
 }

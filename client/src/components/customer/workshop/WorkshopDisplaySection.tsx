@@ -6,7 +6,6 @@ import { IWorkshopWithRating } from "../../../types/workshop.type";
 interface WorkshopDisplaySectionProps {
     filteredWorkshops: IWorkshopWithRating[];
     sortOption: string;
-    currentPage: number;
     locationFilter: string;
     searchQuery: string;
 }
@@ -14,14 +13,9 @@ interface WorkshopDisplaySectionProps {
 const WorkshopDisplaySection: React.FC<WorkshopDisplaySectionProps> = ({
     filteredWorkshops,
     sortOption,
-    currentPage,
     locationFilter,
     searchQuery
 }) => {
-    const workshopsPerPage: number = 8
-    const indexOfLastWorkshop = currentPage * workshopsPerPage
-    const indexOfFirstWorkshop = indexOfLastWorkshop - workshopsPerPage
-    const currentWorkshops = filteredWorkshops.slice(indexOfFirstWorkshop, indexOfLastWorkshop)
 
     return (
         <>
@@ -29,7 +23,7 @@ const WorkshopDisplaySection: React.FC<WorkshopDisplaySectionProps> = ({
                 <p className="text-gray-600">
                     Showing <span className="font-medium">{filteredWorkshops.length}</span> workshops
                 </p>
-                {currentWorkshops.length > 0 && (
+                {filteredWorkshops.length > 0 && (
                     <div className="flex items-center gap-1">
                         <Filter size={16} className="text-gray-500" />
                         <span className="text-sm text-gray-500">
@@ -44,7 +38,7 @@ const WorkshopDisplaySection: React.FC<WorkshopDisplaySectionProps> = ({
                 )}
             </div>
 
-            {currentWorkshops.length === 0 ? (
+            {filteredWorkshops.length === 0 ? (
                 <div className="bg-white rounded-xl shadow-sm p-8 text-center">
                     <div className="mx-auto w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
                         <AlertCircle size={24} className="text-gray-400" />
@@ -58,7 +52,7 @@ const WorkshopDisplaySection: React.FC<WorkshopDisplaySectionProps> = ({
                 </div>
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-                    {currentWorkshops.map((workshop) => (
+                    {filteredWorkshops.map((workshop) => (
                         <Card key={workshop.workshopId} className="overflow-hidden hover:shadow-md transition-shadow group">
                             <div className="relative h-44">
                                 <img

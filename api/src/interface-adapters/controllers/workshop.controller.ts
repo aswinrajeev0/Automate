@@ -381,19 +381,18 @@ export class WorkshopController implements IWorkshopController {
 
     async getAllWorkshopsWithRating(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const { page = 1, limit = 8, search = "" } = req.query;
+            const { page = 1, limit = 8, searchQuery = "", sortOption = "" } = req.query;
             const pageNumber = Number(page);
             const pageSize = Number(limit);
-            const searchTermString = typeof search === "string" ? search : "";
+            const searchTermString = searchQuery.toString()
+            const sort = sortOption.toString()
 
-            const { workshops, total } = await this._getAllWorkshopWithRating.execute(pageNumber, pageSize, searchTermString);
+            const { workshops, total } = await this._getAllWorkshopWithRating.execute(pageNumber, pageSize, searchTermString, sort);
             res.status(HTTP_STATUS.OK).json({
                 success: true,
                 workshops: workshops,
-                totalPages: total,
-                currentPage: pageNumber,
+                totalWorkshops: total,
             });
-            console.log(workshops)
         } catch (error) {
             next(error)
         }

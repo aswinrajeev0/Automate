@@ -81,7 +81,7 @@ const SlotBookingPage: React.FC = () => {
         )}
         
         <div className="bg-white shadow-md rounded-lg overflow-hidden">
-          <div className="flex flex-col md:flex-row">
+          <div className="flex flex-col md:flex-row justify-center">
             {/* Calendar Section */}
             <CalenderSection 
               setBookingSubmitted={setBookingSubmitted} 

@@ -9,6 +9,7 @@ import Workshops from "../components/admin/workshops/Workshops";
 import WorkshopApproval from "../components/admin/workshops/WorkshopApproval";
 import RequestsAdminPage from "../pages/admin/RequestsPage";
 import WorkshopBookingsList from "../pages/admin/BookingsPage";
+import RevenueReportPage from "../pages/admin/RevenueReportPage";
 
 export const AdminRoutes = () => {
     return (
@@ -23,7 +24,7 @@ export const AdminRoutes = () => {
                 <Route path="approvals" element={<AdminProtected><WorkshopApproval /></AdminProtected>} />
                 <Route path="requests" element={<AdminProtected><RequestsAdminPage /></AdminProtected>} />
                 <Route path="bookings" element={<AdminProtected><WorkshopBookingsList /></AdminProtected>} />
-                <Route path="revenue-report" />
+                <Route path="revenue-report" element={<AdminProtected><RevenueReportPage /></AdminProtected>} />
             </Route>
 
         </Routes>

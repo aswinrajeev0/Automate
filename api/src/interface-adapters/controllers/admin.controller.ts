@@ -7,8 +7,10 @@ import { ERROR_MESSAGES, HTTP_STATUS, SUCCESS_MESSAGES } from "../../shared/cons
 import { clearAuthCookies, setAuthCookies, updateCookieWithAccessToken } from "../../shared/utils/cookie-helper";
 import { IAdminLogoutUseCase } from "../../entities/useCaseInterfaces/admin/admin-logout.usecase.interface";
 import { IRefreshTokenUseCase } from "../../entities/useCaseInterfaces/admin/admin-refresh-token.usecase.interface";
-import { tryCatch } from "bullmq";
 import { IDashboardDataUseCase } from "../../entities/useCaseInterfaces/admin/admin-dashboard-data.usecase.interface";
+import { IAdminReportUseCase } from "../../entities/useCaseInterfaces/admin/admin-report.usecase.interface";
+import path from "path";
+import fs from "fs"
 
 @injectable()
 export class AdminController implements IAdminController {
@@ -17,7 +19,8 @@ export class AdminController implements IAdminController {
         @inject("IGenerateTokenUseCase") private _generateToken: IGenerateTokenUseCase,
         @inject("IAdminLogoutUseCase") private _adminLogoutuseCase: IAdminLogoutUseCase,
         @inject("IRefreshTokenUseCase") private _refreshToken: IRefreshTokenUseCase,
-        @inject("IDashboardDataUseCase") private _dashboardData: IDashboardDataUseCase
+        @inject("IDashboardDataUseCase") private _dashboardData: IDashboardDataUseCase,
+        @inject("IAdminReportUseCase") private _adminReportData: IAdminReportUseCase,
     ) { }
 
     async login(req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -121,7 +124,7 @@ export class AdminController implements IAdminController {
     async workshopGrowthData(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const filter = req.query.filter as "monthly" | "yearly";
-            if(!filter){
+            if (!filter) {
                 res.status(HTTP_STATUS.BAD_REQUEST).json({
                     success: false,
                     message: ERROR_MESSAGES.DATA_MISSING
@@ -140,4 +143,93 @@ export class AdminController implements IAdminController {
             next(error)
         }
     }
+
+    async reportPageData(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const reportData = await this._adminReportData.reportData()
+
+            res.status(HTTP_STATUS.OK).json({
+                success: true,
+                message: SUCCESS_MESSAGES.DATA_RETRIEVED,
+                reportData
+            })
+
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    async reportPageRequests(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const startDate = new Date(req.query.startDate as string);
+            const endDate = new Date(req.query.endDate as string);
+            const limit = Number(req.query.limit);
+            const page = Number(req.query.page);
+            const skip = (page - 1) * limit;
+
+            const { requests, totalRequests } = await this._adminReportData.allRequests(startDate, endDate, skip, limit)
+
+            res.status(HTTP_STATUS.OK).json({
+                success: true,
+                message: SUCCESS_MESSAGES.DATA_RETRIEVED,
+                requests,
+                totalRequests
+            })
+
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    async reportPageBookings(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const startDate = new Date(req.query.startDate as string);
+            const endDate = new Date(req.query.endDate as string);
+            const limit = Number(req.query.limit);
+            const page = Number(req.query.page);
+            const skip = (page - 1) * limit;
+
+            const { bookings, totalBookings } = await this._adminReportData.allBookings(startDate, endDate, skip, limit)
+
+            res.status(HTTP_STATUS.OK).json({
+                success: true,
+                message: SUCCESS_MESSAGES.DATA_RETRIEVED,
+                bookings,
+                totalBookings
+            })
+
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    async reportDownload(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const { startDate, endDate, serviceType } = req.query as {
+                startDate: string;
+                endDate: string;
+                serviceType: string;
+            };
+
+            const filePath = await this._adminReportData.downloadPdf(startDate, endDate, serviceType);
+            const filename = path.basename(filePath);
+
+            res.setHeader("Content-Type", "application/pdf");
+            res.setHeader("Content-Disposition", `attachment; filename=${filename}`);
+
+            res.sendFile(filePath, (err) => {
+                if (err) {
+                    next(err);
+                } else {
+                    fs.unlink(filePath, (unlinkErr) => {
+                        if (unlinkErr) console.error("Failed to delete temp PDF:", unlinkErr);
+                    });
+                }
+            });
+
+        } catch (error) {
+            next(error)
+        }
+    }
+
 }

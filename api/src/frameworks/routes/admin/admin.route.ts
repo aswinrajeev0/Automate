@@ -62,5 +62,21 @@ export class AdminRoute extends BaseRoute {
         this.router.get("/dashboard-data", authenticate("admin"), (req: Request, res: Response, next: NextFunction) => {
             adminController.dashboardData(req, res, next);
         })
+
+        this.router.get("/report-page-data", authenticate("admin"), (req: Request, res: Response, next: NextFunction) => {
+            adminController.reportPageData(req, res, next);
+        })
+
+        this.router.get("/get-report-requests", authenticate("admin"), (req: Request, res: Response, next: NextFunction) => {
+            adminController.reportPageRequests(req, res, next);
+        })
+
+        this.router.get("/get-report-bookings", authenticate("admin"), (req: Request, res: Response, next: NextFunction) => {
+            adminController.reportPageBookings(req, res, next);
+        })
+
+        this.router.get("/report-download", authenticate("admin"), (req: Request, res: Response, next: NextFunction) => {
+            adminController.reportDownload(req, res, next);
+        })
     }
 }

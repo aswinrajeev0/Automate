@@ -219,15 +219,19 @@ const CalenderSection: React.FC<CalenderSectionProps> = ({ setBookingSubmitted }
   }, []);
 
   return (
-    <div className="flex flex-col md:flex-row">
-      <div className="p-6 md:w-1/2 border-b md:border-b-0 md:border-r border-gray-200">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-xl font-semibold">
+    <div className="flex flex-col lg:flex-row min-h-125 min-w-200">
+      <div className="p-4 md:p-6 lg:w-1/2 border-b lg:border-b-0 lg:border-r border-gray-200">
+        <div className="flex justify-between items-center mb-4 md:mb-6">
+          <h2 className="text-lg md:text-xl font-semibold">
             Select Date ({type} service - {serviceDuration} hour{serviceDuration > 1 ? "s" : ""})
           </h2>
           <div className="flex items-center">
-            <button onClick={handlePrevMonth} className="p-2 hover:bg-gray-100 rounded-full">
-              <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <button 
+              onClick={handlePrevMonth} 
+              className="p-1 md:p-2 hover:bg-gray-100 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+              aria-label="Previous month"
+            >
+              <svg className="h-4 w-4 md:h-5 md:w-5" viewBox="0 0 20 20" fill="currentColor">
                 <path
                   fillRule="evenodd"
                   d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
@@ -235,9 +239,13 @@ const CalenderSection: React.FC<CalenderSectionProps> = ({ setBookingSubmitted }
                 />
               </svg>
             </button>
-            <span className="text-lg font-medium mx-4">{format(currentDate, "MMMM yyyy")}</span>
-            <button onClick={handleNextMonth} className="p-2 hover:bg-gray-100 rounded-full">
-              <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <span className="text-base md:text-lg font-medium mx-2 md:mx-4">{format(currentDate, "MMMM yyyy")}</span>
+            <button 
+              onClick={handleNextMonth} 
+              className="p-1 md:p-2 hover:bg-gray-100 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+              aria-label="Next month"
+            >
+              <svg className="h-4 w-4 md:h-5 md:w-5" viewBox="0 0 20 20" fill="currentColor">
                 <path
                   fillRule="evenodd"
                   d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
@@ -250,13 +258,14 @@ const CalenderSection: React.FC<CalenderSectionProps> = ({ setBookingSubmitted }
 
         {isLoadingDates ? (
           <div className="flex justify-center items-center h-64">
-            <p>Loading calendar...</p>
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+            <p className="ml-2">Loading calendar...</p>
           </div>
         ) : (
           <>
             <div className="grid grid-cols-7 gap-1 mb-4">
               {["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"].map((day) => (
-                <div key={day} className="text-center font-medium text-gray-500 text-sm py-2">
+                <div key={day} className="text-center font-medium text-gray-500 text-xs md:text-sm py-2">
                   {day}
                 </div>
               ))}
@@ -270,13 +279,17 @@ const CalenderSection: React.FC<CalenderSectionProps> = ({ setBookingSubmitted }
                   <button
                     key={index}
                     className={`
-                      relative h-12 flex items-center justify-center rounded-lg
+                      relative h-10 md:h-12 flex items-center justify-center rounded-lg text-sm md:text-base
                       ${!day ? "text-gray-300" : "cursor-pointer hover:bg-gray-50"}
                       ${isSelected ? "bg-blue-500 text-white hover:bg-blue-600" : ""}
                       ${isDisabled ? "text-gray-300 cursor-not-allowed" : ""}
+                      focus:outline-none focus:ring-2 focus:ring-blue-500
                     `}
                     onClick={() => day && !isDisabled && handleDateClick(day)}
                     disabled={isDisabled}
+                    aria-label={day ? `Select ${format(day, "MMMM d, yyyy")}` : ""}
+                    aria-pressed={isSelected}
+                    aria-disabled={isDisabled}
                   >
                     {day && (
                       <>
@@ -291,27 +304,31 @@ const CalenderSection: React.FC<CalenderSectionProps> = ({ setBookingSubmitted }
               })}
             </div>
 
-            <div className="flex items-center gap-4 text-sm text-gray-500 mt-4">
+            <div className="flex flex-wrap items-center gap-2 md:gap-4 text-xs md:text-sm text-gray-500 mt-4">
               <div className="flex items-center">
-                <span className="inline-block w-3 h-3 bg-green-500 rounded-full mr-2" />
+                <span className="inline-block w-3 h-3 bg-green-500 rounded-full mr-1 md:mr-2" />
                 <span>Available</span>
               </div>
               <div className="flex items-center">
-                <span className="inline-block w-3 h-3 bg-blue-500 rounded-full mr-2" />
+                <span className="inline-block w-3 h-3 bg-blue-500 rounded-full mr-1 md:mr-2" />
                 <span>Selected</span>
+              </div>
+              <div className="flex items-center">
+                <span className="inline-block w-3 h-3 bg-gray-300 rounded-full mr-1 md:mr-2" />
+                <span>Not Available</span>
               </div>
             </div>
           </>
         )}
       </div>
 
-      <div className="p-6 md:w-1/2">
-        <h2 className="text-xl font-semibold mb-6">
+      <div className="p-4 md:p-6 lg:w-1/2">
+        <h2 className="text-lg md:text-xl font-semibold mb-4 md:mb-6">
           {selectedDate ? `Select Time for ${format(selectedDate, "EEEE, MMMM d, yyyy")}` : "Select a date first"}
         </h2>
 
         {overlappingServiceInfo && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
+          <div className="bg-red-100 border border-red-400 text-red-700 px-3 py-2 md:px-4 md:py-3 rounded mb-4 md:mb-6 text-sm md:text-base">
             {overlappingServiceInfo}
           </div>
         )}
@@ -319,29 +336,34 @@ const CalenderSection: React.FC<CalenderSectionProps> = ({ setBookingSubmitted }
         {selectedDate && (
           <>
             {isSlotsLoading ? (
-              <div className="text-center py-8">
+              <div className="text-center py-8 flex flex-col items-center">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mb-2"></div>
                 <p>Loading available slots...</p>
               </div>
             ) : workshopSlots.length === 0 ? (
-              <div className="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded mb-6">
+              <div className="bg-yellow-100 border border-yellow-400 text-yellow-700 px-3 py-2 md:px-4 md:py-3 rounded mb-4 md:mb-6 text-sm md:text-base">
                 No slots available for this date. Please select another date.
               </div>
             ) : (
               <>
                 {groupSlotsByTimeOfDay.morning.length > 0 && (
-                  <div className="mb-6">
-                    <h3 className="text-lg font-medium mb-3">Morning</h3>
+                  <div className="mb-4 md:mb-6">
+                    <h3 className="text-base md:text-lg font-medium mb-2 md:mb-3">Morning</h3>
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                       {groupSlotsByTimeOfDay.morning.map((slot) => (
                         <button
                           key={slot._id}
                           className={`
-                            p-3 rounded-lg transition-colors text-center
+                            p-2 md:p-3 rounded-lg transition-colors text-center text-sm md:text-base
                             ${selectedSlot?._id === slot._id ? "bg-blue-500 text-white" : ""}
                             ${!slot.isAvailable ? "bg-red-100 text-red-800 cursor-not-allowed" : selectedSlot?._id !== slot._id ? "bg-gray-100 hover:bg-gray-200" : ""}
+                            focus:outline-none focus:ring-2 focus:ring-blue-500
                           `}
                           onClick={() => slot.isAvailable && handleSlotSelection(slot)}
                           disabled={!slot.isAvailable}
+                          aria-label={`Book time slot at ${formatTimeDisplay(slot.startTime)}`}
+                          aria-pressed={selectedSlot?._id === slot._id}
+                          aria-disabled={!slot.isAvailable}
                         >
                           <div>{formatTimeDisplay(slot.startTime)}</div>
                           <div className="text-xs mt-1">
@@ -357,19 +379,23 @@ const CalenderSection: React.FC<CalenderSectionProps> = ({ setBookingSubmitted }
                 )}
 
                 {groupSlotsByTimeOfDay.afternoon.length > 0 && (
-                  <div className="mb-6">
-                    <h3 className="text-lg font-medium mb-3">Afternoon</h3>
+                  <div className="mb-4 md:mb-6">
+                    <h3 className="text-base md:text-lg font-medium mb-2 md:mb-3">Afternoon</h3>
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                       {groupSlotsByTimeOfDay.afternoon.map((slot) => (
                         <button
                           key={slot._id}
                           className={`
-                            p-3 rounded-lg transition-colors text-center
+                            p-2 md:p-3 rounded-lg transition-colors text-center text-sm md:text-base
                             ${selectedSlot?._id === slot._id ? "bg-blue-500 text-white" : ""}
                             ${!slot.isAvailable ? "bg-red-100 text-red-800 cursor-not-allowed" : selectedSlot?._id !== slot._id ? "bg-gray-100 hover:bg-gray-200" : ""}
+                            focus:outline-none focus:ring-2 focus:ring-blue-500
                           `}
                           onClick={() => slot.isAvailable && handleSlotSelection(slot)}
                           disabled={!slot.isAvailable}
+                          aria-label={`Book time slot at ${formatTimeDisplay(slot.startTime)}`}
+                          aria-pressed={selectedSlot?._id === slot._id}
+                          aria-disabled={!slot.isAvailable}
                         >
                           <div>{formatTimeDisplay(slot.startTime)}</div>
                           <div className="text-xs mt-1">
@@ -388,9 +414,11 @@ const CalenderSection: React.FC<CalenderSectionProps> = ({ setBookingSubmitted }
                   className={`
                     w-full p-3 rounded-lg text-white font-medium text-center transition-colors
                     ${selectedDate && selectedSlot ? "bg-blue-600 hover:bg-blue-700" : "bg-gray-400 cursor-not-allowed"}
+                    focus:outline-none focus:ring-2 focus:ring-blue-500
                   `}
                   disabled={!selectedDate || !selectedSlot}
                   onClick={handleBookingClick}
+                  aria-label={selectedSlot ? `Book ${type} service for ${serviceDuration} hour${serviceDuration > 1 ? "s" : ""}` : "Select a time slot"}
                 >
                   {selectedSlot ? `Book ${type} Service (${serviceDuration} hour${serviceDuration > 1 ? "s" : ""})` : "Select a time slot"}
                 </button>
