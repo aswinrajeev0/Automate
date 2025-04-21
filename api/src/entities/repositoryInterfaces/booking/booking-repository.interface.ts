@@ -8,7 +8,7 @@ export interface IBookingRepository {
     findUpcomingBookings(filter: any): Promise<IBookingModel[]>
     findAllWorkshopBookings(filter: Partial<IBookingEntity>, skip: number, limit: number): Promise<{bookings: IBookingModel[]; total: number}>;
     findOneAndUpdate(filter: Partial<IBookingEntity>,update: Partial<IBookingEntity>): Promise<IBookingModel | null>;
-    findOne(filter: Partial<IBookingEntity>): Promise<IBookingModel | null>;
+    findOne(filter: any): Promise<IBookingModel | null>;
     findAllCustomerBookings(customerId: string, skip: number, limit: number): Promise<{bookings: IBookingModel[]; total: number}>;
     findAllAdminBookings(filter: Partial<IBookingEntity>, skip: number, limit: number): Promise<{bookings: IBookingModel[]; totalBookings: number}>;
     totalBookings(filter: Partial<IBookingEntity>): Promise<number>

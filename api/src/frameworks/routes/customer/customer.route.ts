@@ -160,5 +160,9 @@ export class CustomerRoute extends BaseRoute {
         this.router.post("/chat/start", authenticate("customer"), (req: Request, res: Response, next: NextFunction) => {
             chatController.startChat(req, res, next);
         })
+
+        this.router.get("/chat/messages", authenticate("customer"), (req: Request, res: Response, next: NextFunction) => {
+            chatController.getMessages(req, res, next);
+        })
     }
 }

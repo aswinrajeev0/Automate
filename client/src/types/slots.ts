@@ -7,6 +7,7 @@ export interface WorkshopSlot {
     maxBookings: number;
     currentBookings: number;
     isAvailable: boolean;
+    isBooked: boolean;
 }
 
 export interface ServiceTypeInfo {

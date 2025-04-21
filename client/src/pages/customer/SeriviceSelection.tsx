@@ -15,8 +15,8 @@ const ServiceSelectionPage = () => {
             id: 1,
             title: "Basic Service",
             subtitle: "Oil Change, Filter Replacement, Inspection",
-            duration: "30 Minutes",
-            price: "₹1500",
+            duration: "1 Hour",
+            price: "₹1,500",
             features: [
                 "Oil and filter change",
                 "Fluid level check",
@@ -31,8 +31,8 @@ const ServiceSelectionPage = () => {
             id: 2,
             title: "Interim/Minor Service",
             subtitle: "Basic Maintenance + Additional Checks",
-            duration: "1 Hour",
-            price: "₹5000",
+            duration: "2 Hours",
+            price: "₹5,000",
             features: [
                 "Basic service tasks",
                 "Air filter replacement",
@@ -47,8 +47,8 @@ const ServiceSelectionPage = () => {
             id: 3,
             title: "Full/Major Service",
             subtitle: "Comprehensive Vehicle Maintenance",
-            duration: "2 Hours",
-            price: "₹11000",
+            duration: "3 Hours",
+            price: "₹7,000",
             features: [
                 "All minor service tasks",
                 "Coolant flush",

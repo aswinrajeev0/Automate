@@ -4,4 +4,5 @@ export interface IMessageEntity {
     sender: "customer" | "workshop";
     timestamp: Date;
     status: "sent" | "delivered" | "read";
+    conversationId: string;
 }

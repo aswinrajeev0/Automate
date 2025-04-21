@@ -1,5 +1,5 @@
 import { ArrowRight, MapPin, MessageCircle, Users, Wrench, Home } from "lucide-react";
-import { Button } from "../../components/ui/button";
+import { Button } from "../../components/ui/Button";
 import { useNavigate } from "react-router-dom";
 import { Header } from "../../components/customer/Header"
 import { Footer } from "../../components/customer/Footer"
@@ -48,23 +48,23 @@ export default function LandingPage() {
               <span className="text-gray-500 font-semibold">Workshop</span>
             </div>
             <div className="flex flex-col items-center">
-              <div className="p-3 rounded-full bg-gray-500 text-white mb-2">
+              <div onClick={() => navigate("/workshops")} className="p-3 rounded-full bg-gray-500 text-white mb-2">
                 <MapPin className="w-6 h-6" />
               </div>
               <span className="text-gray-500 font-semibold">Near Me</span>
             </div>
             <div className="flex flex-col items-center">
-              <div className="p-3 rounded-full bg-gray-500 text-white mb-2">
+              <div onClick={() => navigate("/chat")} className="p-3 rounded-full bg-gray-500 text-white mb-2">
                 <MessageCircle className="w-6 h-6" />
               </div>
               <span className="text-gray-500 font-semibold">Chats</span>
             </div>
-            <div className="flex flex-col items-center">
+            {/* <div className="flex flex-col items-center">
               <div className="p-3 rounded-full bg-gray-500 text-white mb-2">
                 <Users className="w-6 h-6" />
               </div>
               <span className="text-gray-500 font-semibold">About Us</span>
-            </div>
+            </div> */}
           </div>
         </div>
       </section>

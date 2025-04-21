@@ -15,6 +15,7 @@ interface ChatInterfaceProps {
 
 const ChatInterface = ({ userType }: ChatInterfaceProps) => {
     const [selectedConversationId, setSelectedConversationId] = useState<string | null>(null);
+    const [conversationsState, setConversationsState] = useState<IConversationType[]>([]);
     const [showSidebar, setShowSidebar] = useState(true);
     const [searchParams] = useSearchParams();
     const workshopIdFromQuery = searchParams.get("workshopId");
@@ -53,7 +54,11 @@ const ChatInterface = ({ userType }: ChatInterfaceProps) => {
     }, []);
 
     const { data: fetchConversationData } = useFetchConversations(userType);
-    const conversations = (fetchConversationData?.conversations || []) as IConversationType[];
+    useEffect(() => {
+        if (fetchConversationData?.conversations) {
+            setConversationsState(fetchConversationData.conversations);
+        }
+    }, [fetchConversationData]);
 
     const { data: fallbackUsersData } = useFallbackUsers(userType);
     const fallbackUsers = (fallbackUsersData?.users || []) as IFallbackUser[];
@@ -85,7 +90,7 @@ const ChatInterface = ({ userType }: ChatInterfaceProps) => {
         }
     };
 
-    const selectedConversation = conversations.find(
+    const selectedConversation = conversationsState.find(
         (conversation) => conversation._id === selectedConversationId
     );
 
@@ -117,7 +122,7 @@ const ChatInterface = ({ userType }: ChatInterfaceProps) => {
         `}>
                     {showSidebar && (
                         <ChatSidebar
-                            conversations={conversations}
+                            conversations={conversationsState}
                             selectedConversationId={selectedConversationId}
                             onSelectConversation={handleSelectConversation}
                             userType={userType}
@@ -138,6 +143,15 @@ const ChatInterface = ({ userType }: ChatInterfaceProps) => {
                         <ChatConversation
                             conversation={selectedConversation}
                             userType={userType}
+                            onNewMessage={(newMsg) => {
+                                setConversationsState((prev) =>
+                                    prev.map((conv) =>
+                                        conv._id === selectedConversation._id
+                                            ? { ...conv, latestMessage: newMsg }
+                                            : conv
+                                    )
+                                );
+                            }}
                         />
                     ) : (
                         <div className="flex-1 flex flex-col items-center justify-center text-gray-500 p-4">

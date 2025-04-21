@@ -6,7 +6,12 @@ export interface IConversationEntity {
     customerName: string;
     workshopId: string;
     workshopName: string;
-    messages: IMessageEntity[];
+    latestMessage: {
+        content: string,
+        timestamp: Date,
+        sender: string,
+        status: string,
+    };
     createdAt: Date;
     updatedAt: Date;
 }

@@ -12,7 +12,12 @@ export interface IConversationType {
     customerName: string;
     workshopId: string;
     workshopName: string;
-    messages: Omit<IMessageType, "_id">[];
+    latestMessage: {
+        content: string;
+        timestamp: Date;
+        sender: string;
+        status: string;
+    };
 }
 
 export interface IFallbackUser {

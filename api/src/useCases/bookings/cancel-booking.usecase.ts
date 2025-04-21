@@ -30,7 +30,7 @@ export class CancelBookingUseCase implements ICancelBookingUseCase {
 
         console.log(booking)
 
-        await this._slotRepo.findByIdAndUpdate(booking.slotId, {isAvailable: true})
+        await this._slotRepo.findByIdAndUpdate(booking.slotId, {isAvailable: true, isBooked: false})
 
         const customerId = (booking.customerId as IPopulatedId)._id.toString();
 

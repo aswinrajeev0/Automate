@@ -47,3 +47,28 @@ export const startChat = async (userType: string, customerId: string, workshopId
         throw error.response.data
     }
 }
+
+export const getMessages = async (conversationId: string, userType: string) => {
+    try {
+        let response;
+
+        if(userType === "customer"){
+            response = await customerApi.get("/chat/messages", {
+                params: {
+                    conversationId
+                }
+            });
+        }else{
+            response = await workshopApi.get("/chat/messages", {
+                params: {
+                    conversationId
+                }
+            });
+        }
+
+        return response.data
+
+    } catch (error: any) {
+        throw error.response.data;
+    }
+}

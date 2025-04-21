@@ -1,6 +1,6 @@
 import { injectable } from "tsyringe";
 import { IChatRepository } from "../../../entities/repositoryInterfaces/chat/chat-repository.interface";
-import { ConversationModel, IConversationModel } from "../../../frameworks/database/mongoDB/models/conversation.model";
+import { ConversationModel, IConversationModel, IMessageModel, MessageModel } from "../../../frameworks/database/mongoDB/models/conversation.model";
 import { IConversationEntity } from "../../../entities/models/conversation.entity";
 
 @injectable()
@@ -23,5 +23,10 @@ export class ChatRepository implements IChatRepository {
     async createChat(data: Partial<IConversationEntity>): Promise<IConversationModel> {
         const chat = await ConversationModel.create(data);
         return chat;
+    }
+
+    async getMessages(conversationId: string): Promise<IMessageModel[]> {
+        const messages = await MessageModel.find({conversationId});
+        return messages;
     }
 }

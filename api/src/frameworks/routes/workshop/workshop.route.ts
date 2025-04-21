@@ -133,16 +133,20 @@ export class WorkshopRoute extends BaseRoute {
             chatController.startChat(req, res, next);
         })
 
-        this.router.get("/dashboard",(req, res, next) => {
+        this.router.get("/dashboard", (req, res, next) => {
             workshopController.dashBoardData(req, res, next);
         })
 
         this.router.get("/growth-chart-data", (req, res, next) => {
             workshopController.getGrowthChartData(req, res, next);
         })
-        
+
         this.router.get("/earnings-chart-data", (req, res, next) => {
             workshopController.getEarningsChartData(req, res, next);
+        })
+
+        this.router.get("/chat/messages", (req, res, next) => {
+            chatController.getMessages(req, res, next);
         })
     }
 }

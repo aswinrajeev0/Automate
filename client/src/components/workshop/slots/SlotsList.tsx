@@ -139,18 +139,20 @@ const SlotList: React.FC<SlotListProps> = ({ convertTimeToMinutes, loading }) =>
                                                         </td>
                                                         <td className="py-3 px-4 text-sm text-right space-x-2">
                                                             <button
+                                                                disabled={slot.isBooked}
                                                                 onClick={() => handleToggleAvailability(slot._id, slot.isAvailable)}
                                                                 className="inline-flex items-center px-2 py-1 text-sm bg-blue-50 text-blue-600 rounded hover:bg-blue-100 transition-colors"
-                                                                title={slot.isAvailable ? "Mark as unavailable" : "Mark as available"}
+                                                                title={slot.isBooked ? undefined : (slot.isAvailable ? "Mark as unavailable" : "Mark as available")}
                                                             >
-                                                                <Save size={16} />
+                                                                <Save size={16} className={slot.isBooked ? "opacity-40" : "opacity-100 transition-opacity"} />
                                                             </button>
                                                             <button
+                                                                disabled={slot.isBooked}
                                                                 onClick={() => handleDeleteSlot(slot._id)}
                                                                 className="inline-flex items-center px-2 py-1 text-sm bg-red-50 text-red-600 rounded hover:bg-red-100 transition-colors"
-                                                                title="Delete slot"
+                                                                title={slot.isBooked ? undefined : "Delete slot"}
                                                             >
-                                                                <Trash2 size={16} />
+                                                                <Trash2 size={16} className={slot.isBooked ? "opacity-40" : "opacity-100 transition-opacity"} />
                                                             </button>
                                                         </td>
                                                     </tr>

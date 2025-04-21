@@ -1,16 +1,21 @@
 import React, { useEffect, useState } from "react";
 import { usePdfDownload, useReportBookings, useReportRequests } from "../../../hooks/admin/useRevenueReport";
 import SummaryCards from "./SummaryCards";
-import { ChevronLeft, ChevronRight, Download } from "lucide-react";
+import { Download } from "lucide-react";
 import { Pagination1 } from "../Pagination1";
-import { string } from "yup";
 import { useToaster } from "../../../hooks/ui/useToaster";
 
 interface Booking {
     bookingId: string;
-    customerId: string;
+    customerId: {
+        name: string;
+        _id: string
+    };
     customerName?: string;
-    workshopId: string;
+    workshopId: {
+        name: string;
+        _id: string
+    };
     workshopName?: string;
     date: Date;
     time: string;
@@ -35,9 +40,15 @@ interface Request {
     carBrand: string;
     location: string;
     image: string;
-    workshopId: string;
+    workshopId: {
+        name: string;
+        _id: string
+    };
     workshopName?: string;
-    customerId: string;
+    customerId: {
+        name: string;
+        _id: string
+    };
     type: string;
     status: string;
     paymentStatus: string;
@@ -54,7 +65,7 @@ const ReportPageContent: React.FC = () => {
     const [startDate, setStartDate] = useState<Date>(new Date());
     const [endDate, setEndDate] = useState<Date>(new Date());
     const [currentPage, setCurrentPage] = useState<number>(1);
-    const {errorToast, successToast} = useToaster();
+    const { errorToast, successToast } = useToaster();
 
     const limit = 10;
 
@@ -73,7 +84,7 @@ const ReportPageContent: React.FC = () => {
     const handleDownloadPDF = async () => {
         const serviceType = currentView as string;
         try {
-            await pdfDownload.mutateAsync({startDate, endDate, serviceType});
+            await pdfDownload.mutateAsync({ startDate, endDate, serviceType });
             successToast("Report downloaded")
         } catch (error) {
             errorToast("Error downloading report")
@@ -140,13 +151,14 @@ const ReportPageContent: React.FC = () => {
                         className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none"
                         value={(endDate as Date).toISOString().split("T")[0]}
                         onChange={(e) => setEndDate(new Date(e.target.value))}
+                        max={new Date().toISOString().split("T")[0]}
                     />
                 </div>
 
                 <div className="ml-auto">
                     <button
                         className="flex items-center gap-2 bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
-                    onClick={handleDownloadPDF}
+                        onClick={handleDownloadPDF}
                     >
                         <Download size={16} />
                         <span>Download Report</span>
@@ -234,7 +246,7 @@ const ReportPageContent: React.FC = () => {
                                         {request.name}
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                        {request.workshopName}
+                                        {request.workshopId.name}
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                         ₹{((request.amount || 0) - (request.gst || 0)).toLocaleString()}
@@ -254,10 +266,10 @@ const ReportPageContent: React.FC = () => {
                                         {booking.bookingId}
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                        {booking.customerName}
+                                        {booking.customerId.name}
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                        {booking.workshopName}
+                                        {booking.workshopId.name}
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                         ₹{booking.price.toLocaleString()}

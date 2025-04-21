@@ -14,17 +14,17 @@ export class AdminAnalyticsService implements IAdminAnalyticsService {
     }
 
     async getTotalWorkshops(): Promise<number> {
-        const totalWorkshops = await WorkshopModel.countDocuments()
+        const totalWorkshops = await WorkshopModel.countDocuments({approvalStatus: "approved"})
         return totalWorkshops;
     }
 
     async getTotalBookings(): Promise<number> {
-        const totalBookings = await BookingModel.countDocuments()
+        const totalBookings = await BookingModel.countDocuments({status: "completed"})
         return totalBookings
     }
 
     async getTotalRequests(): Promise<number> {
-        const totalRequests = await RequestModel.countDocuments();
+        const totalRequests = await RequestModel.countDocuments({status: "delivered"});
         return totalRequests
     }
 

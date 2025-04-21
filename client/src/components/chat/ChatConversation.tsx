@@ -4,21 +4,39 @@ import { cn } from "../../lib/utils";
 import { io, Socket } from "socket.io-client";
 import { IConversationType, IMessageType } from "../../types/chat.type";
 import { format } from "date-fns";
+import { useGetMessages } from "../../hooks/chat/useChat";
 
 interface ChatConversationProps {
     conversation: IConversationType;
     userType: "customer" | "workshop";
+    onNewMessage: (newMsg: any) => void;
 }
 
 const socket: Socket = io(import.meta.env.VITE_HOST);
 
 const ChatConversation = ({
     conversation,
-    userType
+    userType,
+    onNewMessage
 }: ChatConversationProps) => {
-    console.log(conversation)
     const [newMessage, setNewMessage] = useState("");
-    const [messages, setMessages] = useState(conversation.messages);
+    const [messages, setMessages] = useState<IMessageType[]>([]);
+    const [hasLoadedMessages, setHasLoadedMessages] = useState(false);
+    const [isOnline, setIsOnline] = useState(false);
+
+    const { data: messagesData } = useGetMessages(conversation._id, userType);
+
+    useEffect(() => {
+        if (messagesData?.messages && !hasLoadedMessages) {
+            setMessages(messagesData.messages);
+            setHasLoadedMessages(true);
+        }
+    }, [messagesData, hasLoadedMessages]);
+
+    useEffect(() => {
+        setMessages([]);
+        setHasLoadedMessages(false);
+    }, [conversation._id]);
 
     const messagesEndRef = useRef<HTMLDivElement | null>(null);
     const scrollToBottom = () => {
@@ -26,16 +44,36 @@ const ChatConversation = ({
     };
 
     useEffect(() => {
-        socket.emit("joinRoom", conversation._id);
+        const userId = userType === "customer" ? conversation.customerId : conversation.workshopId;
+        socket.emit("joinRoom", conversation._id, userId);
 
-        socket.on("receiveMessage", (message: IMessageType) => {
+        const handleReceiveMessage = (message: IMessageType) => {
             setMessages((prev) => [...prev, message]);
-        });
+            onNewMessage(message);
+        };
+
+        socket.on("receiveMessage", handleReceiveMessage);
 
         return () => {
-            socket.off("receiveMessage");
+            socket.off("receiveMessage", handleReceiveMessage);
         };
     }, [conversation._id]);
+
+    useEffect(() => {
+        const recipientId = userType === "customer" ? conversation.workshopId : conversation.customerId;
+
+        const handleOnlineStatus = (data: { id: string; online: boolean }) => {
+            if (data.id === recipientId) {
+                setIsOnline(data.online);
+            }
+        };
+
+        socket.on("onlineStatus", handleOnlineStatus);
+
+        return () => {
+            socket.off("onlineStatus", handleOnlineStatus);
+        };
+    }, [conversation._id, userType]);
 
     const handleSendMessage = (e: React.FormEvent) => {
         e.preventDefault();
@@ -73,8 +111,14 @@ const ChatConversation = ({
                 </div>
                 <div>
                     <h2 className="font-medium text-gray-900">{recipientName}</h2>
-                    <p className="text-xs text-gray-500">
+                    <p className="text-xs text-gray-500 flex items-center gap-2">
                         {userType === "customer" ? "Auto Repair Shop" : "Customer"}
+                        <span className={cn(
+                            "h-2 w-2 rounded-full",
+                            isOnline ? "bg-green-500" : "bg-gray-400"
+                        )}>
+                        </span>
+                        <span>{isOnline ? "Online" : "Offline"}</span>
                     </p>
                 </div>
             </div>
@@ -82,6 +126,7 @@ const ChatConversation = ({
             {/* Messages area */}
             <div className="flex-1 overflow-y-auto p-6 space-y-4 overflow-x-scroll">
                 {messages.map((message, index) => {
+                    console.log("Message", message)
                     const isCurrentUser =
                         (userType === "customer" && message.sender === "customer") ||
                         (userType === "workshop" && message.sender === "workshop");

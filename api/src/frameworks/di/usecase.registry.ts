@@ -168,6 +168,8 @@ import { IDashboardDataUseCase } from "../../entities/useCaseInterfaces/admin/ad
 import { DashboardDataUseCase } from "../../useCases/admin/admin-dashboard-data.usecase";
 import { IAdminReportUseCase } from "../../entities/useCaseInterfaces/admin/admin-report.usecase.interface";
 import { AdminReportUseCase } from "../../useCases/admin/admin-report.usecase";
+import { IGetMessagesUseCase } from "../../entities/useCaseInterfaces/chat/get-messages.usecase.interface";
+import { GetMessagesUseCase } from "../../useCases/chat/get-messages.usecase";
 
 export class UseCaseRegistry {
     static registerUseCases(): void {
@@ -466,6 +468,10 @@ export class UseCaseRegistry {
 
         container.register<IAdminReportUseCase>("IAdminReportUseCase", {
             useClass: AdminReportUseCase
+        })
+
+        container.register<IGetMessagesUseCase>("IGetMessagesUseCase", {
+            useClass: GetMessagesUseCase
         })
 
         //* ====== Register Strategies ====== *//

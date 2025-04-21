@@ -1,7 +1,7 @@
 import React, { useState, ChangeEvent, useEffect } from 'react';
 import { MapPin, Camera, ChevronDown, X } from 'lucide-react';
 import * as Yup from "yup"
-import { Button } from "../../components/ui/button"
+import { Button } from "../../components/ui/Button"
 import { Card, CardContent } from "../../components/ui/Card"
 import { Input } from "../../components/ui/Input"
 import { Label } from "../../components/ui/Label"

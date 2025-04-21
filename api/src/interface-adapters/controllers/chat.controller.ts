@@ -5,13 +5,15 @@ import { ERROR_MESSAGES, HTTP_STATUS, SUCCESS_MESSAGES } from "../../shared/cons
 import { IGetConversationsUseCase } from "../../entities/useCaseInterfaces/chat/get-coversations.usecase.interface";
 import { IFallBackUsersUseCase } from "../../entities/useCaseInterfaces/chat/fallback-users.usecase.interface";
 import { IStartConversationUseCase } from "../../entities/useCaseInterfaces/chat/start-chat.usecase.interface";
+import { IGetMessagesUseCase } from "../../entities/useCaseInterfaces/chat/get-messages.usecase.interface";
 
 @injectable()
 export class ChatController implements IChatController {
     constructor(
         @inject("IGetConversationsUseCase") private _getConversations: IGetConversationsUseCase,
         @inject("IFallBackUsersUseCase") private _fallbackUSers: IFallBackUsersUseCase,
-        @inject("IStartConversationUseCase") private _startConversation: IStartConversationUseCase
+        @inject("IStartConversationUseCase") private _startConversation: IStartConversationUseCase,
+        @inject("IGetMessagesUseCase") private _getMessages: IGetMessagesUseCase
     ){}
 
     async getConversations(req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -76,6 +78,20 @@ export class ChatController implements IChatController {
                 chat
             })
 
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    async getMessages(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const conversationId = req.query.conversationId as string;
+            const messages = await this._getMessages.execute(conversationId);
+
+            res.status(HTTP_STATUS.OK).json({
+                success: true,
+                messages
+            })
         } catch (error) {
             next(error)
         }

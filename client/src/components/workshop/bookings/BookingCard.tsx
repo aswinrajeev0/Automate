@@ -50,6 +50,7 @@ const BookingCard: React.FC<{ booking: IBooking }> = ({
 
     const statusOptions = ['pending', 'confirmed', 'in-progress', 'completed'];
     const isStatusCancelled = booking.status === 'cancelled';
+    const isStatusCompleted = booking.status === 'completed';
 
     return (
         <div
@@ -67,9 +68,12 @@ const BookingCard: React.FC<{ booking: IBooking }> = ({
 
                 {/* Status Badge/Dropdown */}
                 {isStatusCancelled ? (
-                    // Static badge for cancelled status
                     <span className="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">
                         Cancelled
+                    </span>
+                ) : isStatusCompleted ? (
+                    <span className="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
+                        Completed
                     </span>
                 ) : (
                     // Dropdown for all other statuses

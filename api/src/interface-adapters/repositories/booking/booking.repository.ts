@@ -29,6 +29,7 @@ export class BookingRepository implements IBookingRepository {
         const bookings = await BookingModel.find(filter)
             .populate("workshopId", "name")
             .populate("customerId", "name phone")
+            .sort({createdAt: -1})
             .skip(skip)
             .limit(limit)
         const total = await BookingModel.countDocuments(filter)
@@ -40,7 +41,7 @@ export class BookingRepository implements IBookingRepository {
         return booking
     }
 
-    async findOne(filter: Partial<IBookingEntity>): Promise<IBookingModel | null> {
+    async findOne(filter: any): Promise<IBookingModel | null> {
         const booking = await BookingModel.findOne(filter);
         return booking
     }

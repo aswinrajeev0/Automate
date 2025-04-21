@@ -30,7 +30,7 @@ export class CancelSlotUseCase implements ICancelSlotUseCase {
             )
         }
 
-        await this._slotRepo.findByIdAndUpdate(booking.slotId, {isAvailable: true})
+        await this._slotRepo.findByIdAndUpdate(booking.slotId, {isAvailable: true, isBooked: false})
 
         const populatedCustomerId = booking.customerId;
 

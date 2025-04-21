@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { MapPin, ChevronDown, X } from 'lucide-react';
 import * as Yup from "yup"
-import { Button } from "../../components/ui/button"
+import { Button } from "../../components/ui/Button"
 import { Card, CardContent } from "../../components/ui/Card"
 import { Input } from "../../components/ui/Input"
 import { Label } from "../../components/ui/Label"
@@ -46,7 +46,7 @@ const MobileWorkshop: React.FC = () => {
     const mobileWorkshopRequest = useMobileWorkshopRequest()
 
     // Define default service pricing
-    const [bookingDetails, setBookingDetails] = useState({
+    const [bookingDetails, _setBookingDetails] = useState({
         date: new Date(),
         time: "ASAP",
         type: "Mobile Workshop",

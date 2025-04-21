@@ -1,6 +1,6 @@
 import React from "react";
 import { Bell, LogOut, Menu } from "lucide-react";
-import { Button } from "../ui/button";
+import { Button } from "../ui/Button";
 
 interface AdminHeaderProps {
   setIsSidebarOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -24,12 +24,12 @@ const AdminHeader: React.FC<AdminHeaderProps> = ({ setIsSidebarOpen, isSidebarOp
           <h1 className="text-lg font-semibold hidden md:block">Admin Dashboard</h1>
         </div>
         <div className="flex items-center gap-3">
-          <Button size="icon" variant="ghost" className="relative text-white hover:bg-white/10">
+          {/* <Button size="icon" variant="ghost" className="relative text-white hover:bg-white/10">
             <Bell className="h-5 w-5" />
             <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-amber-500 text-[10px] font-medium text-white flex items-center justify-center">
               3
             </span>
-          </Button>
+          </Button> */}
           <div className="flex items-center gap-2">
             <div className="h-8 w-8 rounded-full bg-white/20 flex items-center justify-center">
               <span className="text-sm font-medium">A</span>

@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { fallbackUsers, fetchConversations, startChat } from "../../services/chat/fetchConversations"
+import { fallbackUsers, fetchConversations, getMessages, startChat } from "../../services/chat/fetchConversations"
 
 export const useFetchConversations = (userType: string) => {
     return useQuery({
@@ -22,5 +22,12 @@ export const useStartChat = (userType: string) => {
         onSuccess: () => {
             queryClient.invalidateQueries({queryKey: ["coversations", userType]})
         }
+    })
+}
+
+export const useGetMessages = (conversationId: string, userType: string) => {
+    return useQuery({
+        queryKey: ["messages", conversationId, userType],
+        queryFn: () => getMessages(conversationId, userType)
     })
 }

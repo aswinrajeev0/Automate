@@ -19,9 +19,9 @@ export class BookSlotUseCase implements IBookSlotUseCase {
         const bookingId = generateUniqueId("bkng");
         const bookingData = {
             ...data,
-            bookingId
+            bookingId,
         }
-        const isBooked = await this._bookingRepo.findOne({date: data.date, time: data.time, endTime: data.endTime});
+        const isBooked = await this._bookingRepo.findOne({date: data.date, time: data.time, endTime: data.endTime, status: { $nin: ["cancelled", "completed"] }});
         if(isBooked){
             throw new CustomError(
                 ERROR_MESSAGES.SLOT_ALREADY_BOOKED,
@@ -29,7 +29,7 @@ export class BookSlotUseCase implements IBookSlotUseCase {
             )
         }
         const booking = await this._bookingRepo.save(bookingData);
-        await this._slotRepo.findByIdAndUpdate(data.slotId as string, {isAvailable: false})
+        await this._slotRepo.findByIdAndUpdate(data.slotId as string, {isAvailable: false, isBooked: true})
         return booking
     }
 }
