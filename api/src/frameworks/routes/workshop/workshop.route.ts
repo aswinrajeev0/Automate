@@ -148,5 +148,9 @@ export class WorkshopRoute extends BaseRoute {
         this.router.get("/chat/messages", (req, res, next) => {
             chatController.getMessages(req, res, next);
         })
+
+        this.router.patch("/chat/messages/mark-read", (req, res, next) => {
+            chatController.markMessagesAsRead(req, res, next);
+        })
     }
 }

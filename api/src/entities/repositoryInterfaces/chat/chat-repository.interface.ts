@@ -7,4 +7,10 @@ export interface IChatRepository {
     findOne(filter: any): Promise<IConversationModel | null>;
     createChat(data: Partial<IConversationEntity>): Promise<IConversationModel>;
     getMessages(conversationId: string): Promise<IMessageModel[]>
+    findWithMeta(
+        filter: any,
+        userType: "customer" | "workshop"
+    ): Promise<IConversationModel[]>
+    markMessagesAsRead(conversationId: string, userType: string): Promise<void>;
+
 }

@@ -1,4 +1,3 @@
-import { IMessageEntity } from "./message.entity";
 
 export interface IConversationEntity {
     id: string;
@@ -7,11 +6,13 @@ export interface IConversationEntity {
     workshopId: string;
     workshopName: string;
     latestMessage: {
-        content: string,
-        timestamp: Date,
-        sender: string,
-        status: string,
+        content: string;
+        timestamp: Date;
+        sender: string;
+        status: string;
+        imageUrl: string | null;
     };
+    unreadCount: number;
     createdAt: Date;
     updatedAt: Date;
 }

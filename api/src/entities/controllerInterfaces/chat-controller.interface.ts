@@ -5,4 +5,5 @@ export interface IChatController {
     fallBackUsers(req: Request, res: Response, next: NextFunction): Promise<void>;
     startChat(req: Request, res: Response, next: NextFunction): Promise<void>;
     getMessages(req: Request, res: Response, next: NextFunction): Promise<void>;
+    markMessagesAsRead(req: Request, res: Response, next: NextFunction): Promise<void>;
 }

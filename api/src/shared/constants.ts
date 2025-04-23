@@ -66,7 +66,9 @@ export enum SUCCESS_MESSAGES {
    BOOKING_CANCELED = "Booking cancelled",
    RAZORPAY_ORDER_CREATED = "Razorpay order created",
    PAYMENT_VERIFIED = "Payment verified",
-   MONEY_ADDED = "Money added to wallet"
+   MONEY_ADDED = "Money added to wallet",
+   ADDED_TO_FAVORITES = "Added to favorites",
+   REMOVED_FROM_FAVORITES = "Removed from favorites",
 }
 
 export enum WALLET_TRANSACTION_TYPES {

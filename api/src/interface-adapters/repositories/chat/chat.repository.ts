@@ -26,7 +26,38 @@ export class ChatRepository implements IChatRepository {
     }
 
     async getMessages(conversationId: string): Promise<IMessageModel[]> {
-        const messages = await MessageModel.find({conversationId});
+        const messages = await MessageModel.find({ conversationId });
         return messages;
+    }
+
+    async findWithMeta(filter: any, userType: "customer" | "workshop"): Promise<IConversationModel[]> {
+        const conversations = await ConversationModel.find(filter).sort({updatedAt: -1}).lean();
+
+        const enriched = await Promise.all(conversations.map(async (conv) => {
+
+            const unreadCount = await MessageModel.countDocuments({
+                conversationId: conv._id,
+                status: "sent",
+                sender: { $ne: userType }
+            });
+
+            return {
+                ...conv,
+                unreadCount
+            };
+        }));
+
+        return enriched;
+    }
+
+    async markMessagesAsRead(conversationId: string, userType: string): Promise<void> {
+        await MessageModel.updateMany(
+            {
+                conversationId,
+                sender: { $ne: userType },
+                status: "sent"
+            },
+            { $set: { status: "read" } }
+        );
     }
 }

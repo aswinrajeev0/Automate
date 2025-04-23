@@ -1,6 +1,7 @@
 import { Search } from "lucide-react";
 import { cn } from "../../lib/utils";
 import { IConversationType, IFallbackUser } from "../../types/chat.type";
+import { useMarkAsRead } from "../../hooks/chat/useChat";
 
 interface ChatSidebarProps {
     conversations: IConversationType[];
@@ -19,6 +20,9 @@ const ChatSidebar = ({
     fallbackUsers,
     onStartConversation
 }: ChatSidebarProps) => {
+
+    const markAsRead = useMarkAsRead(userType);
+
     return (
         <div className="w-80 border-r border-gray-200 flex flex-col">
             <div className="p-4 border-b border-gray-200">
@@ -47,7 +51,10 @@ const ChatSidebar = ({
                         return (
                             <div
                                 key={conversation._id}
-                                onClick={() => onSelectConversation(conversation._id)}
+                                onClick={async () => {
+                                    await markAsRead.mutateAsync(conversation._id)
+                                    onSelectConversation(conversation._id)
+                                }}
                                 className={cn(
                                     "px-4 py-3 border-b border-gray-100 cursor-pointer transition-colors",
                                     selectedConversationId === conversation._id
@@ -69,12 +76,20 @@ const ChatSidebar = ({
                                             <p className="font-medium text-gray-900 truncate">
                                                 {displayName}
                                             </p>
-                                            <p className="text-xs text-gray-500">
-                                                {new Date(lastMessage?.timestamp).toLocaleTimeString([], {
-                                                    hour: "2-digit",
-                                                    minute: "2-digit",
-                                                })}
-                                            </p>
+
+                                            <div className="flex items-center gap-2">
+                                                {conversation.unreadCount > 0 && (
+                                                    <span className="inline-block min-w-[20px] px-1 text-xs text-white bg-red-500 rounded-full text-center">
+                                                        {conversation.unreadCount}
+                                                    </span>
+                                                )}
+                                                <p className="text-xs text-gray-500">
+                                                    {new Date(lastMessage?.timestamp).toLocaleTimeString([], {
+                                                        hour: "2-digit",
+                                                        minute: "2-digit",
+                                                    })}
+                                                </p>
+                                            </div>
                                         </div>
                                         <p className="text-sm text-gray-500 truncate mt-1">
                                             {lastMessage?.sender === userType

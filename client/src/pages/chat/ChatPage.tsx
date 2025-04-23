@@ -22,17 +22,6 @@ const ChatInterface = ({ userType }: ChatInterfaceProps) => {
 
     const hasStartedRef = useRef(false);
 
-    useEffect(() => {
-        if (
-            userType === "customer" &&
-            workshopIdFromQuery &&
-            !hasStartedRef.current
-        ) {
-            hasStartedRef.current = true;
-            onStartConversation(workshopIdFromQuery);
-        }
-    }, [userType, workshopIdFromQuery]);
-
     const handleSelectConversation = (id: string) => {
         setSelectedConversationId(id);
         if (window.innerWidth < 768) {
@@ -53,12 +42,34 @@ const ChatInterface = ({ userType }: ChatInterfaceProps) => {
         return () => window.removeEventListener('resize', handleResize);
     }, []);
 
-    const { data: fetchConversationData } = useFetchConversations(userType);
+    const { data: fetchConversationData, refetch } = useFetchConversations(userType);
     useEffect(() => {
         if (fetchConversationData?.conversations) {
             setConversationsState(fetchConversationData.conversations);
         }
-    }, [fetchConversationData]);
+    }, [fetchConversationData?.conversations]);
+
+    useEffect(() => {
+        if (
+            userType === "customer" &&
+            workshopIdFromQuery &&
+            fetchConversationData?.conversations &&
+            !hasStartedRef.current
+        ) {
+            hasStartedRef.current = true;
+
+            const existingConversation = fetchConversationData?.conversations.find(
+                (conv) => conv.workshopId === workshopIdFromQuery
+            );
+
+            if (existingConversation) {
+                setSelectedConversationId(existingConversation._id);
+            } else {
+                onStartConversation(workshopIdFromQuery);
+            }
+        }
+    }, [userType, workshopIdFromQuery, fetchConversationData?.conversations]);
+
 
     const { data: fallbackUsersData } = useFallbackUsers(userType);
     const fallbackUsers = (fallbackUsersData?.users || []) as IFallbackUser[];
@@ -69,11 +80,15 @@ const ChatInterface = ({ userType }: ChatInterfaceProps) => {
     const { workshop } = useSelector((state: RootState) => state.workshop);
 
     const onStartConversation = async (userId: string) => {
+        console.log("onStartConversation")
         if (userType === "customer") {
             try {
                 const customerId = customer?.id as string;
                 const workshopId = userId;
+
                 const chat = await startChat.mutateAsync({ customerId, workshopId });
+                await refetch()
+
                 handleSelectConversation(chat._id);
             } catch (error) {
                 console.error(error)

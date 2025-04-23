@@ -4,6 +4,7 @@ export interface IMessageType {
     sender: "customer" | "workshop";
     timestamp: string;
     status: "sent" | "delivered" | "read";
+    imageUrl: string | null;
 }
 
 export interface IConversationType {
@@ -18,6 +19,7 @@ export interface IConversationType {
         sender: string;
         status: string;
     };
+    unreadCount: number;
 }
 
 export interface IFallbackUser {

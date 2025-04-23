@@ -6,6 +6,7 @@ import { IGetConversationsUseCase } from "../../entities/useCaseInterfaces/chat/
 import { IFallBackUsersUseCase } from "../../entities/useCaseInterfaces/chat/fallback-users.usecase.interface";
 import { IStartConversationUseCase } from "../../entities/useCaseInterfaces/chat/start-chat.usecase.interface";
 import { IGetMessagesUseCase } from "../../entities/useCaseInterfaces/chat/get-messages.usecase.interface";
+import { IUpdateMessageStatusUseCase } from "../../entities/useCaseInterfaces/chat/update-message-status.usecase.interface";
 
 @injectable()
 export class ChatController implements IChatController {
@@ -13,13 +14,14 @@ export class ChatController implements IChatController {
         @inject("IGetConversationsUseCase") private _getConversations: IGetConversationsUseCase,
         @inject("IFallBackUsersUseCase") private _fallbackUSers: IFallBackUsersUseCase,
         @inject("IStartConversationUseCase") private _startConversation: IStartConversationUseCase,
-        @inject("IGetMessagesUseCase") private _getMessages: IGetMessagesUseCase
-    ){}
+        @inject("IGetMessagesUseCase") private _getMessages: IGetMessagesUseCase,
+        @inject("IUpdateMessageStatusUseCase") private _updateMessageStatus: IUpdateMessageStatusUseCase
+    ) { }
 
     async getConversations(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const user = req.user;
-            if(!user) {
+            if (!user) {
                 res.status(HTTP_STATUS.UNAUTHORIZED).json({
                     success: false,
                     message: ERROR_MESSAGES.UNAUTHORIZED_ACCESS
@@ -27,7 +29,7 @@ export class ChatController implements IChatController {
                 return;
             }
 
-            const {id: userId, role: useType} = user;
+            const { id: userId, role: useType } = user;
 
             const conversations = await this._getConversations.execute(userId, useType)
 
@@ -61,8 +63,8 @@ export class ChatController implements IChatController {
 
     async startChat(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const {customerId, workshopId} = req.body;
-            if(!customerId || !workshopId) {
+            const { customerId, workshopId } = req.body;
+            if (!customerId || !workshopId) {
                 res.status(HTTP_STATUS.BAD_REQUEST).json({
                     success: false,
                     message: ERROR_MESSAGES.DATA_MISSING
@@ -97,4 +99,28 @@ export class ChatController implements IChatController {
         }
     }
 
+    async markMessagesAsRead(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const { conversationId } = req.body;
+            const userType = req.user?.role;
+
+            if(!userType){
+                res.status(HTTP_STATUS.BAD_REQUEST).json({
+                    success: false,
+                    message: ERROR_MESSAGES.UNAUTHORIZED_ACCESS
+                })
+                return;
+            }
+
+            await this._updateMessageStatus.markMessageAsRead(conversationId, userType)
+
+            res.status(HTTP_STATUS.OK).json({
+                success: true,
+                message: SUCCESS_MESSAGES.UPDATE_SUCCESS
+            })
+
+        } catch (error) {
+            next(error)
+        }
+    }
 }

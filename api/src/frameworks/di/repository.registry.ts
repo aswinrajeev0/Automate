@@ -22,6 +22,8 @@ import { ISlotRepository } from "../../entities/repositoryInterfaces/slots/slot.
 import { SlotRepository } from "../../interface-adapters/repositories/slots/slot.repository";
 import { IChatRepository } from "../../entities/repositoryInterfaces/chat/chat-repository.interface";
 import { ChatRepository } from "../../interface-adapters/repositories/chat/chat.repository";
+import { IFavoritesRepository } from "../../entities/repositoryInterfaces/favorites/favorites.repository.interface";
+import { FavoritesRepository } from "../../interface-adapters/repositories/favorites/favorites.repository";
 
 export class RepositoryRegistry {
     static registerRepositories(): void {
@@ -67,6 +69,10 @@ export class RepositoryRegistry {
 
         container.register<IChatRepository>("IChatRepository", {
             useClass: ChatRepository
+        })
+
+        container.register<IFavoritesRepository>("IFavoritesRepository", {
+            useClass: FavoritesRepository
         })
     }
 }

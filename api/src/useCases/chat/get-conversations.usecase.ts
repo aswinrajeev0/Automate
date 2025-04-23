@@ -14,7 +14,7 @@ export class GetConversationsUseCase implements IGetConversationsUseCase {
             ? { customerId: userId }
             : { workshopId: userId };
 
-        const conversations = await this._chatRepo.find(filter)
+        const conversations = await this._chatRepo.findWithMeta(filter, userType as "customer" | "workshop")
 
         return conversations
     }

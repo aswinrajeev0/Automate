@@ -5,4 +5,5 @@ export interface IMessageEntity {
     timestamp: Date;
     status: "sent" | "delivered" | "read";
     conversationId: string;
+    imageUrl: string | null;
 }

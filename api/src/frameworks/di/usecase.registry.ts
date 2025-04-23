@@ -170,6 +170,12 @@ import { IAdminReportUseCase } from "../../entities/useCaseInterfaces/admin/admi
 import { AdminReportUseCase } from "../../useCases/admin/admin-report.usecase";
 import { IGetMessagesUseCase } from "../../entities/useCaseInterfaces/chat/get-messages.usecase.interface";
 import { GetMessagesUseCase } from "../../useCases/chat/get-messages.usecase";
+import { IUpdateMessageStatusUseCase } from "../../entities/useCaseInterfaces/chat/update-message-status.usecase.interface";
+import { UpdateMessageStatusUseCase } from "../../useCases/chat/update-message-status.usecase";
+import { IFavoriteWorkshopsUseCase } from "../../entities/useCaseInterfaces/workshop/get-favorite-workshops.usecase.interface";
+import { FavoriteWorkshopsUseCase } from "../../useCases/workshop/get-favorite-workshops.usecase";
+import { IHandelFavoritesUseCase } from "../../entities/useCaseInterfaces/favorites/handle-favorites.usecase.interface";
+import { HandelFavoritesUseCase } from "../../useCases/favorites/handle-favorites.usecase";
 
 export class UseCaseRegistry {
     static registerUseCases(): void {
@@ -472,6 +478,18 @@ export class UseCaseRegistry {
 
         container.register<IGetMessagesUseCase>("IGetMessagesUseCase", {
             useClass: GetMessagesUseCase
+        })
+
+        container.register<IUpdateMessageStatusUseCase>("IUpdateMessageStatusUseCase", {
+            useClass: UpdateMessageStatusUseCase
+        })
+
+        container.register<IFavoriteWorkshopsUseCase>("IFavoriteWorkshopsUseCase", {
+            useClass: FavoriteWorkshopsUseCase
+        })
+
+        container.register<IHandelFavoritesUseCase>("IHandelFavoritesUseCase", {
+            useClass: HandelFavoritesUseCase
         })
 
         //* ====== Register Strategies ====== *//

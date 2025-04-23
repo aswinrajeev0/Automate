@@ -4,7 +4,7 @@ import { CustomerRoutes } from "./routes/CustomerRoute";
 import { AdminRoutes } from "./routes/AdminRoute";
 import { WorkshopRoutes } from "./routes/WorkshopRoute";
 import NotFound from "./pages/NotFound";
-import RevenueReportPage from "./pages/admin/RevenueReportPage";
+import FavoritesPage from "./pages/customer/FavoritesPage";
 function App() {
 
   return (
@@ -14,7 +14,7 @@ function App() {
         <Route path="/*" element={<CustomerRoutes />} />
         <Route path="/admin/*" element={<AdminRoutes />} />
         <Route path="/workshop/*" element={<WorkshopRoutes />} />
-        <Route path="/test" element={<RevenueReportPage />} />
+        <Route path="/test" element={<FavoritesPage />} />
 
         <Route path="*" element={<NotFound />} />
       </Routes>

@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { getAllWorkshops, submitReview, workshopDetails } from "../../services/customer/workshopServices";
+import { handleFavorite, favorites, getAllWorkshops, submitReview, workshopDetails, isFavorite, favoriteWorkshopIds } from "../../services/customer/workshopServices";
 
 export interface IWorkshop {
     rating: number;
@@ -16,10 +16,6 @@ export interface IWorkshop {
 
 export type WorkshopData = {
     workshops: IWorkshop[];
-};
-
-type workshopsResponse<T> = {
-    workshops: T;
 };
 
 export type WorkshopDetailsResponse = {
@@ -71,5 +67,33 @@ export const useSubmitReview = () => {
         onError: (error: Error) => {
             console.error("Error submiting review", error)
         }
+    })
+}
+
+export const useHandelFavorite = () => {
+    return useMutation({
+        mutationFn: ({workshopId, status}: {workshopId: string, status: boolean}) => handleFavorite(workshopId, status)
+    })
+}
+
+export const useIsFavorite = (workshopId: string) => {
+    return useQuery({
+        queryKey: ["isFavorite", workshopId],
+        queryFn: () => isFavorite(workshopId),
+        enabled: false
+    })
+}
+
+export const useFavorites = (page: number, limit: number) => {
+    return useQuery({
+        queryKey: ["favorites",page, limit],
+        queryFn: () => favorites(page, limit)
+    })
+}
+
+export const useFavoriteWorkshopIds = () => {
+    return useQuery({
+        queryKey: ["workshopIds"],
+        queryFn: favoriteWorkshopIds
     })
 }

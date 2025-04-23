@@ -1,10 +1,10 @@
-import React, { useState } from "react";
-import { Button } from "../../ui/button";
+import React, { useEffect, useState } from "react";
+import { Button } from "../../ui/Button";
 import { Heart, MessageCircle, Phone, MapPin, Clock, Calendar, Star, Info, ChevronDown, ChevronUp } from "lucide-react";
-import { IWorkshop } from "../../../hooks/customer/useWorkshops";
-import { Badge } from "../../ui/Badge";
+import { IWorkshop, useHandelFavorite, useIsFavorite } from "../../../hooks/customer/useWorkshops";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../../ui/Tooltip";
 import { useNavigate } from "react-router-dom";
+import { useToaster } from "../../../hooks/ui/useToaster";
 
 interface WorkshopDetailsSectionProps {
     workshop: IWorkshop
@@ -14,10 +14,35 @@ interface WorkshopDetailsSectionProps {
 const WorkshopDetailsSection: React.FC<WorkshopDetailsSectionProps> = ({ workshop, reviewCount }) => {
     const [isFavorite, setIsFavorite] = useState(false);
     const [expanded, setExpanded] = useState(false);
+    const { successToast, errorToast } = useToaster();
 
     const navigate = useNavigate()
 
-    // Calculate if bio is too long and needs expansion
+    const { refetch: refetchFavoriteStatus } = useIsFavorite(workshop.id);
+
+    useEffect(() => {
+        refetchFavoriteStatus().then((res) => {
+            setIsFavorite(res.data.isFavorite);
+        });
+    }, [workshop.id])
+
+
+    const handleFavoriteStatus = useHandelFavorite();
+
+    const handleFavorite = async (workshopId: string) => {
+        try {
+            const response = await handleFavoriteStatus.mutateAsync({ workshopId, status: !isFavorite });
+            if (response?.success) {
+                setIsFavorite(!isFavorite);
+                successToast(response?.message || "Update success")
+            } else {
+                errorToast(response.message || "Something went wrong")
+            }
+        } catch (error: any) {
+            errorToast(error?.data?.message)
+        }
+    }
+
     const bioIsLong = workshop?.bio && workshop.bio.length > 150;
     const displayBio = bioIsLong && !expanded
         ? `${workshop?.bio?.substring(0, 150)}...`
@@ -76,19 +101,6 @@ const WorkshopDetailsSection: React.FC<WorkshopDetailsSectionProps> = ({ worksho
                         </div>
                     </div>
 
-                    <div className="flex gap-2 mb-4">
-                        {workshop?.specialties?.slice(0, 3).map((specialty, index) => (
-                            <Badge key={index} variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
-                                {specialty}
-                            </Badge>
-                        ))}
-                        {workshop?.specialties?.length > 3 && (
-                            <Badge variant="outline" className="bg-gray-50 text-gray-600 border-gray-200">
-                                +{workshop?.specialties.length - 3} more
-                            </Badge>
-                        )}
-                    </div>
-
                     <div className="flex-grow">
                         <div className="prose prose-sm max-w-none mb-2">
                             <p className="text-gray-700">{displayBio}</p>
@@ -117,7 +129,7 @@ const WorkshopDetailsSection: React.FC<WorkshopDetailsSectionProps> = ({ worksho
                                         <Button
                                             variant="outline"
                                             className={`flex items-center justify-center ${isFavorite ? 'bg-red-50' : ''}`}
-                                            onClick={() => setIsFavorite(!isFavorite)}
+                                            onClick={() => handleFavorite(workshop.id)}
                                         >
                                             <Heart
                                                 size={18}
@@ -163,8 +175,8 @@ const WorkshopDetailsSection: React.FC<WorkshopDetailsSectionProps> = ({ worksho
                                 <Tooltip>
                                     <TooltipTrigger asChild>
                                         <Button
-                                        onClick={() => navigate(`/request-service/service/${workshop.id}`)}
-                                        variant="outline" className="flex items-center justify-center">
+                                            onClick={() => navigate(`/request-service/service/${workshop.id}`)}
+                                            variant="outline" className="flex items-center justify-center">
                                             <Calendar size={18} className="text-gray-500" />
                                         </Button>
                                     </TooltipTrigger>

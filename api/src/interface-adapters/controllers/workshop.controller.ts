@@ -24,6 +24,7 @@ import { IChangeWorkshopPasswordUseCase } from "../../entities/useCaseInterfaces
 import { IWorkshopDetailsUseCase } from "../../entities/useCaseInterfaces/workshop/workshop-details.usecase.interface";
 import { IGetAllWorkshopsWithRatingUseCase } from "../../entities/useCaseInterfaces/workshop/get-all-workshops-with-rating.usecase.interface";
 import { IWorkshopDashboardUseCase } from "../../entities/useCaseInterfaces/workshop/workshop-dashboard.usecase.interface";
+import { IFavoriteWorkshopsUseCase } from "../../entities/useCaseInterfaces/workshop/get-favorite-workshops.usecase.interface";
 
 @injectable()
 export class WorkshopController implements IWorkshopController {

@@ -15,7 +15,7 @@ const accessLogStream = fs.createWriteStream(path.join(logDirectory, "access.log
 morgan.token("date", () => new Date().toISOString()); // Custom date format
 morgan.token("custom-status", (req, res) => `\x1b${res.statusCode}\x1b[0m`); // Colorize status codes
 
-const customFormat = `:remote-addr - :method :url :status :response-time ms - :res[content-length] bytes [:date]`;;
+const customFormat = `:remote-addr - :method :url :status :response-time ms - :res[content-length] bytes [:date]`;
 
 
 const logFormat = config.loggerStatus || "combined";

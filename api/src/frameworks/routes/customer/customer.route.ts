@@ -5,13 +5,13 @@ import {
     bookingController,
     chatController,
     customerController,
+    favoritesController,
     otpController,
     paymentController,
     requestController,
     reviewController,
     slotController,
     walletController,
-    workshopController
 } from "../../di/resolver";
 import { authenticate, decodeToken } from "../../../interface-adapters/middlewares/auth.midleware";
 
@@ -163,6 +163,26 @@ export class CustomerRoute extends BaseRoute {
 
         this.router.get("/chat/messages", authenticate("customer"), (req: Request, res: Response, next: NextFunction) => {
             chatController.getMessages(req, res, next);
+        })
+
+        this.router.post("/handle-favorites", authenticate("customer"), (req: Request, res: Response, next: NextFunction) => {
+            favoritesController.handleFavorites(req, res, next);
+        })
+
+        this.router.get("/favorites", authenticate("customer"), (req: Request, res: Response, next: NextFunction) => {
+            favoritesController.getFavoriteWorkshops(req, res, next);
+        })
+
+        this.router.get("/is-favorite", authenticate("customer"), (req: Request, res: Response, next: NextFunction) => {
+            favoritesController.isFavorite(req, res, next);
+        })
+
+        this.router.get("/favorite-workshop-ids", authenticate("customer"), (req: Request, res: Response, next: NextFunction) => {
+            favoritesController.getFavoriteWorkshopsId(req, res, next);
+        })
+
+        this.router.patch("/chat/messages/mark-read", authenticate("customer"), (req: Request, res: Response, next: NextFunction) => {
+            chatController.markMessagesAsRead(req, res, next);
         })
     }
 }

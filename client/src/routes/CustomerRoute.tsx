@@ -18,6 +18,7 @@ import WalletPage from "../pages/customer/WalletPage";
 import ServiceRequestDashboard from "../pages/customer/RequestsPage";
 import UserBookingsPage from "../pages/customer/AllBookings";
 import ChatInterface from "../pages/chat/ChatPage";
+import FavoritesPage from "../pages/customer/FavoritesPage";
 
 export const CustomerRoutes = () => {
     return (
@@ -40,6 +41,7 @@ export const CustomerRoutes = () => {
             <Route path="/requests" element={<CustomerProtected><ServiceRequestDashboard /></CustomerProtected>} />
             <Route path="/bookings" element={<CustomerProtected><UserBookingsPage /></CustomerProtected>} />
             <Route path="/chat" element={<CustomerProtected><ChatInterface userType="customer" /></CustomerProtected>} />
+            <Route path="/favorites" element={<CustomerProtected><FavoritesPage /></CustomerProtected>} />
         </Routes>
     )
 }

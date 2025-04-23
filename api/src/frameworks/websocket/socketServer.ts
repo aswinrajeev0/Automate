@@ -26,15 +26,22 @@ export const initializeSocket = (httpServer: HttpServer) => {
             console.log(`${socket.id} joined room ${roomId}`);
         });
 
+        socket.on("checkOnlineStatus", (recipientId: string) => {
+            const isOnline = onlineUsers.has(recipientId);
+            socket.emit("onlineStatus", { id: recipientId, online: isOnline });
+        });
+
         socket.on("sendMessage", async (data) => {
             const { roomId, message } = data;
             io.to(roomId).emit("receiveMessage", message);
             try {
+                console.log(message)
                 const savedMessage = await MessageModel.create({
                     content: message.content,
                     conversationId: roomId,
                     sender: message.sender,
-                    timestamp: message.timestamp
+                    timestamp: message.timestamp,
+                    imageUrl: message.imageUrl
                 });
 
                 await ConversationModel.findByIdAndUpdate(roomId, {
@@ -43,6 +50,7 @@ export const initializeSocket = (httpServer: HttpServer) => {
                         sender: savedMessage.sender,
                         timestamp: savedMessage.timestamp,
                         status: savedMessage.status,
+                        imageUrl: message.imageUrl
                     }
                 });
 
@@ -53,6 +61,7 @@ export const initializeSocket = (httpServer: HttpServer) => {
                         sender: savedMessage.sender,
                         timestamp: savedMessage.timestamp,
                         status: savedMessage.status,
+                        imageUrl: message.imageUrl
                     }
                 });
             } catch (error) {
