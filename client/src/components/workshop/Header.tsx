@@ -1,6 +1,6 @@
 import React from "react"
 import { Bell, LogOut, Menu } from "lucide-react";
-import { Button } from "../ui/button";
+import { Button } from "../ui/Button";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/store";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/Avatar";
@@ -40,12 +40,12 @@ const WorkshopHeader: React.FC<WorkshopHeaderProps> = ({ setIsSidebarOpen, isSid
                     <h1 className="text-lg font-semibold hidden md:block">Workshop Dashboard</h1>
                 </div>
                 <div className="flex items-center gap-3">
-                    <Button size="icon" variant="ghost" className="relative text-white hover:bg-white/10">
+                    {/* <Button size="icon" variant="ghost" className="relative text-white hover:bg-white/10">
                         <Bell className="h-5 w-5" />
                         <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-amber-500 text-[10px] font-medium text-white flex items-center justify-center">
                             3
                         </span>
-                    </Button>
+                    </Button> */}
                     <div className="flex items-center gap-2">
                         <Avatar className="cursor-pointer border-2 border-black hover:opacity-90 transition-opacity">
                             <AvatarImage src={workshop?.image} alt={workshop?.name || "Workshop"} />

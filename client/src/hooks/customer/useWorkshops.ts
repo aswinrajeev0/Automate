@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { handleFavorite, favorites, getAllWorkshops, submitReview, workshopDetails, isFavorite, favoriteWorkshopIds } from "../../services/customer/workshopServices";
 
 export interface IWorkshop {
@@ -70,9 +70,13 @@ export const useSubmitReview = () => {
     })
 }
 
-export const useHandelFavorite = () => {
+export const useHandelFavorite = (page?: number, limit?: number) => {
+    const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: ({workshopId, status}: {workshopId: string, status: boolean}) => handleFavorite(workshopId, status)
+        mutationFn: ({workshopId, status}: {workshopId: string, status: boolean}) => handleFavorite(workshopId, status),
+        onSuccess: () => {
+            queryClient.invalidateQueries({queryKey: ["favorites",page, limit]})
+        }
     })
 }
 

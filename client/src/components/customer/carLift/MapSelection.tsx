@@ -30,7 +30,7 @@ const MapSelection: React.FC<MapSelectionProps> = ({ handleLocationSelect }) => 
 
     const [initialPosition] = useState<LatLngExpression>([9.936434, 76.318366])
     const [currentLocation, setCurrentLocation] = useState<[number, number]>([0, 0])
-    const [error, setError] = useState<string | null>(null);
+    const [_error, setError] = useState<string | null>(null);
     const [markedPosition, setMarkedPosition] = useState<[number, number] | null>(null)
     const [locationString, setLocationString] = useState<string>("")
 

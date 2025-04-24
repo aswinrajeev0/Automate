@@ -1,6 +1,6 @@
 import React from "react";
 import { IUserRequestResponse } from "../../../types/requests";
-import { Calendar, CarFront, Check, Clock, Phone, MapPin, Car, FileText, CreditCard, Info } from "lucide-react";
+import { Calendar, CarFront, Check, Clock, Phone, Car, FileText, CreditCard, Info } from "lucide-react";
 
 const RequestCard: React.FC<{ request: IUserRequestResponse }> = ({ request }) => {
     const getStatusColor = (status: string) => {
@@ -9,14 +9,6 @@ const RequestCard: React.FC<{ request: IUserRequestResponse }> = ({ request }) =
             case 'Delivered': return 'bg-green-100 text-green-800';
             case 'In Progress': return 'bg-yellow-100 text-yellow-800';
             case 'Pending': return 'bg-gray-100 text-gray-800';
-            default: return 'bg-gray-100 text-gray-800';
-        }
-    };
-
-    const getPaymentStatusColor = (status: string) => {
-        switch (status) {
-            case 'completed': return 'bg-green-100 text-green-800';
-            case 'pending': return 'bg-yellow-100 text-yellow-800';
             default: return 'bg-gray-100 text-gray-800';
         }
     };

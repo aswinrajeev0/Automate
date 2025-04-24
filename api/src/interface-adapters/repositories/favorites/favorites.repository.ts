@@ -6,7 +6,7 @@ import { IFavoriteWorkshops } from "../../../shared/dtos/workshop.dto";
 
 @injectable()
 export class FavoritesRepository implements IFavoritesRepository {
-    async wokrkshops(customerId: string, skip: number, limit: number): Promise<IFavoriteWorkshops[]> {
+    async wokrkshops(customerId: string, skip: number, limit: number): Promise<{workshops: IFavoriteWorkshops[]; total: number}> {
         const customer = new mongoose.Types.ObjectId(customerId);
         const result = await FavoriteModel.aggregate([
             { $match: { customer } },
@@ -36,7 +36,10 @@ export class FavoritesRepository implements IFavoritesRepository {
             image: workshop.image,
         }));
 
-        return workshops;
+        const favorite = await FavoriteModel.findOne({customer: customerId})
+        const total = favorite?.workshops.length || 0;
+
+        return {workshops, total};
     }
 
     async addToFavorites(customerId: string, workshopId: string): Promise<IFavoriteModel | null> {

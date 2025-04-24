@@ -72,7 +72,7 @@ const WorkshopDetailsSection: React.FC<WorkshopDetailsSectionProps> = ({ worksho
                                 <Clock size={16} className="text-gray-500" />
                                 <span className="text-sm font-medium">Working Hours</span>
                             </div>
-                            <p className="text-sm text-gray-600">{workshop?.hours || "Mon-Fri: 9AM-6PM"}</p>
+                            <p className="text-sm text-gray-600">{"Mon-Fri: 9AM-6PM"}</p>
                         </div>
 
                         <div className="bg-gray-50 p-4 rounded-lg">

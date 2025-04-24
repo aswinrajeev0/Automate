@@ -85,12 +85,13 @@ export class FavoritesController implements IFavoritesController {
             const limitNumber = Number(limit);
             const customerId = req.user?.id as string;
 
-            const workshops = await this._favoriteWorkshops.execute(customerId, pageNumber, limitNumber)
+            const {workshops, total} = await this._favoriteWorkshops.execute(customerId, pageNumber, limitNumber)
 
             res.status(HTTP_STATUS.OK).json({
                 success: true,
                 message: SUCCESS_MESSAGES.DATA_RETRIEVED,
-                workshops
+                workshops,
+                total
             })
         } catch (error) {
             next(error)

@@ -243,7 +243,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
                 {paymentMethod === 'paypal' ? (
                     <PayPalButtons
                         style={{ layout: 'vertical' }}
-                        createOrder={(data, actions) => {
+                        createOrder={(_data, actions) => {
                             return actions.order.create({
                                 intent: "CAPTURE",
                                 purchase_units: [
@@ -256,7 +256,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
                                 ],
                             });
                         }}
-                        onApprove={async (data, actions) => {
+                        onApprove={async (_data, actions) => {
                             const details = await actions.order?.capture();
                             if (details?.status === "COMPLETED") {
                                 await handleSubmit(finalAmount, gstAmount);

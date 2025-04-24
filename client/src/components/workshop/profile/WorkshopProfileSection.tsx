@@ -17,7 +17,7 @@ import { Input } from "../../ui/Input";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../../ui/Form";
 import { Loader2, Pencil, Phone, Save, User } from "lucide-react";
 import { Textarea } from "../../ui/Textarea";
-import { Button } from "../../ui/button";
+import { Button } from "../../ui/Button";
 
 const profileSchema = yup.object().shape({
     name: yup.string().required("Name is required"),

@@ -3,12 +3,22 @@ import { Card, CardContent } from "../../ui/Card";
 import { IFeaturedWorkshop } from "../../../hooks/customer/useFeaturedWorkshop";
 import { Heart } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useHandelFavorite } from "../../../hooks/customer/useWorkshops";
 
 interface WorkshopCardProps {
     workshop: IFeaturedWorkshop;
+    isFavorite: boolean;
+    onToggleFavorite: (id: string) => void;
 }
 
-const WorkshopCard: React.FC<WorkshopCardProps> = ({workshop}) => {
+const WorkshopCard: React.FC<WorkshopCardProps> = ({ workshop, isFavorite, onToggleFavorite }) => {
+
+    const handleFavorite = useHandelFavorite();
+
+    const handleFavoriteStatus = async (workshopId: string) => {
+        await handleFavorite.mutateAsync({workshopId, status: !isFavorite})
+        onToggleFavorite(workshopId);
+    }
 
     const navigate = useNavigate()
 
@@ -17,7 +27,6 @@ const WorkshopCard: React.FC<WorkshopCardProps> = ({workshop}) => {
             <div className="relative h-48">
                 <img
                     src={workshop.image ? workshop.image : "./mechs.jpg"}
-                    // src="./mechs.jpg"
                     alt={workshop.name}
                     className="w-full h-full object-cover"
                 />
@@ -29,7 +38,13 @@ const WorkshopCard: React.FC<WorkshopCardProps> = ({workshop}) => {
                         <p className="text-sm">{workshop.state}</p>
                         <p className="text-sm">{workshop.city}</p>
                     </div>
-                    <Heart className="h-5 w-5" />
+                    <Heart
+                        onClick={(e) => {
+                            e.stopPropagation()
+                            handleFavoriteStatus(workshop._id)
+                        }}
+                        className={isFavorite ? "text-red-600 fill-red-600" : "text-black-400 hover:text-red-500"}
+                    />
                 </div>
             </CardContent>
         </Card>

@@ -9,9 +9,9 @@ export class FavoriteWorkshopsUseCase implements IFavoriteWorkshopsUseCase {
         @inject("IFavoritesRepository") private _favoriteRepo: IFavoritesRepository
     ){}
 
-    async execute(customerId: string, page: number, limit: number): Promise<IFavoriteWorkshops[]> {
+    async execute(customerId: string, page: number, limit: number): Promise<{workshops: IFavoriteWorkshops[]; total: number}> {
         const skip = (page-1) * limit;
-        const workshops = await this._favoriteRepo.wokrkshops(customerId, skip, limit);
-        return workshops
+        const {workshops, total} = await this._favoriteRepo.wokrkshops(customerId, skip, limit);
+        return {workshops, total}
     }
 }

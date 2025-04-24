@@ -17,7 +17,6 @@ const SlotCreationForm: React.FC<SlotCreationFormProps> = ({loading, setLoading,
         openingTime: '09:00',
         closingTime: '17:00',
         serviceType: 'basic',
-        maxBookings: 1
     });
 
     const {errorToast, successToast} = useToaster()
@@ -78,7 +77,6 @@ const SlotCreationForm: React.FC<SlotCreationFormProps> = ({loading, setLoading,
             startTime: slot.startTime,
             endTime: slot.endTime,
             serviceType: formData.serviceType,
-            maxBookings: formData.maxBookings,
             isAvailable: true,
             isBooked: false
         }));
@@ -164,18 +162,6 @@ const SlotCreationForm: React.FC<SlotCreationFormProps> = ({loading, setLoading,
                             </div>
                         </div>
 
-                        <div>
-                            <label className="block font-medium mb-1 text-gray-700">Max Bookings per Slot</label>
-                            <input
-                                type="number"
-                                name="maxBookings"
-                                value={formData.maxBookings}
-                                onChange={handleInputChange}
-                                min="1"
-                                className="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                                required
-                            />
-                        </div>
                     </div>
 
                     <div className="mt-4">

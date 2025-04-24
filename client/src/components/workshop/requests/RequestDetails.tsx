@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, MapPin, Calendar, Clock, Car, Wrench, CreditCard, User, Phone } from 'lucide-react';
+import { ArrowLeft, MapPin, Calendar, Car, Wrench, CreditCard, User, Phone } from 'lucide-react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAcceptRequest, useRejectRequest, useRequestDetails } from '../../../hooks/workshop/useWorkshopRequests';
 import { IRequest } from '../../../types/requests';
 import { useToaster } from '../../../hooks/ui/useToaster';
 
 const RequestDetailsPage: React.FC = () => {
-    const [showConfirmation, setShowConfirmation] = useState(false);
+    const [_showConfirmation, setShowConfirmation] = useState(false);
     const [requestStatus, setRequestStatus] = useState<string | undefined>(undefined);
     const { successToast, errorToast } = useToaster();
     const navigate = useNavigate();

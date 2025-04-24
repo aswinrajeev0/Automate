@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../../ui/Form";
 import { Building, Globe, Home, Loader2, MapPin, Pencil, Save } from "lucide-react";
 import { Input } from "../../ui/Input";
-import { Button } from "../../ui/button";
+import { Button } from "../../ui/Button";
 import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";

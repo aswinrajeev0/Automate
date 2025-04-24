@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { TabsContent } from "../../ui/Tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../ui/Card";
-import { Button } from "../../ui/button";
+import { Button } from "../../ui/Button";
 import { Eye, EyeOff, KeyRound, LogOut, Trash2 } from "lucide-react";
 import {
     AlertDialog,

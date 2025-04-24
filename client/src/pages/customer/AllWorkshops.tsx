@@ -30,7 +30,6 @@ const WorkshopsPage = () => {
     const totalWorkshops = data?.totalWorkshops || 1;
     const totalPages = Math.ceil(totalWorkshops / limit) || 1
 
-    // Debounced search implementation
     const debouncedSearch = useCallback(
         debounce((query: string) => {
             setDebouncedSearchQuery(query)
@@ -49,27 +48,35 @@ const WorkshopsPage = () => {
 
     if (isLoading) {
         return (
-            <div className="bg-white p-4 md:p-6 min-h-[calc(100vh-200px)] flex flex-col items-center justify-center">
-                <div className="w-12 h-12 rounded-full border-4 border-gray-300 border-t-yellow-500 animate-spin mb-4"></div>
-                <p className="text-gray-700 font-medium">Loading workshops...</p>
-            </div>
+            <>
+                <Header />
+                <div className="bg-white p-4 md:p-6 min-h-[calc(100vh-200px)] flex flex-col items-center justify-center">
+                    <div className="w-12 h-12 rounded-full border-4 border-gray-300 border-t-yellow-500 animate-spin mb-4"></div>
+                    <p className="text-gray-700 font-medium">Loading workshops...</p>
+                </div>
+                <Footer />
+            </>
         )
     }
 
     if (isError) {
         return (
-            <div className="bg-white p-4 md:p-6 min-h-[calc(100vh-200px)] flex flex-col items-center justify-center">
-                <div className="bg-red-100 border-l-4 border-red-600 p-4 rounded mb-4 max-w-md">
-                    <h3 className="text-red-700 font-medium mb-2">Unable to load workshops</h3>
-                    <p className="text-red-600">There was an error while fetching the workshops. Please try again later.</p>
+            <>
+                <Header />
+                <div className="bg-white p-4 md:p-6 min-h-[calc(100vh-200px)] flex flex-col items-center justify-center">
+                    <div className="bg-red-100 border-l-4 border-red-600 p-4 rounded mb-4 max-w-md">
+                        <h3 className="text-red-700 font-medium mb-2">Unable to load workshops</h3>
+                        <p className="text-red-600">There was an error while fetching the workshops. Please try again later.</p>
+                    </div>
+                    <button
+                        onClick={() => window.location.reload()}
+                        className="px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition-colors"
+                    >
+                        Retry
+                    </button>
                 </div>
-                <button
-                    onClick={() => window.location.reload()}
-                    className="px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition-colors"
-                >
-                    Retry
-                </button>
-            </div>
+                <Footer />
+            </>
         )
     }
 

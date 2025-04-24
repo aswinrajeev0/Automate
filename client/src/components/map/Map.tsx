@@ -7,7 +7,7 @@ import "leaflet/dist/leaflet.css"
 import L, { type LatLngExpression } from "leaflet"
 import { GeoSearchControl, OpenStreetMapProvider } from "leaflet-geosearch"
 import "leaflet-geosearch/dist/geosearch.css"
-import { Button } from "../ui/button"
+import { Button } from "../ui/Button"
 import {
     Dialog,
     DialogContent,
@@ -178,7 +178,7 @@ const MapModal = forwardRef<HTMLButtonElement, {}>((_, ref) => {
     const [workshops, setWorkshops] = useState<Workshop[]>([])
     const [loading, setLoading] = useState(false)
     const [searchRadius, setSearchRadius] = useState(5000) // 5km default radius
-    const [userLocationAvailable, setUserLocationAvailable] = useState(false)
+    const [_userLocationAvailable, setUserLocationAvailable] = useState(false)
     const [currentLocation, setCurrentLocation] = useState<[number, number]>([0,0])
 
     const fetchWorkshopsNearLocation = useCallback(

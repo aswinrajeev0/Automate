@@ -20,7 +20,6 @@ export interface IFormData {
     openingTime: string;
     closingTime: string;
     serviceType: 'basic' | 'interim' | 'full';
-    maxBookings: number;
 }
 
 export interface ITimeSlot {
