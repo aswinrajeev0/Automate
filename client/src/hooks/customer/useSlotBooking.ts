@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { allUserBookings, availableDates, bookedSlots, bookSlot, cancelSlot, checkSlotAvailability, fetchAvailableSlots, isSlotAvailable } from "../../services/customer/slotService"
+import { allUserBookings, availableDates, bookedSlots, bookSlot, cancelSlot, checkSlotAvailability, fetchAvailableSlots, isSlotAvailable, saveSlotId } from "../../services/customer/slotService"
 import { format } from "date-fns"
 
 export interface BookSlot {
@@ -35,19 +35,22 @@ export const useBookSlot = (workshopId: string, type: string) => {
     const queryClient = useQueryClient();
     return useMutation({
         mutationFn: (data: BookSlot) => bookSlot(data),
-        onMutate: async (newBooking) => {
-            await queryClient.cancelQueries({ queryKey: ["booked-slots", workshopId, type] });
-            const previousSlots = queryClient.getQueryData<{ bookings: BookSlot[] }>(["booked-slots", workshopId, type]);
-            if (previousSlots) {
-                queryClient.setQueryData(
-                    ["booked-slots", workshopId, type],
-                    {
-                        ...previousSlots,
-                        bookings: [...previousSlots.bookings, newBooking]
-                    }
-                );
-            }
-            return { previousSlots }
+        // onMutate: async (newBooking) => {
+        //     await queryClient.cancelQueries({ queryKey: ["booked-slots", workshopId, type] });
+        //     const previousSlots = queryClient.getQueryData<{ bookings: BookSlot[] }>(["booked-slots", workshopId, type]);
+        //     if (previousSlots) {
+        //         queryClient.setQueryData(
+        //             ["booked-slots", workshopId, type],
+        //             {
+        //                 ...previousSlots,
+        //                 bookings: [...previousSlots.bookings, newBooking]
+        //             }
+        //         );
+        //     }
+        //     return { previousSlots }
+        // },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["booked-slots", workshopId, type] })
         },
         onError: (error) => {
             console.error('Booking failed:', error);
@@ -76,6 +79,7 @@ export const useCancelSlot = (workshopId?: string, type?: string) => {
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["use-bookings"] });
+            queryClient.invalidateQueries({ queryKey: ["workshopSlots", workshopId] });
         },
         onError: (_, _bookingId, context) => {
             if (context?.previousSlots) {
@@ -85,6 +89,12 @@ export const useCancelSlot = (workshopId?: string, type?: string) => {
                 );
             }
         }
+    })
+}
+
+export const useSaveSlotId = () => {
+    return useMutation({
+        mutationFn: (slotId: string) => saveSlotId(slotId)
     })
 }
 

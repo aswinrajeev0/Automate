@@ -35,7 +35,6 @@ export const initializeSocket = (httpServer: HttpServer) => {
             const { roomId, message } = data;
             io.to(roomId).emit("receiveMessage", message);
             try {
-                console.log(message)
                 const savedMessage = await MessageModel.create({
                     content: message.content,
                     conversationId: roomId,

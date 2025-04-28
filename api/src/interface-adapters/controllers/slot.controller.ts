@@ -164,6 +164,24 @@ export class SlotController implements ISlotController {
         }
     }
 
+    async saveSlotId(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const slotId = req.body.slotId;
+            if(!slotId){
+                res.status(HTTP_STATUS.BAD_REQUEST).json({
+                    success: false,
+                    message: ERROR_MESSAGES.DATA_MISSING
+                })
+                return;
+            }
+
+            await this
+
+        } catch (error) {
+            next(error)
+        }
+    }
+
     async checkSlotAvailability(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const slotId = req.query.slotId as string;

@@ -145,6 +145,10 @@ export class CustomerRoute extends BaseRoute {
             slotController.fetchAvailableDates(req, res, next);
         })
 
+        this.router.post("/save-slot-id", authenticate("customer"), (req: Request, res: Response, next: NextFunction) => {
+            slotController.saveSlotId(req, res, next);
+        })
+
         this.router.get("/check-slot-availability", authenticate("customer"), (req: Request, res: Response, next: NextFunction) => {
             slotController.checkSlotAvailability(req, res, next)
         })

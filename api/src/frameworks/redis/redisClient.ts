@@ -15,27 +15,39 @@ export class RedisClient implements IRedisClient {
     }
 
     async blackListToken(token: string, expiresIn: number): Promise<void> {
-        await this.client.set(token, "blacklisted", "EX", expiresIn );
-}
+        await this.client.set(token, "blacklisted", "EX", expiresIn);
+    }
 
-    async deleteResetToken(userId: string): Promise < void> {
-    const key = `reset_token:${userId}`;
-    await this.client.del(key);
-}
+    async deleteResetToken(userId: string): Promise<void> {
+        const key = `reset_token:${userId}`;
+        await this.client.del(key);
+    }
 
-    async isTokenBlackListed(token: string): Promise < boolean > {
-    const result = await this.client.get(token);
-    return result === "blacklisted";
-}
+    async isTokenBlackListed(token: string): Promise<boolean> {
+        const result = await this.client.get(token);
+        return result === "blacklisted";
+    }
 
-    async storeResetToken(userId: string, token: string): Promise < void> {
-    const key = `reset_token:${userId}`;
-    await this.client.setex(key, 300, token);
-}
+    async storeResetToken(userId: string, token: string): Promise<void> {
+        const key = `reset_token:${userId}`;
+        await this.client.setex(key, 300, token);
+    }
 
-    async verifyResetToken(userId: string, token: string): Promise < boolean > {
-    const key = `reset_token:${userId}`;
-    const storedToken = await this.client.get(key);
-    return storedToken === token;
-}
+    async verifyResetToken(userId: string, token: string): Promise<boolean> {
+        const key = `reset_token:${userId}`;
+        const storedToken = await this.client.get(key);
+        return storedToken === token;
+    }
+
+    async saveSlotId(slotId: string): Promise<boolean> {
+        const key = `slot:${slotId}`;
+        const result = await this.client.set(key, slotId, "EX", 300, "NX");
+        return result === "OK";
+    }
+
+    async getSlotId(slotId: string): Promise<boolean> {
+        const key = `slot:${slotId}`;
+        const result = await this.client.get(key);
+        return result !== null;
+    }
 }

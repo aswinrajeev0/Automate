@@ -15,7 +15,7 @@ import { BookedSlot } from "./BookedSlots";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../store/store";
 import { useParams, useSearchParams } from "react-router-dom";
-import { BookSlot, useAvailableDates, useBookSlot, useCheckSlotAvailability, useFetchAvailableSlots } from "../../../hooks/customer/useSlotBooking";
+import { BookSlot, useAvailableDates, useBookSlot, useCheckSlotAvailability, useFetchAvailableSlots, useSaveSlotId } from "../../../hooks/customer/useSlotBooking";
 import PaymentModal from "../payment/PaymentModal";
 import ConfirmationModal from "../carLift/ConfirmationModal";
 import FailedModal from "../carLift/FailedModal";
@@ -71,6 +71,8 @@ const CalenderSection: React.FC<CalenderSectionProps> = ({ setBookingSubmitted }
 
   const { data: _isSlotAvailableData, refetch: checkAvailability } = useCheckSlotAvailability(selectedSlot?._id || "");
 
+  const saveSlotId = useSaveSlotId();
+
   useEffect(() => {
     if (selectedDate) {
       refetchSlots();
@@ -100,8 +102,8 @@ const CalenderSection: React.FC<CalenderSectionProps> = ({ setBookingSubmitted }
     if (!selectedDate || !selectedSlot) return;
 
     try {
+      // await saveSlotId.mutateAsync(selectedSlot._id)
       const { data } = await checkAvailability();
-      console.log(data)
       const isAvailable = data?.isSlotAvailable || false;
       if (!isAvailable) {
         errorToast("Slot became unavailable");
