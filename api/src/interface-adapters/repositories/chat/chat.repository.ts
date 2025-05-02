@@ -31,7 +31,7 @@ export class ChatRepository implements IChatRepository {
     }
 
     async findWithMeta(filter: any, userType: "customer" | "workshop"): Promise<IConversationModel[]> {
-        const conversations = await ConversationModel.find(filter).sort({updatedAt: -1}).lean();
+        const conversations = await ConversationModel.find(filter).populate("customerId", "image").populate("workshopId", "image").sort({updatedAt: -1}).lean();
 
         const enriched = await Promise.all(conversations.map(async (conv) => {
 

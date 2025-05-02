@@ -6,9 +6,16 @@ import { ConversationModel, MessageModel } from "../database/mongoDB/models/conv
 let io: SocketIOServer;
 
 export const initializeSocket = (httpServer: HttpServer) => {
+    const allowedOrigins = config.cors.ALLOWED_ORIGIN.split(',').map(o => o.trim());
     io = new SocketIOServer(httpServer, {
         cors: {
-            origin: config.cors.ALLOWED_ORIGIN,
+            origin: (origin, callback) => {
+                if (!origin || allowedOrigins.includes(origin)) {
+                    callback(null, true);
+                } else {
+                    callback(new Error('Not allowed by CORS'));
+                }
+            },
             methods: ["GET", "POST"],
             credentials: true
         }

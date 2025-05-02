@@ -28,8 +28,15 @@ export class Server {
     private configureMiddlewares() {
         this._app.use(morganLogger);
         this._app.use(helmet());
+        const allowedOrigins = config.cors.ALLOWED_ORIGIN.split(',').map(o => o.trim());
         this._app.use(cors({
-            origin: config.cors.ALLOWED_ORIGIN,
+            origin: (origin, callback) => {
+                if (!origin || allowedOrigins.includes(origin)) {
+                    callback(null, true);
+                } else {
+                    callback(new Error('Not allowed by CORS'));
+                }
+            },
             methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
             allowedHeaders: ['Authorization', 'Content-Type'],
             credentials: true

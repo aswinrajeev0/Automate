@@ -5,13 +5,16 @@ import { config } from "./shared/config";
 import { startExpiredSlotCleaner } from './frameworks/schedulers/clearExpiredSlots';
 import { createServer } from 'http';
 import { initializeSocket } from './frameworks/websocket/socketServer';
+import { startBookingCompletionUpdater } from './frameworks/schedulers/bookingCompletionUpdater';
 
 const server = new Server();
 const mongoConnect = new MongoConnect();
 
 mongoConnect.connectDb()
 
+//cron jobs
 startExpiredSlotCleaner();
+startBookingCompletionUpdater();
 
 const httpServer = createServer(server.getApp());
 
