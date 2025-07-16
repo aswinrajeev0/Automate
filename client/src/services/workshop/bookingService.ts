@@ -1,3 +1,4 @@
+import { AxiosError } from "axios";
 import { workshopApi } from "../../api/workshop.axios"
 
 export const getAllWorkshopBookings = async (page: number, limit: number, searchTerm: string, statusFilter: string) => {
@@ -11,8 +12,14 @@ export const getAllWorkshopBookings = async (page: number, limit: number, search
             }
         })
         return response.data;
-    } catch (error: any) {
-        throw error.response.data
+    } catch (error) {
+        const axiosError = error as AxiosError;
+
+        if (axiosError.response && axiosError.response.data) {
+            throw axiosError.response.data;
+        } else {
+            throw new Error("Failed to fetch bookings!");
+        }
     }
 }
 
@@ -22,8 +29,14 @@ export const cancelBooking = async (bookingId: string) => {
             bookingId
         })
         return response.data
-    } catch (error: any) {
-        throw error.response.data
+    } catch (error) {
+        const axiosError = error as AxiosError;
+
+        if (axiosError.response && axiosError.response.data) {
+            throw axiosError.response.data;
+        } else {
+            throw new Error("Failed to cancel booking!");
+        }
     }
 }
 
@@ -34,7 +47,13 @@ export const changeWorkshopStatus = async (bookingId: string, status: string) =>
             status
         })
         return response.data
-    } catch (error: any) {
-        throw error.response.data
+    } catch (error) {
+        const axiosError = error as AxiosError;
+
+        if (axiosError.response && axiosError.response.data) {
+            throw axiosError.response.data;
+        } else {
+            throw new Error("Failed to change booking status!");
+        }
     }
 }

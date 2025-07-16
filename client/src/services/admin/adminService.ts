@@ -1,3 +1,4 @@
+import { AxiosError } from "axios";
 import { adminApi } from "../../api/admin.axios";
 
 export const getAllCustomers = async ({
@@ -23,8 +24,14 @@ export const updateCustomerStatus = async (userId: string) => {
     try {
         const response = await adminApi.patch(`/customer-status/${userId}`, {});
         return response.data;
-    } catch (error: any) {
-        throw new Error(error.response?.data?.message || "Failed to update status");
+    } catch (error) {
+        const axiosError = error as AxiosError;
+
+        if (axiosError.response && axiosError.response.data) {
+            throw axiosError.response.data;
+        } else {
+            throw new Error("Failed to update status");
+        }
     }
 };
 
@@ -51,15 +58,21 @@ export const updateWorkshopStatus = async (workshopId: string) => {
     try {
         const response = await adminApi.patch(`/workshop-status/${workshopId}`);
         return response.data
-    } catch (error: any) {
-        throw new Error(error.response.data.message || "Failed to update status")
+    } catch (error) {
+        const axiosError = error as AxiosError;
+
+        if (axiosError.response && axiosError.response.data) {
+            throw axiosError.response.data;
+        } else {
+            throw new Error("Failed to update status");
+        }
     }
 }
 
-export const updateWorkshopApprovalStatus = async ({ 
-    workshopId, 
-    status, 
-    reason 
+export const updateWorkshopApprovalStatus = async ({
+    workshopId,
+    status,
+    reason
 }: { workshopId: string; status: string; reason?: string }) => {
     try {
         const response = await adminApi.patch('/workshop-approval', {
@@ -69,8 +82,14 @@ export const updateWorkshopApprovalStatus = async ({
         })
 
         return response.data;
-    } catch (error: any) {
-        throw new Error(error.response.data || "Failed to change approval status")
+    } catch (error) {
+        const axiosError = error as AxiosError;
+
+        if (axiosError.response && axiosError.response.data) {
+            throw axiosError.response.data;
+        } else {
+            throw new Error("Failed to change approval status");
+        }
     }
 }
 
@@ -103,14 +122,20 @@ export const allRequests = async (page: number, limit: number, searchTerm: strin
             }
         });
         return response.data;
-    } catch (error: any) {
-        throw error.response.data;
+    } catch (error) {
+        const axiosError = error as AxiosError;
+
+        if (axiosError.response && axiosError.response.data) {
+            throw axiosError.response.data;
+        } else {
+            throw new Error("Failed to update status");
+        }
     }
 }
 
 export const allBookings = async (page: number, limit: number, filter: string) => {
     try {
-        const response = await adminApi.get("all-bookings",{
+        const response = await adminApi.get("all-bookings", {
             params: {
                 page,
                 limit,
@@ -119,7 +144,13 @@ export const allBookings = async (page: number, limit: number, filter: string) =
         })
 
         return response.data;
-    } catch (error: any) {
-        throw error.response.data
+    } catch (error) {
+        const axiosError = error as AxiosError;
+
+        if (axiosError.response && axiosError.response.data) {
+            throw axiosError.response.data;
+        } else {
+            throw new Error("Failed to update status");
+        }
     }
 }

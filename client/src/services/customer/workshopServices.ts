@@ -8,8 +8,14 @@ export const workshopDetails = async (id: string): Promise<WorkshopDetailsRespon
     try {
         const response = await publicApi.get(`/workshop-details/${id}`);
         return response.data;
-    } catch (error: any) {
-        throw error.response.data;
+    } catch (error) {
+        const axiosError = error as AxiosError;
+
+        if (axiosError.response && axiosError.response.data) {
+            throw axiosError.response.data;
+        } else {
+            throw new Error("Failed to fetch workshop details!");
+        }
     }
 }
 
@@ -17,8 +23,14 @@ export const submitReview = async (data: IReveiwSubmitData) => {
     try {
         const response = await customerApi.post("/submit-review", data);
         return response
-    } catch (error: any) {
-        throw error.response.data
+    } catch (error) {
+        const axiosError = error as AxiosError;
+
+        if (axiosError.response && axiosError.response.data) {
+            throw axiosError.response.data;
+        } else {
+            throw new Error("Failed to submit review!");
+        }
     }
 }
 
@@ -33,8 +45,14 @@ export const getAllWorkshops = async (page: number, limit: number = 8, searchQue
             }
         })
         return response.data
-    } catch (error: any) {
-        throw error.response.data
+    } catch (error) {
+        const axiosError = error as AxiosError;
+
+        if (axiosError.response && axiosError.response.data) {
+            throw axiosError.response.data;
+        } else {
+            throw new Error("Failed to fetch workshops!");
+        }
     }
 }
 

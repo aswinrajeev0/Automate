@@ -1,3 +1,4 @@
+import { AxiosError } from "axios";
 import { customerApi } from "../../api/customer.axios"
 
 export const createOrder = async (orderCreationData: { amount: number, currency: string }) => {
@@ -5,7 +6,13 @@ export const createOrder = async (orderCreationData: { amount: number, currency:
         const response = await customerApi.post("/create-order", orderCreationData)
         return response.data
     } catch (error: any) {
-        error.response.data
+        const axiosError = error as AxiosError;
+
+        if (axiosError.response && axiosError.response.data) {
+            throw axiosError.response.data;
+        } else {
+            throw new Error("Failed to create order!");
+        }
     }
 }
 
@@ -18,6 +25,12 @@ export const verifyPayment = async (verificationData: {
         const response = await customerApi.post("/verify-payment", verificationData);
         return response.data
     } catch (error: any) {
-        throw error.response.data
+        const axiosError = error as AxiosError;
+
+        if (axiosError.response && axiosError.response.data) {
+            throw axiosError.response.data;
+        } else {
+            throw new Error("Failed to verify payment!");
+        }
     }
 }

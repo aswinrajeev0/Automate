@@ -46,8 +46,14 @@ export const bookSlot = async (data: BookSlot) => {
     try {
         const response = await customerApi.post("/book-slot", data);
         return response.data
-    } catch (error: any) {
-        return error.response.data
+    } catch (error) {
+        const axiosError = error as AxiosError;
+
+        if (axiosError.response && axiosError.response.data) {
+            throw axiosError.response.data;
+        } else {
+            throw new Error("Failed to book slot!");
+        }
     }
 }
 
@@ -55,8 +61,14 @@ export const cancelSlot = async (bookingId: string) => {
     try {
         const response = await customerApi.patch(`/cancel-slot/${bookingId}`);
         return response.data;
-    } catch (error: any) {
-        return error.response.data
+    } catch (error) {
+        const axiosError = error as AxiosError;
+
+        if (axiosError.response && axiosError.response.data) {
+            throw axiosError.response.data;
+        } else {
+            throw new Error("Failed to cancel slot!");
+        }
     }
 }
 
@@ -103,7 +115,7 @@ export const allUserBookings = async (page: number, limit: number) => {
             }
         });
         return response.data
-    } catch (error: any) {
+    } catch (error) {
         const axiosError = error as AxiosError;
 
         if (axiosError.response && axiosError.response.data) {
